@@ -258,7 +258,8 @@ function Investigation() {
   const [previousInputs3, setpreviousInputs3] = useState<
     readonly unknown[] | null
   >(null);
-  const currentInputs4 = [selected];
+  // A refreshed copy of the same case must not replace an analyst's draft.
+  const currentInputs4 = [selected?.investigation_id ?? null];
   if (
     previousInputs3 === null ||
     currentInputs4.some(

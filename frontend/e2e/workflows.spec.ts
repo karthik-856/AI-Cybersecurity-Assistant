@@ -24,6 +24,60 @@ test("attack chart shows shares of all alerts", async ({ page }) => {
   await expect(page.locator(".attack-share").nth(1)).toHaveText("(10%)");
 });
 
+test("investigation drafts survive refreshes and notes persist after saving", async ({
+  page,
+  request,
+}) => {
+  await signIn(page);
+  const token = await page.evaluate(() =>
+    localStorage.getItem("zuka_access_token"),
+  );
+  const headers = { Authorization: `Bearer ${token}` };
+  const incidentsResponse = await request.get("/api/incidents?limit=1", {
+    headers,
+  });
+  expect(incidentsResponse.status()).toBe(200);
+  const incidents = await incidentsResponse.json();
+  const created = await request.post("/api/investigations", {
+    headers,
+    data: { incident_id: incidents.items[0].incident_id },
+  });
+  expect(created.status()).toBe(201);
+  const investigation = await created.json();
+  await page.goto(
+    `/investigation?investigation_id=${encodeURIComponent(investigation.investigation_id)}`,
+  );
+  const notes = page.getByPlaceholder(
+    "Record evidence reviewed, observations, correlations, and analyst actions...",
+  );
+  const conclusion = page.getByPlaceholder(
+    "Document the evidence-based conclusion of the investigation...",
+  );
+  await notes.fill("Browser review: replay evidence checked.");
+  await conclusion.fill("Unsaved analyst conclusion remains available.");
+  await page.waitForResponse(
+    (response) =>
+      response.url().includes("/api/investigations?") &&
+      response.request().method() === "GET",
+  );
+  await expect(notes).toHaveValue("Browser review: replay evidence checked.");
+  await expect(conclusion).toHaveValue(
+    "Unsaved analyst conclusion remains available.",
+  );
+  const saved = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/notes") &&
+      response.request().method() === "PATCH",
+  );
+  await page.getByRole("button", { name: "Save Notes", exact: true }).click();
+  expect((await saved).status()).toBe(200);
+  await expect(conclusion).toHaveValue(
+    "Unsaved analyst conclusion remains available.",
+  );
+  await page.reload();
+  await expect(notes).toHaveValue("Browser review: replay evidence checked.");
+});
+
 test("all main screens load without browser errors", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
