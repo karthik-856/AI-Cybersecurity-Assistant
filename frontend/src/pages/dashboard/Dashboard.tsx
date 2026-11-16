@@ -139,10 +139,7 @@ function Dashboard() {
     };
   }, [loadDashboard]);
 
-  const maxAttackCount =
-    data && data.attack_distribution.length > 0
-      ? Math.max(...data.attack_distribution.map((item) => item.count))
-      : 1;
+  const totalAlertCount = data?.alerts.total ?? 0;
 
   const totalResolved = data
     ? (data.alerts.resolved || 0) + (data.incidents.closed || 0)
@@ -476,8 +473,8 @@ function Dashboard() {
               <div className="dashboard-attack-list">
                 {data.attack_distribution.map((item) => {
                   const percentage =
-                    maxAttackCount > 0
-                      ? Math.round((item.count / maxAttackCount) * 100)
+                    totalAlertCount > 0
+                      ? Math.round((item.count / totalAlertCount) * 100)
                       : 0;
 
                   return (
@@ -488,7 +485,12 @@ function Dashboard() {
                           <strong className="attack-count">
                             {formatNumber(item.count)}
                           </strong>
-                          <span className="attack-share">({percentage}%)</span>
+                          <span
+                            className="attack-share"
+                            title="Share of all recorded alerts"
+                          >
+                            ({percentage}%)
+                          </span>
                         </div>
                       </div>
 
@@ -576,7 +578,9 @@ function Dashboard() {
                       </span>
                     </td>
                     <td>
-                      <span className="dashboard-cell-dataset">Unknown</span>
+                      <span className="dashboard-cell-dataset">
+                        Not provided
+                      </span>
                     </td>
                     <td>
                       <span className="dashboard-cell-time">

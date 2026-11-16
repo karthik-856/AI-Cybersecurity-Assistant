@@ -8,6 +8,22 @@ async function signIn(page: Page, username = "admin") {
   await expect(page).toHaveURL(/\/dashboard$/);
 }
 
+test("attack chart shows shares of all alerts", async ({ page }) => {
+  await page.route("**/api/dashboard/summary", async (route) => {
+    const response = await route.fetch();
+    const data = await response.json();
+    data.alerts.total = 100;
+    data.attack_distribution = [
+      { name: "DOS", count: 20 },
+      { name: "DDOS", count: 10 },
+    ];
+    await route.fulfill({ response, json: data });
+  });
+  await signIn(page);
+  await expect(page.locator(".attack-share").first()).toHaveText("(20%)");
+  await expect(page.locator(".attack-share").nth(1)).toHaveText("(10%)");
+});
+
 test("all main screens load without browser errors", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));

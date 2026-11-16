@@ -159,3 +159,18 @@ def test_unavailable_knowledge_engine_fails_gracefully(monkeypatch):
     assert result["success"] is False
     assert "I don't have that information" in result["reply"]
 
+
+def test_replay_preserves_dataset_provenance():
+    from sqlalchemy import select
+    from backend.app.database.session import SessionLocal
+    from backend.app.models import Alert
+    from backend.app.replay.replay_service import replay_row
+    with Path("data/sample_replay.csv").open(encoding="utf-8") as source:
+        row = next(row for row in csv.DictReader(source) if row["zuka_attack_class"] == "RECONNAISSANCE")
+    with SessionLocal() as db:
+        result = replay_row(db, row, row_index=0, include_xai=False)
+        alert = db.scalar(select(Alert).where(Alert.alert_id == result["alert_id"]))
+        assert alert is not None
+        assert alert.dataset_name == row["dataset_name"]
+        assert alert.capture_source == "Dataset replay"
+

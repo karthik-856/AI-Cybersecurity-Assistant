@@ -165,7 +165,10 @@ def _build_network_metadata(
     row: dict[str, str],
 ) -> dict[str, Any]:
 
-    metadata: dict[str, Any] = {}
+    metadata: dict[str, Any] = {
+        "dataset_name": _optional_string(row.get("dataset_name")),
+        "capture_source": DATASET_REPLAY_SOURCE,
+    }
 
     source_ip = _optional_string(row.get("source_ip"))
     destination_ip = _optional_string(row.get("destination_ip"))
