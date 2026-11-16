@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import datetime
 
@@ -38,14 +39,14 @@ class PushSubscription(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=utc_now,
         nullable=False,
         index=True,
     )
 
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=utc_now,
+        onupdate=utc_now,
         nullable=False,
     )

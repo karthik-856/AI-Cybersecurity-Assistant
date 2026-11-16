@@ -12,15 +12,15 @@ export type CardType =
 
 export interface AssistantCard {
   card_type: CardType;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export interface PendingAction {
   action: string;
   target_entity: string;
   target_id: string;
-  params: Record<string, any>;
-  preview_changes: Record<string, any>;
+  params: Record<string, unknown>;
+  preview_changes: Record<string, unknown>;
   summary: string;
 }
 
@@ -41,7 +41,7 @@ export interface ActionConfirmationRequest {
   action: string;
   target_entity: string;
   target_id: string;
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
   conversation_id?: string | null;
 }
 

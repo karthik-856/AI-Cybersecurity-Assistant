@@ -1,3 +1,4 @@
+import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
@@ -18,11 +19,10 @@ import {
 } from "lucide-react";
 
 import "./Users.css";
-import PasswordRequirements, {
-  evaluatePassword,
-} from "../../components/auth/PasswordRequirements";
+import PasswordRequirements from "../../components/auth/PasswordRequirements";
+import { evaluatePassword } from "../../utils/password";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+import { API_BASE_URL } from "../../services/config";
 
 interface User {
   id: number;
@@ -67,13 +67,16 @@ function Users() {
 
   const [deleteError, setDeleteError] = useState("");
 
-  const [updatingUserId, setUpdatingUserId] = useState<
-    number | null
-  >(null);
+  const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
 
-  const [currentUserId, setCurrentUserId] = useState<
-    number | null
-  >(null);
+  const [currentUserId] = useState<number | null>(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem("zuka_user") || "null");
+      return typeof user?.id === "number" ? user.id : null;
+    } catch {
+      return null;
+    }
+  });
 
   const [form, setForm] = useState<CreateUserForm>({
     username: "",
@@ -85,69 +88,30 @@ function Users() {
   /*
    * Get the currently logged-in user.
    */
-  useEffect(() => {
-    const storedUser = localStorage.getItem(
-      "zuka_user",
-    );
-
-    if (!storedUser) {
-      return;
-    }
-
-    try {
-      const user = JSON.parse(storedUser);
-
-      if (typeof user.id === "number") {
-        setCurrentUserId(user.id);
-      }
-    } catch {
-      setCurrentUserId(null);
-    }
-  }, []);
 
   /*
    * Load users from the ADMIN API.
    */
   async function loadUsers() {
-    setLoading(true);
-    setError("");
-
-    const token = localStorage.getItem(
-      "zuka_access_token",
-    );
-
-    if (!token) {
-      setError("Authentication token is missing.");
-      setLoading(false);
-      return;
-    }
+    const token = localStorage.getItem("zuka_access_token");
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/admin/users`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail || "Unable to load users.",
-        );
+        throw new Error(data.detail || "Unable to load users.");
       }
 
       setUsers(data);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to load users.",
-      );
+      setError(err instanceof Error ? err.message : "Unable to load users.");
     } finally {
       setLoading(false);
     }
@@ -157,16 +121,13 @@ function Users() {
    * Load users when the page opens.
    */
   useEffect(() => {
-    loadUsers();
+    return scheduleLoad(loadUsers);
   }, []);
 
   /*
    * Update create-user form.
    */
-  function updateForm(
-    field: keyof CreateUserForm,
-    value: string,
-  ) {
+  function updateForm(field: keyof CreateUserForm, value: string) {
     setForm((previous) => ({
       ...previous,
       [field]: value,
@@ -203,9 +164,7 @@ function Users() {
   /*
    * Create a new user.
    */
-  async function handleCreateUser(
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  async function handleCreateUser(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setCreating(true);
@@ -222,42 +181,31 @@ function Users() {
       return;
     }
 
-    const token = localStorage.getItem(
-      "zuka_access_token",
-    );
+    const token = localStorage.getItem("zuka_access_token");
 
     if (!token) {
-      setCreateError(
-        "Authentication token is missing.",
-      );
+      setCreateError("Authentication token is missing.");
       setCreating(false);
       return;
     }
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/admin/users`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(form),
+      const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(form),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail || "Unable to create user.",
-        );
+        throw new Error(data.detail || "Unable to create user.");
       }
 
-      setCreateSuccess(
-        `User "${data.username}" created successfully.`,
-      );
+      setCreateSuccess(`User "${data.username}" created successfully.`);
 
       setForm({
         username: "",
@@ -274,9 +222,7 @@ function Users() {
       }, 2000);
     } catch (err) {
       setCreateError(
-        err instanceof Error
-          ? err.message
-          : "Unable to create user.",
+        err instanceof Error ? err.message : "Unable to create user.",
       );
     } finally {
       setCreating(false);
@@ -286,21 +232,14 @@ function Users() {
   /*
    * Change a user's role.
    */
-  async function changeUserRole(
-    userId: number,
-    role: string,
-  ) {
+  async function changeUserRole(userId: number, role: string) {
     setError("");
     setUpdatingUserId(userId);
 
-    const token = localStorage.getItem(
-      "zuka_access_token",
-    );
+    const token = localStorage.getItem("zuka_access_token");
 
     if (!token) {
-      setError(
-        "Authentication token is missing.",
-      );
+      setError("Authentication token is missing.");
       setUpdatingUserId(null);
       return;
     }
@@ -323,18 +262,13 @@ function Users() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail ||
-            "Unable to change user role.",
-        );
+        throw new Error(data.detail || "Unable to change user role.");
       }
 
       await loadUsers();
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to change user role.",
+        err instanceof Error ? err.message : "Unable to change user role.",
       );
     } finally {
       setUpdatingUserId(null);
@@ -344,21 +278,14 @@ function Users() {
   /*
    * Activate or deactivate a user.
    */
-  async function changeUserStatus(
-    userId: number,
-    isActive: boolean,
-  ) {
+  async function changeUserStatus(userId: number, isActive: boolean) {
     setError("");
     setUpdatingUserId(userId);
 
-    const token = localStorage.getItem(
-      "zuka_access_token",
-    );
+    const token = localStorage.getItem("zuka_access_token");
 
     if (!token) {
-      setError(
-        "Authentication token is missing.",
-      );
+      setError("Authentication token is missing.");
       setUpdatingUserId(null);
       return;
     }
@@ -381,18 +308,13 @@ function Users() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail ||
-            "Unable to change user status.",
-        );
+        throw new Error(data.detail || "Unable to change user status.");
       }
 
       await loadUsers();
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to change user status.",
+        err instanceof Error ? err.message : "Unable to change user status.",
       );
     } finally {
       setUpdatingUserId(null);
@@ -451,18 +373,14 @@ function Users() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.detail || "Unable to delete user.",
-        );
+        throw new Error(data.detail || "Unable to delete user.");
       }
 
       setUserToDelete(null);
       await loadUsers();
     } catch (err) {
       setDeleteError(
-        err instanceof Error
-          ? err.message
-          : "Unable to delete user.",
+        err instanceof Error ? err.message : "Unable to delete user.",
       );
     } finally {
       setDeleting(false);
@@ -473,24 +391,16 @@ function Users() {
    * Search users.
    */
   const filteredUsers = users.filter((user) => {
-    const query = search
-      .toLowerCase()
-      .trim();
+    const query = search.toLowerCase().trim();
 
     if (!query) {
       return true;
     }
 
     return (
-      user.username
-        .toLowerCase()
-        .includes(query) ||
-      user.email
-        .toLowerCase()
-        .includes(query) ||
-      user.role
-        .toLowerCase()
-        .includes(query)
+      user.username.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query) ||
+      user.role.toLowerCase().includes(query)
     );
   });
 
@@ -500,55 +410,39 @@ function Users() {
    * Backend timestamps are UTC. The shared ZUKA
    * datetime utility converts them to Asia/Kolkata.
    */
-  function formatUserDateTime(
-    value: string | null,
-  ) {
+  function formatUserDateTime(value: string | null) {
     if (!value) {
       return "Never";
     }
 
     const formatted = formatShortDateTime(value);
 
-    return formatted === "—"
-      ? "Unknown"
-      : formatted;
+    return formatted === "—" ? "Unknown" : formatted;
   }
 
   /*
    * Count users by role.
    */
-  const adminCount = users.filter(
-    (user) => user.role === "ADMIN",
-  ).length;
+  const adminCount = users.filter((user) => user.role === "ADMIN").length;
 
   const analystCount = users.filter(
-    (user) =>
-      user.role === "SOC_ANALYST",
+    (user) => user.role === "SOC_ANALYST",
   ).length;
 
-  const viewerCount = users.filter(
-    (user) => user.role === "VIEWER",
-  ).length;
+  const viewerCount = users.filter((user) => user.role === "VIEWER").length;
 
-  const activeCount = users.filter(
-    (user) => user.is_active,
-  ).length;
+  const activeCount = users.filter((user) => user.is_active).length;
 
   return (
     <div className="users-page">
       {/* PAGE HEADER */}
       <div className="users-heading">
         <div>
-          <div className="users-eyebrow">
-            ADMINISTRATION / ACCESS CONTROL
-          </div>
+          <div className="users-eyebrow">ADMINISTRATION / ACCESS CONTROL</div>
 
           <h1>User Management</h1>
 
-          <p>
-            Manage ZUKA SOC accounts, roles,
-            and access status.
-          </p>
+          <p>Manage ZUKA SOC accounts, roles, and access status.</p>
         </div>
 
         <button
@@ -570,9 +464,7 @@ function Users() {
             type="text"
             placeholder="Search username, email, or role..."
             value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
+            onChange={(event) => setSearch(event.target.value)}
           />
         </div>
 
@@ -583,52 +475,33 @@ function Users() {
           disabled={loading}
           title="Refresh users"
         >
-          <RefreshCw
-            size={16}
-            className={
-              loading
-                ? "users-spin"
-                : ""
-            }
-          />
+          <RefreshCw size={16} className={loading ? "users-spin" : ""} />
         </button>
       </div>
 
       {/* ERROR */}
-      {error && (
-        <div className="users-error">
-          {error}
-        </div>
-      )}
+      {error && <div className="users-error">{error}</div>}
 
       {/* SUMMARY */}
       <div className="users-summary">
         <div>
           <span>Total Users</span>
-          <strong>
-            {users.length}
-          </strong>
+          <strong>{users.length}</strong>
         </div>
 
         <div>
           <span>Active Users</span>
-          <strong>
-            {activeCount}
-          </strong>
+          <strong>{activeCount}</strong>
         </div>
 
         <div>
           <span>SOC Analysts</span>
-          <strong>
-            {analystCount}
-          </strong>
+          <strong>{analystCount}</strong>
         </div>
 
         <div>
           <span>Viewers</span>
-          <strong>
-            {viewerCount}
-          </strong>
+          <strong>{viewerCount}</strong>
         </div>
       </div>
 
@@ -636,27 +509,18 @@ function Users() {
       <section className="users-panel">
         <div className="users-panel-header">
           <div>
-            <span>
-              IDENTITY & ACCESS
-            </span>
+            <span>IDENTITY & ACCESS</span>
 
-            <h2>
-              Registered Users
-            </h2>
+            <h2>Registered Users</h2>
           </div>
 
           <ShieldCheck size={20} />
         </div>
 
         {loading ? (
-          <div className="users-empty">
-            Loading users...
-          </div>
-        ) : filteredUsers.length ===
-          0 ? (
-          <div className="users-empty">
-            No users found.
-          </div>
+          <div className="users-empty">Loading users...</div>
+        ) : filteredUsers.length === 0 ? (
+          <div className="users-empty">No users found.</div>
         ) : (
           <div className="users-table-wrapper">
             <table className="users-table">
@@ -673,175 +537,121 @@ function Users() {
               </thead>
 
               <tbody>
-                {filteredUsers.map(
-                  (user) => {
-                    const isCurrentUser =
-                      user.id ===
-                      currentUserId;
+                {filteredUsers.map((user) => {
+                  const isCurrentUser = user.id === currentUserId;
 
-                    const isUpdating =
-                      updatingUserId ===
-                      user.id;
+                  const isUpdating = updatingUserId === user.id;
 
-                    return (
-                      <tr
-                        key={user.id}
-                      >
-                        {/* USER */}
-                        <td>
-                          <div className="users-user-cell">
-                            <div className="users-avatar">
-                              {user.username
-                                .charAt(0)
-                                .toUpperCase()}
-                            </div>
-
-                            <div>
-                              <strong>
-                                {
-                                  user.username
-                                }
-                              </strong>
-
-                              <span>
-                                ID #
-                                {user.id}
-                                {isCurrentUser
-                                  ? " • YOU"
-                                  : ""}
-                              </span>
-                            </div>
+                  return (
+                    <tr key={user.id}>
+                      {/* USER */}
+                      <td>
+                        <div className="users-user-cell">
+                          <div className="users-avatar">
+                            {user.username.charAt(0).toUpperCase()}
                           </div>
-                        </td>
 
-                        {/* EMAIL */}
-                        <td>
-                          {user.email}
-                        </td>
+                          <div>
+                            <strong>{user.username}</strong>
 
-                        {/* ROLE */}
-                        <td>
-                          <select
-                            className="users-role-select"
-                            value={
-                              user.role
-                            }
-                            disabled={
-                              isUpdating ||
-                              isCurrentUser
-                            }
-                            title={
-                              isCurrentUser
-                                ? "You cannot change your own ADMIN role."
-                                : "Change user role"
-                            }
-                            onChange={(
-                              event,
-                            ) =>
-                              changeUserRole(
-                                user.id,
-                                event
-                                  .target
-                                  .value,
-                              )
-                            }
-                          >
-                            <option value="VIEWER">
-                              VIEWER
-                            </option>
+                            <span>
+                              ID #{user.id}
+                              {isCurrentUser ? " • YOU" : ""}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
 
-                            <option value="SOC_ANALYST">
-                              SOC_ANALYST
-                            </option>
+                      {/* EMAIL */}
+                      <td>{user.email}</td>
 
-                            <option value="ADMIN">
-                              ADMIN
-                            </option>
-                          </select>
-                        </td>
+                      {/* ROLE */}
+                      <td>
+                        <select
+                          className="users-role-select"
+                          value={user.role}
+                          disabled={isUpdating || isCurrentUser}
+                          title={
+                            isCurrentUser
+                              ? "You cannot change your own ADMIN role."
+                              : "Change user role"
+                          }
+                          onChange={(event) =>
+                            changeUserRole(user.id, event.target.value)
+                          }
+                        >
+                          <option value="VIEWER">VIEWER</option>
 
-                        {/* STATUS */}
-                        <td>
+                          <option value="SOC_ANALYST">SOC_ANALYST</option>
+
+                          <option value="ADMIN">ADMIN</option>
+                        </select>
+                      </td>
+
+                      {/* STATUS */}
+                      <td>
+                        <button
+                          type="button"
+                          className={`users-status-button ${
+                            user.is_active ? "active" : "inactive"
+                          }`}
+                          disabled={isUpdating || isCurrentUser}
+                          title={
+                            isCurrentUser
+                              ? "You cannot deactivate your own account."
+                              : user.is_active
+                                ? "Click to deactivate user immediately"
+                                : "Click to activate user immediately"
+                          }
+                          onClick={() =>
+                            changeUserStatus(user.id, !user.is_active)
+                          }
+                        >
+                          {user.is_active ? (
+                            <>
+                              <UserCheck size={13} />
+                              Active
+                            </>
+                          ) : (
+                            <>
+                              <UserX size={13} />
+                              Inactive
+                            </>
+                          )}
+                        </button>
+                      </td>
+
+                      {/* CREATED */}
+                      <td>{formatUserDateTime(user.created_at)}</td>
+
+                      {/* LAST LOGIN */}
+                      <td>{formatUserDateTime(user.last_login_at)}</td>
+
+                      {/* ACTIONS: IN-WEBSITE MODAL CONFIRMATION DELETE */}
+                      <td>
+                        {!isCurrentUser ? (
                           <button
                             type="button"
-                            className={`users-status-button ${
-                              user.is_active
-                                ? "active"
-                                : "inactive"
-                            }`}
-                            disabled={
-                              isUpdating ||
-                              isCurrentUser
-                            }
-                            title={
-                              isCurrentUser
-                                ? "You cannot deactivate your own account."
-                                : user.is_active
-                                  ? "Click to deactivate user immediately"
-                                  : "Click to activate user immediately"
-                            }
-                            onClick={() =>
-                              changeUserStatus(
-                                user.id,
-                                !user.is_active,
-                              )
-                            }
+                            className="users-delete-button"
+                            disabled={isUpdating}
+                            title={`Delete user account ${user.username}`}
+                            onClick={() => openDeleteModal(user)}
                           >
-                            {user.is_active ? (
-                              <>
-                                <UserCheck
-                                  size={13}
-                                />
-                                Active
-                              </>
-                            ) : (
-                              <>
-                                <UserX
-                                  size={13}
-                                />
-                                Inactive
-                              </>
-                            )}
+                            <Trash2 size={13} />
+                            Delete
                           </button>
-                        </td>
-
-                        {/* CREATED */}
-                        <td>
-                          {formatUserDateTime(
-                            user.created_at,
-                          )}
-                        </td>
-
-                        {/* LAST LOGIN */}
-                        <td>
-                          {formatUserDateTime(
-                            user.last_login_at,
-                          )}
-                        </td>
-
-                        {/* ACTIONS: IN-WEBSITE MODAL CONFIRMATION DELETE */}
-                        <td>
-                          {!isCurrentUser ? (
-                            <button
-                              type="button"
-                              className="users-delete-button"
-                              disabled={isUpdating}
-                              title={`Delete user account ${user.username}`}
-                              onClick={() =>
-                                openDeleteModal(user)
-                              }
-                            >
-                              <Trash2 size={13} />
-                              Delete
-                            </button>
-                          ) : (
-                            <span className="users-action-locked" title="You cannot delete your own account">—</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  },
-                )}
+                        ) : (
+                          <span
+                            className="users-action-locked"
+                            title="You cannot delete your own account"
+                          >
+                            —
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -852,58 +662,39 @@ function Users() {
       <div className="users-role-statistics">
         <div>
           <span>ADMINISTRATORS</span>
-          <strong>
-            {adminCount}
-          </strong>
+          <strong>{adminCount}</strong>
         </div>
 
         <div>
           <span>SOC ANALYSTS</span>
-          <strong>
-            {analystCount}
-          </strong>
+          <strong>{analystCount}</strong>
         </div>
 
         <div>
           <span>VIEWERS</span>
-          <strong>
-            {viewerCount}
-          </strong>
+          <strong>{viewerCount}</strong>
         </div>
       </div>
 
       {/* CREATE USER MODAL */}
       {showCreate && (
-        <div
-          className="users-modal-backdrop"
-          onMouseDown={
-            closeCreateModal
-          }
-        >
+        <div className="users-modal-backdrop" onMouseDown={closeCreateModal}>
           <div
             className="users-modal"
-            onMouseDown={(event) =>
-              event.stopPropagation()
-            }
+            onMouseDown={(event) => event.stopPropagation()}
           >
             {/* MODAL HEADER */}
             <div className="users-modal-header">
               <div>
-                <span>
-                  ADMINISTRATION
-                </span>
+                <span>ADMINISTRATION</span>
 
-                <h2>
-                  Create User
-                </h2>
+                <h2>Create User</h2>
               </div>
 
               <button
                 type="button"
                 className="users-modal-close"
-                onClick={
-                  closeCreateModal
-                }
+                onClick={closeCreateModal}
                 disabled={creating}
                 aria-label="Close"
               >
@@ -912,30 +703,18 @@ function Users() {
             </div>
 
             {/* FORM */}
-            <form
-              className="users-form"
-              onSubmit={
-                handleCreateUser
-              }
-            >
+            <form className="users-form" onSubmit={handleCreateUser}>
               <label>
                 Username
-
                 <input
                   type="text"
                   required
                   minLength={3}
                   maxLength={50}
                   autoComplete="username"
-                  value={
-                    form.username
-                  }
+                  value={form.username}
                   onChange={(event) =>
-                    updateForm(
-                      "username",
-                      event.target
-                        .value,
-                    )
+                    updateForm("username", event.target.value)
                   }
                   placeholder="Enter username"
                 />
@@ -943,28 +722,18 @@ function Users() {
 
               <label>
                 Email
-
                 <input
                   type="email"
                   required
                   autoComplete="email"
-                  value={
-                    form.email
-                  }
-                  onChange={(event) =>
-                    updateForm(
-                      "email",
-                      event.target
-                        .value,
-                    )
-                  }
+                  value={form.email}
+                  onChange={(event) => updateForm("email", event.target.value)}
                   placeholder="user@example.com"
                 />
               </label>
 
               <label>
                 Password
-
                 <div className="users-password-wrapper">
                   <input
                     type={showCreatePassword ? "text" : "password"}
@@ -972,15 +741,9 @@ function Users() {
                     minLength={8}
                     maxLength={128}
                     autoComplete="new-password"
-                    value={
-                      form.password
-                    }
+                    value={form.password}
                     onChange={(event) =>
-                      updateForm(
-                        "password",
-                        event.target
-                          .value,
-                      )
+                      updateForm("password", event.target.value)
                     }
                     placeholder="e.g. SecOps@2026!"
                   />
@@ -988,11 +751,19 @@ function Users() {
                     type="button"
                     className="users-password-toggle-btn"
                     onClick={() => setShowCreatePassword(!showCreatePassword)}
-                    aria-label={showCreatePassword ? "Hide password" : "Show password"}
-                    title={showCreatePassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showCreatePassword ? "Hide password" : "Show password"
+                    }
+                    title={
+                      showCreatePassword ? "Hide password" : "Show password"
+                    }
                     tabIndex={-1}
                   >
-                    {showCreatePassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showCreatePassword ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
                   </button>
                 </div>
                 <PasswordRequirements password={form.password} />
@@ -1000,39 +771,29 @@ function Users() {
 
               <label>
                 Role
-
                 <select
                   value={form.role}
                   onChange={(event) =>
                     updateForm(
                       "role",
-                      event.target
-                        .value as "VIEWER" | "SOC_ANALYST",
+                      event.target.value as "VIEWER" | "SOC_ANALYST",
                     )
                   }
                 >
-                  <option value="SOC_ANALYST">
-                    SOC_ANALYST
-                  </option>
+                  <option value="SOC_ANALYST">SOC_ANALYST</option>
 
-                  <option value="VIEWER">
-                    VIEWER
-                  </option>
+                  <option value="VIEWER">VIEWER</option>
                 </select>
               </label>
 
               {/* FORM ERROR */}
               {createError && (
-                <div className="users-form-error">
-                  {createError}
-                </div>
+                <div className="users-form-error">{createError}</div>
               )}
 
               {/* FORM SUCCESS */}
               {createSuccess && (
-                <div className="users-form-success">
-                  {createSuccess}
-                </div>
+                <div className="users-form-success">{createSuccess}</div>
               )}
 
               {/* SUBMIT */}
@@ -1041,9 +802,7 @@ function Users() {
                 className="users-submit-button"
                 disabled={creating}
               >
-                {creating
-                  ? "Creating..."
-                  : "Create User"}
+                {creating ? "Creating..." : "Create User"}
               </button>
             </form>
           </div>
@@ -1052,10 +811,7 @@ function Users() {
 
       {/* IN-WEBSITE USER DELETE CONFIRMATION MODAL */}
       {userToDelete && (
-        <div
-          className="users-modal-backdrop"
-          onMouseDown={closeDeleteModal}
-        >
+        <div className="users-modal-backdrop" onMouseDown={closeDeleteModal}>
           <div
             className="users-modal users-delete-modal"
             onMouseDown={(event) => event.stopPropagation()}
@@ -1070,7 +826,9 @@ function Users() {
                   <AlertTriangle size={20} />
                 </div>
                 <div>
-                  <span className="users-delete-eyebrow">DANGER ZONE / PERMANENT ACTION</span>
+                  <span className="users-delete-eyebrow">
+                    DANGER ZONE / PERMANENT ACTION
+                  </span>
                   <h2 id="delete-dialog-title">Delete User Account</h2>
                 </div>
               </div>
@@ -1089,7 +847,8 @@ function Users() {
             {/* MODAL BODY */}
             <div className="users-delete-modal-body">
               <p className="users-delete-notice-text">
-                Are you sure you want to permanently delete this user account from the ZUKA SOC platform?
+                Are you sure you want to permanently delete this user account
+                from the ZUKA SOC platform?
               </p>
 
               {/* USER DETAILS BOX */}
@@ -1100,12 +859,20 @@ function Users() {
                 <div className="users-delete-card-details">
                   <div className="users-delete-card-top">
                     <strong>{userToDelete.username}</strong>
-                    <span className="users-delete-card-id">ID #{userToDelete.id}</span>
+                    <span className="users-delete-card-id">
+                      ID #{userToDelete.id}
+                    </span>
                   </div>
-                  <div className="users-delete-card-email">{userToDelete.email}</div>
+                  <div className="users-delete-card-email">
+                    {userToDelete.email}
+                  </div>
                   <div className="users-delete-card-tags">
-                    <span className="users-delete-tag role-tag">Role: {userToDelete.role}</span>
-                    <span className={`users-delete-tag status-tag ${userToDelete.is_active ? "active" : "inactive"}`}>
+                    <span className="users-delete-tag role-tag">
+                      Role: {userToDelete.role}
+                    </span>
+                    <span
+                      className={`users-delete-tag status-tag ${userToDelete.is_active ? "active" : "inactive"}`}
+                    >
                       Status: {userToDelete.is_active ? "Active" : "Inactive"}
                     </span>
                   </div>
@@ -1117,13 +884,17 @@ function Users() {
                 <h4>Permanent Deletion Impact</h4>
                 <ul>
                   <li>
-                    <strong>Immediate Access Revocation:</strong> The user will be immediately logged out and blocked from logging in.
+                    <strong>Immediate Access Revocation:</strong> The user will
+                    be immediately logged out and blocked from logging in.
                   </li>
                   <li>
-                    <strong>Credential Purge:</strong> Account credentials and authorization tokens will be permanently removed.
+                    <strong>Credential Purge:</strong> Account credentials and
+                    authorization tokens will be permanently removed.
                   </li>
                   <li>
-                    <strong>Audit Trail Retention:</strong> Historical audit log entries generated by this user will be preserved for security compliance.
+                    <strong>Audit Trail Retention:</strong> Historical audit log
+                    entries generated by this user will be preserved for
+                    security compliance.
                   </li>
                 </ul>
               </div>
@@ -1152,7 +923,9 @@ function Users() {
                   disabled={deleting}
                 >
                   <Trash2 size={15} />
-                  {deleting ? "Deleting Account..." : "Yes, Delete User Permanently"}
+                  {deleting
+                    ? "Deleting Account..."
+                    : "Yes, Delete User Permanently"}
                 </button>
               </div>
             </div>

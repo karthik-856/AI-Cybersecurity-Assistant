@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import datetime
 from uuid import uuid4
@@ -262,12 +263,12 @@ def create_analyst_action(
             if payload.result
             else None
         ),
-        created_at=datetime.utcnow(),
+        created_at=utc_now(),
     )
 
     db.add(action)
 
-    now = datetime.utcnow()
+    now = utc_now()
 
     # Link action to real Incident lifecycle
     if incident_id:

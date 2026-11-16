@@ -1,7 +1,5 @@
-import {
-  
-  formatShortDateTime,
-} from "../../utils/datetime";
+import { scheduleLoad } from "../../utils/scheduleLoad";
+import { formatShortDateTime } from "../../utils/datetime";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -42,7 +40,6 @@ const STATUS_OPTIONS = [
   "COMPLETED",
 ];
 
-
 function statusLabel(status: string) {
   return status.replaceAll("_", " ");
 }
@@ -64,49 +61,38 @@ function Investigation() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const [investigations, setInvestigations] = useState<
-    InvestigationRecord[]
-  >([]);
+  const [investigations, setInvestigations] = useState<InvestigationRecord[]>(
+    [],
+  );
 
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
-  const [selected, setSelected] =
-    useState<InvestigationRecord | null>(null);
+  const [selected, setSelected] = useState<InvestigationRecord | null>(null);
 
-  const [statusFilter, setStatusFilter] =
-    useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [copied, setCopied] = useState(false);
 
-  const [notes, setNotes] =
-    useState("");
+  const [notes, setNotes] = useState("");
 
-  const [conclusion, setConclusion] =
-    useState("");
+  const [conclusion, setConclusion] = useState("");
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [refreshing, setRefreshing] =
-    useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [savingNotes, setSavingNotes] =
-    useState(false);
+  const [savingNotes, setSavingNotes] = useState(false);
 
-  const [savingConclusion, setSavingConclusion] =
-    useState(false);
+  const [savingConclusion, setSavingConclusion] = useState(false);
 
-  const [updatingStatus, setUpdatingStatus] =
-    useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
-  const [error, setError] =
-    useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const [downloadingReport, setDownloadingReport] =
-    useState(false);
+  const [downloadingReport, setDownloadingReport] = useState(false);
 
   const handleDownloadForensicReport = async () => {
     if (!selected) return;
@@ -116,15 +102,20 @@ function Investigation() {
       const headers: HeadersInit = {};
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const res = await fetch(`/api/reports/investigations/${encodeURIComponent(selected.investigation_id)}/pdf`, {
-        headers,
-      });
+      const res = await fetch(
+        `/api/reports/investigations/${encodeURIComponent(selected.investigation_id)}/pdf`,
+        {
+          headers,
+        },
+      );
       if (!res.ok) {
         let msg = `Export failed (${res.status})`;
         try {
           const body = await res.json();
           msg = body.detail || msg;
-        } catch {}
+        } catch {
+          /* The optional browser feature or response body is unavailable. */
+        }
         throw new Error(msg);
       }
       const blob = await res.blob();
@@ -137,20 +128,46 @@ function Investigation() {
       anchor.remove();
       URL.revokeObjectURL(url);
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Unable to export forensic report.");
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Unable to export forensic report.",
+      );
     } finally {
       setDownloadingReport(false);
     }
   };
 
-  useEffect(() => {
+  const [previousInputs0, setpreviousInputs0] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs1 = [searchParams];
+  if (
+    previousInputs0 === null ||
+    currentInputs1.some(
+      (value, index) => !Object.is(value, previousInputs0?.[index]),
+    )
+  ) {
+    setpreviousInputs0(currentInputs1);
+
     const q = searchParams.get("search") || searchParams.get("incident_id");
     if (q !== null && q !== undefined) {
       setSearch(q);
     }
-  }, [searchParams]);
+  }
 
-  useEffect(() => {
+  const [previousInputs1, setpreviousInputs1] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs2 = [searchParams, investigations];
+  if (
+    previousInputs1 === null ||
+    currentInputs2.some(
+      (value, index) => !Object.is(value, previousInputs1?.[index]),
+    )
+  ) {
+    setpreviousInputs1(currentInputs2);
+
     const invId = searchParams.get("investigation_id");
     const incId = searchParams.get("incident_id");
     if (investigations.length > 0) {
@@ -160,121 +177,114 @@ function Investigation() {
         );
         if (found) setSelected(found);
       } else if (incId) {
-        const found = investigations.find(
-          (item) => item.incident_id === incId,
-        );
+        const found = investigations.find((item) => item.incident_id === incId);
         if (found) setSelected(found);
       }
     }
-  }, [searchParams, investigations]);
+  }
 
-  const loadInvestigations = useCallback(
-    async (showRefresh = false) => {
-      try {
-        if (showRefresh) {
-          setRefreshing(true);
-        } else {
-          setLoading(true);
+  const loadInvestigations = useCallback(async () => {
+    try {
+      const data = await getInvestigations({
+        status: statusFilter === "ALL" ? undefined : statusFilter,
+        search: search.trim() || undefined,
+        limit: PAGE_SIZE,
+        offset: (page - 1) * PAGE_SIZE,
+      });
+
+      setInvestigations(data.items);
+      setTotal(data.total);
+
+      // Do not replace the selected object during the 5-second refresh
+      // while the analyst is editing notes/conclusion. That would reset
+      // the controlled textareas and make typing appear broken.
+      setSelected((current) => {
+        if (!current) {
+          return data.items[0] ?? null;
         }
 
-        setError(null);
-
-        const data = await getInvestigations({
-          status:
-            statusFilter === "ALL"
-              ? undefined
-              : statusFilter,
-          search: search.trim() || undefined,
-          limit: PAGE_SIZE,
-          offset: (page - 1) * PAGE_SIZE,
-        });
-
-        setInvestigations(data.items);
-        setTotal(data.total);
-
-        // Do not replace the selected object during the 5-second refresh
-        // while the analyst is editing notes/conclusion. That would reset
-        // the controlled textareas and make typing appear broken.
-        setSelected((current) => {
-          if (!current) {
-            return data.items[0] ?? null;
-          }
-
-          const refreshed = data.items.find(
-            (item) =>
-              item.investigation_id ===
-              current.investigation_id,
-          );
-
-          // Preserve the current object when it is on this page so the
-          // 5-second refresh never overwrites unsaved analyst text.
-          if (refreshed) {
-            return current;
-          }
-
-          // When pagination moves to another page, select its first case.
-          return data.items[0] ?? null;
-        });
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Unable to load investigations.",
+        const refreshed = data.items.find(
+          (item) => item.investigation_id === current.investigation_id,
         );
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [page, search, statusFilter],
-  );
 
-  useEffect(() => {
+        // Preserve the current object when it is on this page so the
+        // 5-second refresh never overwrites unsaved analyst text.
+        if (refreshed) {
+          return current;
+        }
+
+        // When pagination moves to another page, select its first case.
+        return data.items[0] ?? null;
+      });
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Unable to load investigations.",
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [page, search, statusFilter]);
+
+  const [previousInputs2, setpreviousInputs2] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs3 = [search, statusFilter];
+  if (
+    previousInputs2 === null ||
+    currentInputs3.some(
+      (value, index) => !Object.is(value, previousInputs2?.[index]),
+    )
+  ) {
+    setpreviousInputs2(currentInputs3);
+
     setPage(1);
-  }, [search, statusFilter]);
+  }
 
   useEffect(() => {
-    void loadInvestigations();
+    const cancelInitialLoad = scheduleLoad(loadInvestigations);
 
-    const interval =
-      window.setInterval(() => {
-        void loadInvestigations(true);
-      }, 5000);
+    const interval = window.setInterval(() => {
+      void loadInvestigations();
+    }, 5000);
 
-    return () =>
+    return () => {
+      cancelInitialLoad();
       window.clearInterval(interval);
+    };
   }, [loadInvestigations]);
 
-  useEffect(() => {
+  const [previousInputs3, setpreviousInputs3] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs4 = [selected];
+  if (
+    previousInputs3 === null ||
+    currentInputs4.some(
+      (value, index) => !Object.is(value, previousInputs3?.[index]),
+    )
+  ) {
+    setpreviousInputs3(currentInputs4);
+
     if (!selected) {
       setNotes("");
       setConclusion("");
-      return;
+    } else {
+      setNotes(selected.analyst_notes ?? "");
+      setConclusion(selected.conclusion ?? "");
     }
-
-    setNotes(selected.analyst_notes ?? "");
-    setConclusion(selected.conclusion ?? "");
-  }, [selected]);
+  }
 
   const statistics = useMemo(() => {
     return {
       total,
-      notStarted: investigations.filter(
-        (item) =>
-          item.status === "NOT_STARTED",
-      ).length,
-      inProgress: investigations.filter(
-        (item) =>
-          item.status === "IN_PROGRESS",
-      ).length,
-      onHold: investigations.filter(
-        (item) =>
-          item.status === "ON_HOLD",
-      ).length,
-      completed: investigations.filter(
-        (item) =>
-          item.status === "COMPLETED",
-      ).length,
+      notStarted: investigations.filter((item) => item.status === "NOT_STARTED")
+        .length,
+      inProgress: investigations.filter((item) => item.status === "IN_PROGRESS")
+        .length,
+      onHold: investigations.filter((item) => item.status === "ON_HOLD").length,
+      completed: investigations.filter((item) => item.status === "COMPLETED")
+        .length,
     };
   }, [investigations, total]);
 
@@ -287,29 +297,23 @@ function Investigation() {
       setSavingNotes(true);
       setError(null);
 
-      const updated =
-        await updateInvestigationNotes(
-          selected.investigation_id,
-          {
-            analyst_notes: notes,
-          },
-        );
+      const updated = await updateInvestigationNotes(
+        selected.investigation_id,
+        {
+          analyst_notes: notes,
+        },
+      );
 
       setSelected(updated);
 
       setInvestigations((current) =>
         current.map((item) =>
-          item.investigation_id ===
-          updated.investigation_id
-            ? updated
-            : item,
+          item.investigation_id === updated.investigation_id ? updated : item,
         ),
       );
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to save analyst notes.",
+        err instanceof Error ? err.message : "Unable to save analyst notes.",
       );
     } finally {
       setSavingNotes(false);
@@ -322,9 +326,7 @@ function Investigation() {
     }
 
     if (!conclusion.trim()) {
-      setError(
-        "A conclusion is required before saving.",
-      );
+      setError("A conclusion is required before saving.");
       return;
     }
 
@@ -332,39 +334,30 @@ function Investigation() {
       setSavingConclusion(true);
       setError(null);
 
-      const updated =
-        await updateInvestigationConclusion(
-          selected.investigation_id,
-          {
-            conclusion:
-              conclusion.trim(),
-          },
-        );
+      const updated = await updateInvestigationConclusion(
+        selected.investigation_id,
+        {
+          conclusion: conclusion.trim(),
+        },
+      );
 
       setSelected(updated);
 
       setInvestigations((current) =>
         current.map((item) =>
-          item.investigation_id ===
-          updated.investigation_id
-            ? updated
-            : item,
+          item.investigation_id === updated.investigation_id ? updated : item,
         ),
       );
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to save conclusion.",
+        err instanceof Error ? err.message : "Unable to save conclusion.",
       );
     } finally {
       setSavingConclusion(false);
     }
   }
 
-  async function changeStatus(
-    nextStatus: string,
-  ) {
+  async function changeStatus(nextStatus: string) {
     if (!selected) {
       return;
     }
@@ -393,46 +386,36 @@ function Investigation() {
       if (
         nextStatus === "COMPLETED" &&
         conclusion.trim() &&
-        conclusion.trim() !==
-          (selected.conclusion ?? "").trim()
+        conclusion.trim() !== (selected.conclusion ?? "").trim()
       ) {
-        current =
-          await updateInvestigationConclusion(
-            selected.investigation_id,
-            {
-              conclusion:
-                conclusion.trim(),
-            },
-          );
+        current = await updateInvestigationConclusion(
+          selected.investigation_id,
+          {
+            conclusion: conclusion.trim(),
+          },
+        );
 
         setSelected(current);
 
         setInvestigations((items) =>
           items.map((item) =>
-            item.investigation_id ===
-            current.investigation_id
-              ? current
-              : item,
+            item.investigation_id === current.investigation_id ? current : item,
           ),
         );
       }
 
-      const updated =
-        await updateInvestigationStatus(
-          current.investigation_id,
-          {
-            status: nextStatus,
-          },
-        );
+      const updated = await updateInvestigationStatus(
+        current.investigation_id,
+        {
+          status: nextStatus,
+        },
+      );
 
       setSelected(updated);
 
       setInvestigations((items) =>
         items.map((item) =>
-          item.investigation_id ===
-          updated.investigation_id
-            ? updated
-            : item,
+          item.investigation_id === updated.investigation_id ? updated : item,
         ),
       );
     } catch (err) {
@@ -446,8 +429,7 @@ function Investigation() {
     }
   }
 
-  const isCompleted =
-    selected?.status === "COMPLETED";
+  const isCompleted = selected?.status === "COMPLETED";
 
   return (
     <main className="investigation-page">
@@ -465,9 +447,8 @@ function Investigation() {
             <div>
               <h1>Investigation Center</h1>
               <p>
-                Investigate detected security incidents using
-                evidence, analyst notes, conclusions, and controlled
-                investigation states.
+                Investigate detected security incidents using evidence, analyst
+                notes, conclusions, and controlled investigation states.
               </p>
             </div>
           </div>
@@ -476,18 +457,12 @@ function Investigation() {
         <button
           type="button"
           className="investigation-refresh"
-          onClick={() =>
-            void loadInvestigations(true)
-          }
+          onClick={() => void loadInvestigations()}
           disabled={refreshing}
         >
           <RefreshCw
             size={15}
-            className={
-              refreshing
-                ? "investigation-spin"
-                : ""
-            }
+            className={refreshing ? "investigation-spin" : ""}
           />
           Refresh
         </button>
@@ -531,15 +506,11 @@ function Investigation() {
         <aside className="investigation-queue">
           <div className="queue-header">
             <div>
-              <span className="queue-eyebrow">
-                INVESTIGATION QUEUE
-              </span>
+              <span className="queue-eyebrow">INVESTIGATION QUEUE</span>
               <h2>Cases</h2>
             </div>
 
-            <span className="queue-count">
-              {investigations.length}
-            </span>
+            <span className="queue-count">{investigations.length}</span>
           </div>
 
           <div className="queue-controls">
@@ -548,27 +519,18 @@ function Investigation() {
 
               <input
                 value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
+                onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search investigation..."
               />
             </div>
 
             <select
               value={statusFilter}
-              onChange={(event) =>
-                setStatusFilter(event.target.value)
-              }
+              onChange={(event) => setStatusFilter(event.target.value)}
             >
               {STATUS_OPTIONS.map((status) => (
-                <option
-                  key={status}
-                  value={status}
-                >
-                  {status === "ALL"
-                    ? "All statuses"
-                    : statusLabel(status)}
+                <option key={status} value={status}>
+                  {status === "ALL" ? "All statuses" : statusLabel(status)}
                 </option>
               ))}
             </select>
@@ -577,23 +539,15 @@ function Investigation() {
           <div className="investigation-list">
             {loading ? (
               <div className="investigation-empty">
-                <Loader2
-                  size={22}
-                  className="investigation-spin"
-                />
-                <span>
-                  Loading investigations...
-                </span>
+                <Loader2 size={22} className="investigation-spin" />
+                <span>Loading investigations...</span>
               </div>
             ) : investigations.length === 0 ? (
               <div className="investigation-empty">
                 <FileSearch size={25} />
-                <strong>
-                  No investigations found
-                </strong>
+                <strong>No investigations found</strong>
                 <span>
-                  Investigations created from SOC incidents
-                  will appear here.
+                  Investigations created from SOC incidents will appear here.
                 </span>
               </div>
             ) : (
@@ -602,25 +556,16 @@ function Investigation() {
                   type="button"
                   key={item.investigation_id}
                   className={`investigation-list-item ${
-                    selected?.investigation_id ===
-                    item.investigation_id
+                    selected?.investigation_id === item.investigation_id
                       ? "selected"
                       : ""
                   }`}
-                  onClick={() =>
-                    setSelected(item)
-                  }
+                  onClick={() => setSelected(item)}
                 >
                   <div className="case-top-row">
-                    <span className="case-id">
-                      {item.investigation_id}
-                    </span>
+                    <span className="case-id">{item.investigation_id}</span>
 
-                    <span
-                      className={statusClass(
-                        item.status,
-                      )}
-                    >
+                    <span className={statusClass(item.status)}>
                       {statusLabel(item.status)}
                     </span>
                   </div>
@@ -642,7 +587,8 @@ function Investigation() {
           {total > 0 && (
             <div className="investigation-pagination">
               <span>
-                Page <strong>{page}</strong> of <strong>{Math.ceil(total / PAGE_SIZE)}</strong>
+                Page <strong>{page}</strong> of{" "}
+                <strong>{Math.ceil(total / PAGE_SIZE)}</strong>
               </span>
               <div className="investigation-pagination-controls">
                 <button
@@ -655,25 +601,35 @@ function Investigation() {
                   <ChevronLeft size={14} />
                   <span>Prev</span>
                 </button>
-                {Array.from({ length: Math.min(5, Math.ceil(total / PAGE_SIZE)) }, (_, index) => {
-                  const pageCount = Math.ceil(total / PAGE_SIZE);
-                  const startPage = Math.max(1, Math.min(page - 2, pageCount - 4));
-                  const pageNumber = startPage + index;
-                  return (
-                    <button
-                      key={pageNumber}
-                      type="button"
-                      className={page === pageNumber ? "active" : ""}
-                      onClick={() => setPage(pageNumber)}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                })}
+                {Array.from(
+                  { length: Math.min(5, Math.ceil(total / PAGE_SIZE)) },
+                  (_, index) => {
+                    const pageCount = Math.ceil(total / PAGE_SIZE);
+                    const startPage = Math.max(
+                      1,
+                      Math.min(page - 2, pageCount - 4),
+                    );
+                    const pageNumber = startPage + index;
+                    return (
+                      <button
+                        key={pageNumber}
+                        type="button"
+                        className={page === pageNumber ? "active" : ""}
+                        onClick={() => setPage(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  },
+                )}
                 <button
                   type="button"
                   className="prev-next"
-                  onClick={() => setPage((value) => Math.min(Math.ceil(total / PAGE_SIZE), value + 1))}
+                  onClick={() =>
+                    setPage((value) =>
+                      Math.min(Math.ceil(total / PAGE_SIZE), value + 1),
+                    )
+                  }
                   disabled={page >= Math.ceil(total / PAGE_SIZE)}
                   title="Next Page"
                 >
@@ -691,27 +647,20 @@ function Investigation() {
               <FileSearch size={38} />
               <h2>Select an investigation</h2>
               <p>
-                Choose a case from the investigation queue to
-                begin the analyst workflow.
+                Choose a case from the investigation queue to begin the analyst
+                workflow.
               </p>
             </div>
           ) : (
             <>
               <div className="detail-header">
                 <div>
-                  <div className="detail-eyebrow">
-                    INVESTIGATION CASE
-                  </div>
+                  <div className="detail-eyebrow">INVESTIGATION CASE</div>
 
-                  <h2>
-                    {selected.investigation_id}
-                  </h2>
+                  <h2>{selected.investigation_id}</h2>
 
                   <p>
-                    Linked incident:{" "}
-                    <strong>
-                      {selected.incident_id}
-                    </strong>
+                    Linked incident: <strong>{selected.incident_id}</strong>
                   </p>
                 </div>
 
@@ -741,11 +690,7 @@ function Investigation() {
                     <span>Reports</span>
                   </button>
 
-                  <span
-                    className={statusClass(
-                      selected.status,
-                    )}
-                  >
+                  <span className={statusClass(selected.status)}>
                     {statusLabel(selected.status)}
                   </span>
                 </div>
@@ -759,9 +704,7 @@ function Investigation() {
 
                   <div>
                     <span>Linked Incident</span>
-                    <strong>
-                      {selected.incident_id}
-                    </strong>
+                    <strong>{selected.incident_id}</strong>
                     <button
                       type="button"
                       style={{
@@ -798,11 +741,7 @@ function Investigation() {
 
                   <div>
                     <span>Started</span>
-                    <strong>
-                      {formatShortDateTime(
-                        selected.started_at,
-                      )}
-                    </strong>
+                    <strong>{formatShortDateTime(selected.started_at)}</strong>
                   </div>
                 </div>
 
@@ -814,9 +753,7 @@ function Investigation() {
                   <div>
                     <span>Completed</span>
                     <strong>
-                      {formatShortDateTime(
-                        selected.completed_at,
-                      )}
+                      {formatShortDateTime(selected.completed_at)}
                     </strong>
                   </div>
                 </div>
@@ -862,23 +799,16 @@ function Investigation() {
               <div className="workflow-panel">
                 <div className="panel-heading">
                   <div>
-                    <span className="panel-eyebrow">
-                      ANALYST WORKFLOW
-                    </span>
+                    <span className="panel-eyebrow">ANALYST WORKFLOW</span>
                     <h3>Investigation Status</h3>
                   </div>
                 </div>
 
                 <div className="workflow-actions">
-                  {selected.status ===
-                    "NOT_STARTED" && (
+                  {selected.status === "NOT_STARTED" && (
                     <button
                       type="button"
-                      onClick={() =>
-                        void changeStatus(
-                          "IN_PROGRESS",
-                        )
-                      }
+                      onClick={() => void changeStatus("IN_PROGRESS")}
                       disabled={updatingStatus}
                     >
                       <PlayCircle size={16} />
@@ -886,16 +816,11 @@ function Investigation() {
                     </button>
                   )}
 
-                  {selected.status ===
-                    "IN_PROGRESS" && (
+                  {selected.status === "IN_PROGRESS" && (
                     <button
                       type="button"
                       className="secondary"
-                      onClick={() =>
-                        void changeStatus(
-                          "ON_HOLD",
-                        )
-                      }
+                      onClick={() => void changeStatus("ON_HOLD")}
                       disabled={updatingStatus}
                     >
                       <PauseCircle size={16} />
@@ -903,15 +828,10 @@ function Investigation() {
                     </button>
                   )}
 
-                  {selected.status ===
-                    "ON_HOLD" && (
+                  {selected.status === "ON_HOLD" && (
                     <button
                       type="button"
-                      onClick={() =>
-                        void changeStatus(
-                          "IN_PROGRESS",
-                        )
-                      }
+                      onClick={() => void changeStatus("IN_PROGRESS")}
                       disabled={updatingStatus}
                     >
                       <PlayCircle size={16} />
@@ -919,29 +839,18 @@ function Investigation() {
                     </button>
                   )}
 
-                  {selected.status !==
-                    "COMPLETED" && (
+                  {selected.status !== "COMPLETED" && (
                     <button
                       type="button"
                       className="complete-button"
-                      onClick={() =>
-                        void changeStatus(
-                          "COMPLETED",
-                        )
-                      }
+                      onClick={() => void changeStatus("COMPLETED")}
                       disabled={
                         updatingStatus ||
-                        !(
-                          conclusion.trim() ||
-                          selected.conclusion?.trim()
-                        )
+                        !(conclusion.trim() || selected.conclusion?.trim())
                       }
                     >
                       {updatingStatus ? (
-                        <Loader2
-                          size={16}
-                          className="investigation-spin"
-                        />
+                        <Loader2 size={16} className="investigation-spin" />
                       ) : (
                         <ClipboardCheck size={16} />
                       )}
@@ -952,7 +861,8 @@ function Investigation() {
                   {isCompleted && (
                     <div className="completed-notice">
                       <CheckCircle2 size={17} />
-                      Investigation completed. Notes and conclusion can still be refined.
+                      Investigation completed. Notes and conclusion can still be
+                      refined.
                     </div>
                   )}
 
@@ -962,7 +872,9 @@ function Investigation() {
                     style={{ borderColor: "#3b82f6", color: "#60a5fa" }}
                     onClick={() => {
                       if (selected.incident_id) {
-                        navigate(`/incidents?incident_id=${encodeURIComponent(selected.incident_id)}`);
+                        navigate(
+                          `/incidents?incident_id=${encodeURIComponent(selected.incident_id)}`,
+                        );
                       } else {
                         navigate("/incidents");
                       }
@@ -975,10 +887,15 @@ function Investigation() {
                   <button
                     type="button"
                     className="secondary"
-                    style={{ borderColor: "rgba(239, 68, 68, 0.4)", color: "#f87171" }}
+                    style={{
+                      borderColor: "rgba(239, 68, 68, 0.4)",
+                      color: "#f87171",
+                    }}
                     onClick={() => {
                       if (selected.incident_id) {
-                        navigate(`/defense?case_id=${encodeURIComponent(selected.incident_id)}`);
+                        navigate(
+                          `/defense?case_id=${encodeURIComponent(selected.incident_id)}`,
+                        );
                       } else {
                         navigate("/defense");
                       }
@@ -992,7 +909,8 @@ function Investigation() {
                     type="button"
                     className="secondary"
                     onClick={() => {
-                      const alertTarget = selected.alert_id || selected.incident_id;
+                      const alertTarget =
+                        selected.alert_id || selected.incident_id;
                       navigate(
                         `/alerts?search=${encodeURIComponent(alertTarget)}`,
                       );
@@ -1028,19 +946,19 @@ function Investigation() {
                 <section className="editor-panel">
                   <div className="panel-heading">
                     <div>
-                      <span className="panel-eyebrow">
-                        ANALYST RECORD
-                      </span>
+                      <span className="panel-eyebrow">ANALYST RECORD</span>
                       <h3>Analyst Investigation Notes</h3>
-                      <p className="editor-helper">Record the evidence reviewed, observations, correlations, and actions taken during the investigation.</p>
+                      <p className="editor-helper">
+                        Record the evidence reviewed, observations,
+                        correlations, and actions taken during the
+                        investigation.
+                      </p>
                     </div>
                   </div>
 
                   <textarea
                     value={notes}
-                    onChange={(event) =>
-                      setNotes(event.target.value)
-                    }
+                    onChange={(event) => setNotes(event.target.value)}
                     placeholder="Record evidence reviewed, observations, correlations, and analyst actions..."
                   />
 
@@ -1053,16 +971,11 @@ function Investigation() {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        void saveNotes()
-                      }
+                      onClick={() => void saveNotes()}
                       disabled={savingNotes}
                     >
                       {savingNotes ? (
-                        <Loader2
-                          size={15}
-                          className="investigation-spin"
-                        />
+                        <Loader2 size={15} className="investigation-spin" />
                       ) : null}
                       Save Notes
                     </button>
@@ -1072,21 +985,19 @@ function Investigation() {
                 <section className="editor-panel">
                   <div className="panel-heading">
                     <div>
-                      <span className="panel-eyebrow">
-                        ANALYST RECORD
-                      </span>
+                      <span className="panel-eyebrow">ANALYST RECORD</span>
                       <h3>Analyst Conclusion</h3>
-                      <p className="editor-helper">Write the final evidence-based finding. This conclusion becomes the Incident Resolution Summary when the incident is resolved.</p>
+                      <p className="editor-helper">
+                        Write the final evidence-based finding. This conclusion
+                        becomes the Incident Resolution Summary when the
+                        incident is resolved.
+                      </p>
                     </div>
                   </div>
 
                   <textarea
                     value={conclusion}
-                    onChange={(event) =>
-                      setConclusion(
-                        event.target.value,
-                      )
-                    }
+                    onChange={(event) => setConclusion(event.target.value)}
                     placeholder="Document the evidence-based conclusion of the investigation..."
                   />
 
@@ -1099,19 +1010,11 @@ function Investigation() {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        void saveConclusion()
-                      }
-                      disabled={
-                        savingConclusion ||
-                        !conclusion.trim()
-                      }
+                      onClick={() => void saveConclusion()}
+                      disabled={savingConclusion || !conclusion.trim()}
                     >
                       {savingConclusion ? (
-                        <Loader2
-                          size={15}
-                          className="investigation-spin"
-                        />
+                        <Loader2 size={15} className="investigation-spin" />
                       ) : null}
                       Save Conclusion
                     </button>
@@ -1122,9 +1025,7 @@ function Investigation() {
               <div className="timeline-panel">
                 <div className="panel-heading">
                   <div>
-                    <span className="panel-eyebrow">
-                      CASE TIMELINE
-                    </span>
+                    <span className="panel-eyebrow">CASE TIMELINE</span>
                     <h3>Investigation Record</h3>
                   </div>
                 </div>
@@ -1134,14 +1035,8 @@ function Investigation() {
                     <span className="timeline-dot" />
 
                     <div>
-                      <strong>
-                        Investigation created
-                      </strong>
-                      <span>
-                        {formatShortDateTime(
-                          selected.created_at,
-                        )}
-                      </span>
+                      <strong>Investigation created</strong>
+                      <span>{formatShortDateTime(selected.created_at)}</span>
                     </div>
                   </div>
 
@@ -1150,14 +1045,8 @@ function Investigation() {
                       <span className="timeline-dot active" />
 
                       <div>
-                        <strong>
-                          Investigation started
-                        </strong>
-                        <span>
-                          {formatShortDateTime(
-                            selected.started_at,
-                          )}
-                        </span>
+                        <strong>Investigation started</strong>
+                        <span>{formatShortDateTime(selected.started_at)}</span>
                       </div>
                     </div>
                   )}
@@ -1167,13 +1056,9 @@ function Investigation() {
                       <span className="timeline-dot complete" />
 
                       <div>
-                        <strong>
-                          Investigation completed
-                        </strong>
+                        <strong>Investigation completed</strong>
                         <span>
-                          {formatShortDateTime(
-                            selected.completed_at,
-                          )}
+                          {formatShortDateTime(selected.completed_at)}
                         </span>
                       </div>
                     </div>
@@ -1183,14 +1068,8 @@ function Investigation() {
                     <span className="timeline-dot" />
 
                     <div>
-                      <strong>
-                        Last record update
-                      </strong>
-                      <span>
-                        {formatShortDateTime(
-                          selected.updated_at,
-                        )}
-                      </span>
+                      <strong>Last record update</strong>
+                      <span>{formatShortDateTime(selected.updated_at)}</span>
                     </div>
                   </div>
                 </div>

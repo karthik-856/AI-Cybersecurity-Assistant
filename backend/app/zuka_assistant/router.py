@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 import logging
 import json
@@ -56,7 +57,7 @@ def handle_chat_message(
     db: Session = Depends(get_db),
     _rate_limit: None = Depends(enforce_assistant_rate_limit),
 ) -> AssistantResponse:
-    now_iso = datetime.utcnow().isoformat()
+    now_iso = utc_now().isoformat()
     active_inc = req.current_context.incident_id if req.current_context else None
     active_alt = req.current_context.alert_id if req.current_context else None
 
@@ -113,7 +114,7 @@ def handle_chat_message_stream(
                     "incident_id": req.current_context.incident_id if req.current_context else None,
                     "alert_id": req.current_context.alert_id if req.current_context else None,
                 },
-                timestamp=datetime.utcnow().isoformat(),
+                timestamp=utc_now().isoformat(),
                 engine="Zuka Knowledge Boundary",
                 relevance="OUT_OF_SCOPE",
             )
@@ -139,7 +140,7 @@ def confirm_action_direct(
     db: Session = Depends(get_db),
     _rate_limit: None = Depends(enforce_assistant_rate_limit),
 ) -> AssistantResponse:
-    now_iso = datetime.utcnow().isoformat()
+    now_iso = utc_now().isoformat()
     pending = PendingAction(
         action=req.action,
         target_entity=req.target_entity,

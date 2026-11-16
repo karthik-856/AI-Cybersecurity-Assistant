@@ -54,6 +54,10 @@ data/processed/
 models/multiclass/
 models/deep_learning/
 models/zuka_unified_xgboost/model.json
+models/zuka_unified_xgboost/model.ubj
 results/tables/xai/*.npy
 template-inspect.ndjson
 
+
+frontend/playwright-report/
+frontend/test-results/

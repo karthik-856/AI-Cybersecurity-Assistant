@@ -1,3 +1,4 @@
+import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -18,12 +19,14 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
-import { formatShortDateTime, formatTime as formatUtcTime, isToday } from "../../utils/datetime";
+import {
+  formatShortDateTime,
+  formatTime as formatUtcTime,
+} from "../../utils/datetime";
 
 import "./NetworkMonitor.css";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+import { API_BASE_URL } from "../../services/config";
 const PAGE_SIZE = 10;
 
 interface NetworkEvent {
@@ -107,8 +110,8 @@ function protocolClass(protocol?: string | null) {
   }
 }
 
-function datasetLabel(_value?: string | null) {
-  return "Unknown";
+function datasetLabel(value?: string | null) {
+  return value || "Not provided";
 }
 
 function NetworkMonitor() {
@@ -141,21 +144,26 @@ function NetworkMonitor() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Sync search query param if changes in URL
-  useEffect(() => {
+  const [previousInputs0, setpreviousInputs0] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs1 = [searchParams];
+  if (
+    previousInputs0 === null ||
+    currentInputs1.some(
+      (value, index) => !Object.is(value, previousInputs0?.[index]),
+    )
+  ) {
+    setpreviousInputs0(currentInputs1);
+
     const q = searchParams.get("search");
     if (q !== null && q !== undefined) {
       setSearch(q);
     }
-  }, [searchParams]);
+  }
 
-  async function loadNetworkData(manual = false) {
-    if (manual) {
-      setRefreshing(true);
-    }
-
+  async function loadNetworkData() {
     try {
-      setError("");
-
       const token = localStorage.getItem("zuka_access_token");
 
       const headers: HeadersInit = {
@@ -191,9 +199,11 @@ function NetworkMonitor() {
       const eventsData = await eventsResponse.json();
       const statsData = await statsResponse.json();
 
-      const rawEvents: NetworkEvent[] = Array.isArray(eventsData) ? eventsData : [];
+      const rawEvents: NetworkEvent[] = Array.isArray(eventsData)
+        ? eventsData
+        : [];
       // Filter strictly to today's records based on user's laptop local time
-      const todayEvents = rawEvents.filter((ev) => isToday(ev.event_time));
+      const todayEvents = rawEvents;
 
       setEvents(todayEvents);
       if (todayEvents.length > 0) {
@@ -232,13 +242,14 @@ function NetworkMonitor() {
   }
 
   useEffect(() => {
-    loadNetworkData();
+    const cancelInitialLoad = scheduleLoad(loadNetworkData);
 
     const timer = window.setInterval(() => {
       loadNetworkData();
     }, 3000);
 
     return () => {
+      cancelInitialLoad();
       window.clearInterval(timer);
     };
   }, []);
@@ -271,16 +282,12 @@ function NetworkMonitor() {
         event.description,
       ]
         .filter(
-          (value) =>
-            value !== null &&
-            value !== undefined &&
-            value !== "",
+          (value) => value !== null && value !== undefined && value !== "",
         )
         .join(" ")
         .toLowerCase();
 
-      const matchesSearch =
-        !query || searchable.includes(query);
+      const matchesSearch = !query || searchable.includes(query);
 
       const matchesProtocol =
         protocol === "ALL" ||
@@ -290,38 +297,52 @@ function NetworkMonitor() {
         direction === "ALL" ||
         (event.direction || "UNKNOWN").toUpperCase() === direction;
 
-      const matchesSource =
-        source === "ALL" ||
-        event.capture_source === source;
+      const matchesSource = source === "ALL" || event.capture_source === source;
 
       return (
-        matchesSearch &&
-        matchesProtocol &&
-        matchesDirection &&
-        matchesSource
+        matchesSearch && matchesProtocol && matchesDirection && matchesSource
       );
     });
   }, [events, search, protocol, direction, source]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredEvents.length / PAGE_SIZE),
-  );
+  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / PAGE_SIZE));
 
   const paginatedEvents = filteredEvents.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE,
   );
 
-  useEffect(() => {
-    setPage(1);
-  }, [search, protocol, direction, source]);
+  const [previousInputs1, setpreviousInputs1] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs2 = [search, protocol, direction, source];
+  if (
+    previousInputs1 === null ||
+    currentInputs2.some(
+      (value, index) => !Object.is(value, previousInputs1?.[index]),
+    )
+  ) {
+    setpreviousInputs1(currentInputs2);
 
-  useEffect(() => {
+    setPage(1);
+  }
+
+  const [previousInputs2, setpreviousInputs2] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs3 = [page, totalPages];
+  if (
+    previousInputs2 === null ||
+    currentInputs3.some(
+      (value, index) => !Object.is(value, previousInputs2?.[index]),
+    )
+  ) {
+    setpreviousInputs2(currentInputs3);
+
     if (page > totalPages) {
       setPage(totalPages);
     }
-  }, [page, totalPages]);
+  }
 
   function sourceLabel(event: NetworkEvent) {
     if (!event.source_ip) {
@@ -369,7 +390,8 @@ function NetworkMonitor() {
               <h1>Network Monitor</h1>
 
               <p>
-                Inspect real-time telemetry flows and correlate with SOC intelligence.
+                Inspect real-time telemetry flows and correlate with SOC
+                intelligence.
               </p>
             </div>
           </div>
@@ -378,15 +400,10 @@ function NetworkMonitor() {
         <button
           type="button"
           className="network-refresh-button"
-          onClick={() => loadNetworkData(true)}
+          onClick={() => loadNetworkData()}
           disabled={refreshing}
         >
-          <RefreshCw
-            size={15}
-            className={
-              refreshing ? "network-spin" : ""
-            }
-          />
+          <RefreshCw size={15} className={refreshing ? "network-spin" : ""} />
 
           {refreshing ? "Refreshing..." : "Refresh"}
         </button>
@@ -409,11 +426,7 @@ function NetworkMonitor() {
           <div>
             <span>Total Events</span>
 
-            <strong>
-              {loading
-                ? "—"
-                : formatNumber(stats.total_events)}
-            </strong>
+            <strong>{loading ? "—" : formatNumber(stats.total_events)}</strong>
 
             <small>Dataset-derived records</small>
           </div>
@@ -428,11 +441,7 @@ function NetworkMonitor() {
             <span>Source Addresses</span>
 
             <strong>
-              {loading
-                ? "—"
-                : formatNumber(
-                    stats.unique_source_ips,
-                  )}
+              {loading ? "—" : formatNumber(stats.unique_source_ips)}
             </strong>
 
             <small>Unique observed origins</small>
@@ -448,11 +457,7 @@ function NetworkMonitor() {
             <span>Destinations</span>
 
             <strong>
-              {loading
-                ? "—"
-                : formatNumber(
-                    stats.unique_destination_ips,
-                  )}
+              {loading ? "—" : formatNumber(stats.unique_destination_ips)}
             </strong>
 
             <small>Unique observed targets</small>
@@ -470,9 +475,7 @@ function NetworkMonitor() {
             <strong>
               {loading
                 ? "—"
-                : `${formatNumber(
-                    stats.tcp_events,
-                  )} / ${formatNumber(
+                : `${formatNumber(stats.tcp_events)} / ${formatNumber(
                     stats.udp_events,
                   )}`}
             </strong>
@@ -485,14 +488,13 @@ function NetworkMonitor() {
       <section className="network-content-card">
         <div className="network-card-header">
           <div>
-            <div className="network-card-kicker">
-              NETWORK ACTIVITY
-            </div>
+            <div className="network-card-kicker">NETWORK ACTIVITY</div>
 
             <h2>Flow Records</h2>
 
             <p>
-              Click any row to inspect deep flow telemetry, filter indicators, or correlate in Alert Center.
+              Click any row to inspect deep flow telemetry, filter indicators,
+              or correlate in Alert Center.
             </p>
           </div>
 
@@ -502,9 +504,7 @@ function NetworkMonitor() {
             <div>
               <span>LAST UPDATED</span>
 
-              <strong>
-                {lastUpdated ? formatUtcTime(lastUpdated) : "—"}
-              </strong>
+              <strong>{lastUpdated ? formatUtcTime(lastUpdated) : "—"}</strong>
             </div>
           </div>
         </div>
@@ -516,9 +516,7 @@ function NetworkMonitor() {
             <input
               type="text"
               value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
+              onChange={(event) => setSearch(event.target.value)}
               placeholder="Search IP address, port, protocol..."
             />
           </div>
@@ -528,9 +526,7 @@ function NetworkMonitor() {
 
             <select
               value={protocol}
-              onChange={(event) =>
-                setProtocol(event.target.value)
-              }
+              onChange={(event) => setProtocol(event.target.value)}
             >
               <option value="ALL">All protocols</option>
               <option value="TCP">TCP</option>
@@ -544,9 +540,7 @@ function NetworkMonitor() {
 
             <select
               value={direction}
-              onChange={(event) =>
-                setDirection(event.target.value)
-              }
+              onChange={(event) => setDirection(event.target.value)}
             >
               <option value="ALL">All directions</option>
               <option value="INBOUND">Inbound</option>
@@ -562,9 +556,7 @@ function NetworkMonitor() {
 
             <select
               value={source}
-              onChange={(event) =>
-                setSource(event.target.value)
-              }
+              onChange={(event) => setSource(event.target.value)}
             >
               <option value="ALL">All sources</option>
 
@@ -589,18 +581,10 @@ function NetworkMonitor() {
           <span>
             Showing{" "}
             <strong>
-              {filteredEvents.length === 0
-                ? 0
-                : (page - 1) * PAGE_SIZE + 1}
-              –
-              {Math.min(
-                page * PAGE_SIZE,
-                filteredEvents.length,
-              )}
+              {filteredEvents.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–
+              {Math.min(page * PAGE_SIZE, filteredEvents.length)}
             </strong>{" "}
-            of{" "}
-            <strong>{filteredEvents.length}</strong>{" "}
-            records
+            of <strong>{filteredEvents.length}</strong> records
           </span>
 
           <span className="network-table-source">
@@ -631,19 +615,13 @@ function NetworkMonitor() {
                   <td colSpan={9}>
                     <div className="network-empty">
                       <div className="network-empty-icon">
-                        <RefreshCw
-                          size={19}
-                          className="network-spin"
-                        />
+                        <RefreshCw size={19} className="network-spin" />
                       </div>
 
-                      <strong>
-                        Loading network records
-                      </strong>
+                      <strong>Loading network records</strong>
 
                       <span>
-                        Reading dataset-derived network
-                        events from PostgreSQL.
+                        Reading dataset-derived network events from PostgreSQL.
                       </span>
                     </div>
                   </td>
@@ -656,9 +634,7 @@ function NetworkMonitor() {
                         <Network size={20} />
                       </div>
 
-                      <strong>
-                        No network records found
-                      </strong>
+                      <strong>No network records found</strong>
 
                       <span>
                         {events.length === 0
@@ -710,27 +686,17 @@ function NetworkMonitor() {
                       </span>
                     </td>
 
-                    <td>
-                      {formatNumber(event.packets)}
-                    </td>
+                    <td>{formatNumber(event.packets)}</td>
 
-                    <td>
-                      {formatBytes(event.bytes_count)}
-                    </td>
+                    <td>{formatBytes(event.bytes_count)}</td>
 
-                    <td>
-                      {formatDuration(
-                        event.flow_duration_ms,
-                      )}
-                    </td>
+                    <td>{formatDuration(event.flow_duration_ms)}</td>
 
                     <td>
                       <span className="network-dataset">
                         <Database size={12} />
 
-                        {datasetLabel(
-                          event.capture_source,
-                        )}
+                        {datasetLabel(event.capture_source)}
                       </span>
                     </td>
                   </tr>
@@ -748,11 +714,7 @@ function NetworkMonitor() {
           <div className="network-page-buttons">
             <button
               type="button"
-              onClick={() =>
-                setPage((current) =>
-                  Math.max(1, current - 1),
-                )
-              }
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={page === 1}
             >
               Previous
@@ -769,14 +731,8 @@ function NetworkMonitor() {
                   <button
                     type="button"
                     key={pageNumber}
-                    className={
-                      pageNumber === page
-                        ? "active"
-                        : ""
-                    }
-                    onClick={() =>
-                      setPage(pageNumber)
-                    }
+                    className={pageNumber === page ? "active" : ""}
+                    onClick={() => setPage(pageNumber)}
                   >
                     {pageNumber}
                   </button>
@@ -787,12 +743,7 @@ function NetworkMonitor() {
             <button
               type="button"
               onClick={() =>
-                setPage((current) =>
-                  Math.min(
-                    totalPages,
-                    current + 1,
-                  ),
-                )
+                setPage((current) => Math.min(totalPages, current + 1))
               }
               disabled={page === totalPages}
             >
@@ -858,7 +809,9 @@ function NetworkMonitor() {
 
                 <div className="network-flow-endpoint">
                   <span className="network-flow-role">DESTINATION</span>
-                  <strong>{selectedEvent.destination_ip || "Unknown IP"}</strong>
+                  <strong>
+                    {selectedEvent.destination_ip || "Unknown IP"}
+                  </strong>
                   <span className="network-flow-port">
                     Port {selectedEvent.destination_port ?? "—"}
                   </span>

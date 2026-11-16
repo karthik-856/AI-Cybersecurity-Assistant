@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 import threading
 from datetime import datetime
@@ -70,7 +71,7 @@ class LiveCaptureService:
             self.running = False
 
             error_event = {
-                "event_time": datetime.utcnow(),
+                "event_time": utc_now(),
                 "capture_source": "live",
                 "event_type": "capture_error",
                 "description": str(exc),
@@ -130,7 +131,7 @@ class LiveCaptureService:
         packet_length = len(packet)
 
         return {
-            "event_time": datetime.utcnow(),
+            "event_time": utc_now(),
 
             "source_ip": source_ip,
             "destination_ip": destination_ip,

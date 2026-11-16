@@ -22,6 +22,10 @@ def get_rag_pipeline() -> RAGPipeline:
         from rag_assistant.rag import RAGPipeline
         logger.info("[ZUKA_RAG] Initializing RAG Pipeline with ChromaDB persistent store...")
         _rag_pipeline_instance = RAGPipeline()
+        from rag_assistant.config import knowledge_base_fingerprint
+        if _rag_pipeline_instance.collection.count() == 0 or _rag_pipeline_instance.collection.metadata.get("source_fingerprint") != knowledge_base_fingerprint():
+            from rag_assistant.ingest import ingest_documents
+            ingest_documents()
     return _rag_pipeline_instance
 
 

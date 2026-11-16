@@ -10,6 +10,7 @@ from backend.app.models.audit_log import AuditLog
 from backend.app.models.push_subscription import PushSubscription
 from backend.app.models.auth_session import AuthSession
 from backend.app.models.report import Report
+from backend.app.models.auth_rate_limit import AuthRateLimit
 
 __all__ = [
     "LoginAuditLog",

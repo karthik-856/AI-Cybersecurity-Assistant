@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import datetime
 
@@ -75,7 +76,7 @@ def generate_incident_id() -> str:
     """
     Generate a unique human-readable ZUKA incident identifier.
     """
-    timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S%f")
+    timestamp = utc_now().strftime("%Y%m%d%H%M%S%f")
     return f"ZUKA-INC-{timestamp}"
 
 
@@ -559,7 +560,7 @@ def update_incident_status(
                 alert.status = "ACKNOWLEDGED"
 
         action = AnalystAction(
-            action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+            action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
             incident_id=incident.incident_id,
             analyst_id=current_user.id,
             action_type="ACKNOWLEDGE_INCIDENT",
@@ -594,19 +595,19 @@ def update_incident_status(
 
         if investigation is None:
             investigation = Investigation(
-                investigation_id=f"ZUKA-INV-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+                investigation_id=f"ZUKA-INV-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
                 incident_id=incident.incident_id,
                 status="IN_PROGRESS",
                 conclusion=None,
                 analyst_notes=None,
-                started_at=datetime.utcnow(),
+                started_at=utc_now(),
                 completed_at=None,
             )
             db.add(investigation)
         elif investigation.status != "COMPLETED":
             investigation.status = "IN_PROGRESS"
             if investigation.started_at is None:
-                investigation.started_at = datetime.utcnow()
+                investigation.started_at = utc_now()
 
         # Auto-assign active analyst upon starting investigation
         if incident.assigned_to_id is None:
@@ -647,7 +648,7 @@ def update_incident_status(
         # Resolution summary pre-fills from the completed investigation conclusion or adopts analyst override
         res_summary = payload_summary or conclusion
 
-        now = datetime.utcnow()
+        now = utc_now()
         incident.resolution_summary = res_summary
         incident.resolved_at = now
         if incident.assigned_to_id is None:
@@ -711,12 +712,12 @@ def update_incident_status(
                 detail="Cannot close incident: A resolution summary is required.",
             )
 
-        incident.closed_at = datetime.utcnow()
+        incident.closed_at = utc_now()
         if closure_summary and closure_summary.strip():
             incident.resolution_summary = closure_summary.strip()
 
         action = AnalystAction(
-            action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+            action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
             incident_id=incident.incident_id,
             analyst_id=current_user.id,
             action_type="CLOSE_INCIDENT",
@@ -833,7 +834,7 @@ def escalate_incident(
     reason = (payload.reason.strip() if payload and payload.reason else "Tier 2 Escalation / High-Priority Threat Review")
 
     action = AnalystAction(
-        action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+        action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
         incident_id=incident.incident_id,
         analyst_id=current_user.id,
         action_type="ESCALATE_INCIDENT",
@@ -886,7 +887,7 @@ def add_incident_note(
         )
 
     action = AnalystAction(
-        action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+        action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
         incident_id=incident.incident_id,
         analyst_id=current_user.id,
         action_type="ADD_NOTE",

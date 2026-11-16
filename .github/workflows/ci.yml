@@ -49,5 +49,69 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm run lint
       - run: npm run build
-      - run: npm audit --omit=dev --audit-level=high
+      - run: npm audit --audit-level=low
+
+  deployment-and-browser:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test-only-ci-password
+          POSTGRES_DB: zuka_test_deployment
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d zuka_test_deployment"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: docker build -t zuka-ci .
+      - name: Verify the production image with 512 MiB RAM
+        run: >-
+          docker run --rm --memory=512m --memory-swap=512m --cpus=1 --network=host
+          -e DATABASE_URL=postgresql+psycopg2://postgres:test-only-ci-password@localhost:5432/zuka_test_deployment
+          -e JWT_SECRET_KEY=ci-signing-secret-never-used-in-a-real-deployment-123
+          -e OTP_SECRET=ci-otp-secret-never-used-in-a-real-deployment-456
+          -e SMOKE_TEST_ONLY=true -e AUTH_RATE_LIMIT_ENABLED=false -e SEED_DEMO_DATA=true
+          zuka-ci python -m scripts.smoke_deployment
+      - name: Start the production container
+        run: >-
+          docker run -d --name zuka-web --memory=512m --memory-swap=512m --cpus=1 --network=host
+          -e DATABASE_URL=postgresql+psycopg2://postgres:test-only-ci-password@localhost:5432/zuka_test_deployment
+          -e JWT_SECRET_KEY=ci-signing-secret-never-used-in-a-real-deployment-123
+          -e OTP_SECRET=ci-otp-secret-never-used-in-a-real-deployment-456
+          -e AUTH_RATE_LIMIT_ENABLED=false zuka-ci
+      - name: Wait for the website
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/api/ready; then exit 0; fi
+            sleep 2
+          done
+          docker logs zuka-web
+          exit 1
+      - run: npm ci
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: npm run test:e2e
+        working-directory: frontend
+        env:
+          E2E_BASE_URL: http://127.0.0.1:8000
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-results
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+      - name: Container logs
+        if: always()
+        run: docker logs zuka-web || true

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import gzip
 import json
+import math
 from pathlib import Path
 from threading import Lock
 
 import numpy as np
-import pandas as pd
 import xgboost as xgb  # type: ignore[reportMissingImports]
 
 
@@ -104,9 +104,12 @@ class ZukaModelService:
 
             print("Loading ZUKA unified XGBoost model...")
 
-            model = xgb.XGBClassifier()
+            model = xgb.Booster(params={"nthread": 1})
 
-            if self.model_path.exists():
+            binary_path = self.model_dir / "model.ubj"
+            if binary_path.exists():
+                model.load_model(str(binary_path))
+            elif self.model_path.exists():
                 model.load_model(str(self.model_path))
             else:
                 compressed = self.model_path.with_suffix(".json.gz")
@@ -138,6 +141,13 @@ class ZukaModelService:
             print("ZUKA model loaded successfully.")
             print(f"  Features: {len(features)}")
             print(f"  Classes : {len(labels)}")
+
+    @property
+    def iteration_range(self) -> tuple[int, int]:
+        """Match XGBClassifier's default early-stopping prediction behavior."""
+        self.load()
+        best_iteration = self._model.attr("best_iteration")
+        return (0, int(best_iteration) + 1) if best_iteration is not None else (0, 0)
 
     @property
     def features(self) -> list[str]:
@@ -173,6 +183,8 @@ class ZukaModelService:
 
             try:
                 row[feature] = float(values[feature])
+                if not math.isfinite(row[feature]) or abs(row[feature]) > float(np.finfo(np.float32).max):
+                    raise ValueError(f"Feature '{feature}' must be finite.")
 
             except (TypeError, ValueError):
 
@@ -180,12 +192,7 @@ class ZukaModelService:
                     f"Feature '{feature}' must be numeric."
                 )
 
-        dataframe = pd.DataFrame(
-            [row],
-            columns=self._features,
-        )
-
-        numeric_values = dataframe.to_numpy(dtype=float)
+        numeric_values = np.asarray([[row[name] for name in self._features]], dtype=np.float32)
 
         if not np.isfinite(numeric_values).all():
             raise ValueError(
@@ -197,7 +204,10 @@ class ZukaModelService:
                 "ZUKA physical-domain features cannot be negative."
             )
 
-        probabilities = self._model.predict_proba(dataframe)[0]
+        probabilities = self._model.predict(
+            xgb.DMatrix(numeric_values, feature_names=self._features),
+            iteration_range=self.iteration_range,
+        )[0]
 
         predicted_id = int(np.argmax(probabilities))
 

@@ -1,3 +1,4 @@
+import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -44,10 +45,10 @@ export interface DefenseStrategyDef {
   recommendedFor: string[];
 }
 
-export const DEFENSE_STRATEGIES: DefenseStrategyDef[] = [
+const DEFENSE_STRATEGIES: DefenseStrategyDef[] = [
   {
     type: "VLAN_QUARANTINE",
-    label: "Quarantine Targeted IoT / Device VLAN",
+    label: "Record device isolation",
     icon: Lock,
     color: "#f59e0b",
     category: "Network Isolation (L2/L3)",
@@ -58,40 +59,44 @@ export const DEFENSE_STRATEGIES: DefenseStrategyDef[] = [
   },
   {
     type: "BLOCK_IP",
-    label: "Enforce Ingress Firewall Block on Attacker IP",
+    label: "Record an IP block",
     icon: ShieldAlert,
     color: "#ef4444",
     category: "Perimeter Security (L3/L4 ACL)",
     targetNetwork: "WAN Gateway, Border Routers, Edge Firewalls",
     summary:
-      "Deploy border firewall and edge ACL drops to immediately discard incoming traffic from the hostile source IP address.",
-    recommendedFor: ["PORT_SCAN", "BRUTE_FORCE", "DOS", "DDOS", "RECONNAISSANCE"],
+      "Document an intended IP block and its verification. Configure the firewall separately.",
+    recommendedFor: [
+      "PORT_SCAN",
+      "BRUTE_FORCE",
+      "DOS",
+      "DDOS",
+      "RECONNAISSANCE",
+    ],
   },
   {
     type: "CREDENTIAL_ROTATION",
-    label: "Enforce Session Revocation & Credential Rotation",
+    label: "Record credential rotation",
     icon: ShieldCheck,
     color: "#8b5cf6",
     category: "Identity & Access Control (IAM)",
     targetNetwork: "API Gateways, Active Directory, IoT Management Plane",
-    summary:
-      "Terminate active authenticated sessions across target nodes, revoke compromised tokens, and force mandatory credential updates.",
+    summary: "Document credential changes made in the affected system.",
     recommendedFor: ["BRUTE_FORCE", "BACKDOOR", "INFILTRATION"],
   },
   {
     type: "RATE_LIMIT",
-    label: "Apply Ingress Rate-Limiting",
+    label: "Record rate limiting",
     icon: Flame,
     color: "#3b82f6",
     category: "Transport QoS & Flow Control (L4)",
     targetNetwork: "Ingress Interfaces, Public Switch Ports, API Endpoints",
-    summary:
-      "Enforce token-bucket packet throttling and SYN rate limits on targeted ports to absorb volumetric floods without taking services offline.",
+    summary: "Document rate limits applied in the affected system.",
     recommendedFor: ["DOS", "DDOS", "FUZZING"],
   },
   {
     type: "FIRMWARE_PATCH",
-    label: "Schedule Firmware Lockdown & Daemon Isolation",
+    label: "Record a firmware update",
     icon: Server,
     color: "#10b981",
     category: "Endpoint & Application Shield (L7)",
@@ -102,7 +107,7 @@ export const DEFENSE_STRATEGIES: DefenseStrategyDef[] = [
   },
   {
     type: "CUSTOM",
-    label: "Custom Analyst Defense Action",
+    label: "Other response",
     icon: Zap,
     color: "#06b6d4",
     category: "Bespoke Countermeasure Policy",
@@ -135,7 +140,9 @@ export default function DefenseDepartment() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const [investigations, setInvestigations] = useState<DefenseInvestigation[]>([]);
+  const [investigations, setInvestigations] = useState<DefenseInvestigation[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,7 +154,9 @@ export default function DefenseDepartment() {
   const PAGE_SIZE = 6;
 
   // Selected case & view tabs
-  const [selectedCase, setSelectedCase] = useState<DefenseInvestigation | null>(null);
+  const [selectedCase, setSelectedCase] = useState<DefenseInvestigation | null>(
+    null,
+  );
   const [detailTab, setDetailTab] = useState<DetailTab>("CONTAINMENT");
 
   // Defense form state
@@ -164,77 +173,71 @@ export default function DefenseDepartment() {
     incident_id: string;
   } | null>(null);
 
-  const loadData = useCallback(
-    async (isBackground = false) => {
-      try {
-        if (!isBackground) setLoading(true);
-        else setRefreshing(true);
-        setError(null);
+  const loadData = useCallback(async () => {
+    try {
+      const data = await getOpenDefenseInvestigations();
+      setInvestigations(data);
 
-        const data = await getOpenDefenseInvestigations();
-        setInvestigations(data);
+      // Keep selection or auto-select first or matching search param
+      setSelectedCase((prev) => {
+        const targetId =
+          searchParams.get("investigation_id") ||
+          searchParams.get("case_id") ||
+          searchParams.get("incident_id") ||
+          searchParams.get("search") ||
+          prev?.investigation_id;
 
-        // Keep selection or auto-select first or matching search param
-        setSelectedCase((prev) => {
-          const targetId =
-            searchParams.get("investigation_id") ||
-            searchParams.get("case_id") ||
-            searchParams.get("incident_id") ||
-            searchParams.get("search") ||
-            prev?.investigation_id;
-
-          if (targetId) {
-            const found = data.find(
-              (item) =>
-                item.investigation_id.toLowerCase() === targetId.toLowerCase() ||
-                item.incident_id.toLowerCase() === targetId.toLowerCase(),
-            );
-            if (found) return found;
-          }
-          return data.length > 0 ? data[0] : null;
-        });
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load open defense investigations.",
-        );
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [searchParams],
-  );
+        if (targetId) {
+          const found = data.find(
+            (item) =>
+              item.investigation_id.toLowerCase() === targetId.toLowerCase() ||
+              item.incident_id.toLowerCase() === targetId.toLowerCase(),
+          );
+          if (found) return found;
+        }
+        return data.length > 0 ? data[0] : null;
+      });
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to load open defense investigations.",
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
-    void loadData();
+    return scheduleLoad(loadData);
   }, [loadData]);
 
   // Auto-generate defense note template when case or strategy changes
-  useEffect(() => {
+  const [previousInputs0, setpreviousInputs0] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs1 = [selectedCase, selectedStrategy];
+  if (
+    previousInputs0 === null ||
+    currentInputs1.some(
+      (value, index) => !Object.is(value, previousInputs0?.[index]),
+    )
+  ) {
+    setpreviousInputs0(currentInputs1);
+
     if (!selectedCase) {
       setDefenseNote("");
       setRationale("");
-      return;
+    } else {
+      const defaultRationale = `Review ${selectedCase.predicted_class} and record the planned response.`;
+      setRationale(defaultRationale);
+      const generatedNote = `Planned action: ${selectedStrategy.label}\nTarget: ${selectedCase.destination_ip}\nRecord the evidence and outcome here. This action does not configure a real device.`;
+
+      setDefenseNote(generatedNote);
+      setSuccessBanner(null);
     }
-
-    const defaultRationale = `Containment action enforced against detected ${selectedCase.predicted_class} attack pattern on ${selectedCase.destination_ip}.`;
-    setRationale(defaultRationale);
-
-    const generatedNote = `[DEFENSE CONTAINMENT DIRECTIVE]
-Policy Enforced: ${selectedStrategy.label} (${selectedStrategy.type})
-Category: ${selectedStrategy.category}
-Target Endpoint: ${selectedCase.destination_ip} (Port ${selectedCase.destination_port} / ${selectedCase.protocol})
-Attacker Origin: ${selectedCase.source_ip} (Port ${selectedCase.source_port})
-Telemetry Diagnosis: ${selectedCase.diagnosis}
-Tactical Rationale: ${defaultRationale}
-Action Status: Contained & Enforced
-SOC Directive: Containment directive logged in Analyst Actions ledger and synchronized to Investigation Department.`;
-
-    setDefenseNote(generatedNote);
-    setSuccessBanner(null);
-  }, [selectedCase, selectedStrategy]);
+  }
 
   // Filtered investigations
   const filteredCases = useMemo(() => {
@@ -290,9 +293,20 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
   );
 
   // Reset page when filter changes
-  useEffect(() => {
+  const [previousInputs1, setpreviousInputs1] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs2 = [searchQuery, filterTab];
+  if (
+    previousInputs1 === null ||
+    currentInputs2.some(
+      (value, index) => !Object.is(value, previousInputs1?.[index]),
+    )
+  ) {
+    setpreviousInputs1(currentInputs2);
+
     setCurrentPage(1);
-  }, [searchQuery, filterTab]);
+  }
 
   // Pagination slice
   const totalPages = Math.ceil(filteredCases.length / PAGE_SIZE) || 1;
@@ -339,7 +353,7 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
           : null,
       );
 
-      void loadData(true);
+      void loadData();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to apply defense action.",
@@ -368,26 +382,43 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
           <div className="defense-brand-titles">
             <h1>Defense Department</h1>
             <div className="defense-brand-meta">
-              <span className="defense-brand-subtitle">Threat Containment Console</span>
+              <span className="defense-brand-subtitle">
+                Threat Containment Console
+              </span>
             </div>
           </div>
         </div>
 
         {/* METRIC CARDS */}
         <div className="defense-header-metrics">
-          <div className="header-metric-card" title="Total active cases in containment queue">
+          <div
+            className="header-metric-card"
+            title="Total active cases in containment queue"
+          >
             <span className="header-metric-label">Queue</span>
-            <span className="header-metric-value cyan">{investigations.length}</span>
+            <span className="header-metric-value cyan">
+              {investigations.length}
+            </span>
           </div>
 
-          <div className="header-metric-card" title="Incidents requiring immediate defensive containment">
+          <div
+            className="header-metric-card"
+            title="Incidents requiring immediate defensive containment"
+          >
             <span className="header-metric-label">Needs Action</span>
-            <span className="header-metric-value amber">{needsActionCount}</span>
+            <span className="header-metric-value amber">
+              {needsActionCount}
+            </span>
           </div>
 
-          <div className="header-metric-card" title="Incidents with containment countermeasures enforced">
+          <div
+            className="header-metric-card"
+            title="Incidents with containment countermeasures enforced"
+          >
             <span className="header-metric-label">Contained</span>
-            <span className="header-metric-value emerald">{containedCount}</span>
+            <span className="header-metric-value emerald">
+              {containedCount}
+            </span>
           </div>
         </div>
 
@@ -396,11 +427,14 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
           <button
             type="button"
             className="btn-header secondary"
-            onClick={() => void loadData(false)}
+            onClick={() => void loadData()}
             disabled={loading || refreshing}
             title="Refresh open defense cases"
           >
-            <RefreshCw size={13} className={refreshing ? "spin-animation" : ""} />
+            <RefreshCw
+              size={13}
+              className={refreshing ? "spin-animation" : ""}
+            />
             <span>Refresh</span>
           </button>
 
@@ -490,7 +524,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
           <div className="queue-panel-head">
             <div className="queue-head-title-row">
               <h2>Incident Queue</h2>
-              <span className="queue-count-badge">{filteredCases.length} Cases</span>
+              <span className="queue-count-badge">
+                {filteredCases.length} Cases
+              </span>
             </div>
           </div>
 
@@ -556,7 +592,8 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
           ) : (
             <div className="queue-cards-list">
               {paginatedCases.map((incident) => {
-                const isSelected = selectedCase?.investigation_id === incident.investigation_id;
+                const isSelected =
+                  selectedCase?.investigation_id === incident.investigation_id;
                 return (
                   <div
                     key={incident.investigation_id}
@@ -564,13 +601,22 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                     onClick={() => setSelectedCase(incident)}
                   >
                     <div className="incident-card-row-top">
-                      <span className="incident-card-id">{incident.investigation_id}</span>
-                      <span className={severityBadgeClass(incident.incident_severity)}>
+                      <span className="incident-card-id">
+                        {incident.investigation_id}
+                      </span>
+                      <span
+                        className={severityBadgeClass(
+                          incident.incident_severity,
+                        )}
+                      >
                         {incident.incident_severity}
                       </span>
                     </div>
 
-                    <div className="incident-card-title" title={incident.incident_title}>
+                    <div
+                      className="incident-card-title"
+                      title={incident.incident_title}
+                    >
                       {incident.incident_title}
                     </div>
 
@@ -578,7 +624,10 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                       <span className="threat-classification-badge">
                         {incident.predicted_class}
                       </span>
-                      <span className="incident-card-ip" title={incident.source_ip}>
+                      <span
+                        className="incident-card-ip"
+                        title={incident.source_ip}
+                      >
                         {incident.source_ip}
                       </span>
                     </div>
@@ -586,7 +635,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                     <div className="incident-card-footer">
                       <span className="incident-card-time">
                         <Clock3 size={11} />
-                        {incident.started_at ? formatShortDateTime(incident.started_at) : "Active"}
+                        {incident.started_at
+                          ? formatShortDateTime(incident.started_at)
+                          : "Active"}
                       </span>
                       {incident.defense_actions_count > 0 ? (
                         <span className="status-badge-contained">
@@ -594,7 +645,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                           {incident.defense_actions_count} Contained
                         </span>
                       ) : (
-                        <span className="status-badge-action">Action Required</span>
+                        <span className="status-badge-action">
+                          Action Required
+                        </span>
                       )}
                     </div>
                   </div>
@@ -607,7 +660,8 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
           {filteredCases.length > PAGE_SIZE && (
             <div className="queue-pagination-bar">
               <span className="pagination-text">
-                Page {currentPage} of {totalPages} ({filteredCases.length} Total)
+                Page {currentPage} of {totalPages} ({filteredCases.length}{" "}
+                Total)
               </span>
               <div className="pagination-controls">
                 <button
@@ -623,7 +677,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                 <button
                   type="button"
                   className="pagination-button"
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
                   disabled={currentPage === totalPages}
                   title="Next page"
                 >
@@ -644,9 +700,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
               <ShieldAlert size={48} style={{ color: "#334155" }} />
               <h3>Select an Incident to Inspect</h3>
               <p>
-                Choose an active incident from the queue on the left to review correlated
-                threat telemetry, evaluate AI detection confidence, and deploy containment
-                strategies.
+                Choose an active incident from the queue on the left to review
+                correlated threat telemetry, evaluate AI detection confidence,
+                and deploy containment strategies.
               </p>
             </div>
           ) : (
@@ -657,7 +713,11 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                   <span className="investigation-selected-id">
                     {selectedCase.investigation_id}
                   </span>
-                  <span className={severityBadgeClass(selectedCase.incident_severity)}>
+                  <span
+                    className={severityBadgeClass(
+                      selectedCase.incident_severity,
+                    )}
+                  >
                     {selectedCase.incident_severity}
                   </span>
                   <span className="threat-classification-badge">
@@ -671,7 +731,13 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                     </span>
                   ) : (
                     <span className="packet-ip-badge flow-vector">
-                      <span className="stage-dot" style={{ background: "#38bdf8", boxShadow: "0 0 6px #38bdf8" }} />
+                      <span
+                        className="stage-dot"
+                        style={{
+                          background: "#38bdf8",
+                          boxShadow: "0 0 6px #38bdf8",
+                        }}
+                      />
                       Flow Vector Telemetry
                     </span>
                   )}
@@ -759,7 +825,10 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                           title="Copy Attacker IP"
                         >
                           {copiedIp ? (
-                            <CheckCircle2 size={12} style={{ color: "#10b981" }} />
+                            <CheckCircle2
+                              size={12}
+                              style={{ color: "#10b981" }}
+                            />
                           ) : (
                             <Copy size={12} />
                           )}
@@ -767,7 +836,8 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                       )}
                     </div>
                     <span className="summary-card-sub">
-                      Port: {selectedCase.source_port} | Proto: {selectedCase.protocol}
+                      Port: {selectedCase.source_port} | Proto:{" "}
+                      {selectedCase.protocol}
                     </span>
                   </div>
 
@@ -782,11 +852,16 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                         <button
                           type="button"
                           className="summary-copy-btn"
-                          onClick={() => handleCopyIp(selectedCase.destination_ip)}
+                          onClick={() =>
+                            handleCopyIp(selectedCase.destination_ip)
+                          }
                           title="Copy Target IP"
                         >
                           {copiedIp ? (
-                            <CheckCircle2 size={12} style={{ color: "#10b981" }} />
+                            <CheckCircle2
+                              size={12}
+                              style={{ color: "#10b981" }}
+                            />
                           ) : (
                             <Copy size={12} />
                           )}
@@ -800,7 +875,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
 
                   {/* CARD 4: CONTAINMENT STATUS */}
                   <div className="summary-card">
-                    <span className="summary-card-label">Containment Status</span>
+                    <span className="summary-card-label">
+                      Containment Status
+                    </span>
                     <div className="summary-card-value-row">
                       <span
                         className={`summary-card-value ${
@@ -810,11 +887,13 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                         }`}
                         style={{
                           color:
-                            selectedCase.defense_actions_count > 0 ? "#10b981" : "#f59e0b",
+                            selectedCase.defense_actions_count > 0
+                              ? "#10b981"
+                              : "#f59e0b",
                         }}
                       >
                         {selectedCase.defense_actions_count > 0
-                          ? `${selectedCase.defense_actions_count} Actions Enforced`
+                          ? `${selectedCase.defense_actions_count} Actions recorded`
                           : "Awaiting Action"}
                       </span>
                     </div>
@@ -834,13 +913,14 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                     {/* 5. CONTAINMENT STRATEGY CARDS (3-COLUMN GRID) */}
                     <section className="strategy-section-wrapper">
                       <div className="strategy-section-header">
-                        <h3>Containment Strategies</h3>
+                        <h3>Response options</h3>
                         <span>Select targeted defense countermeasure</span>
                       </div>
 
                       <div className="strategy-cards-grid">
                         {DEFENSE_STRATEGIES.map((strategy) => {
-                          const isSelected = selectedStrategy.type === strategy.type;
+                          const isSelected =
+                            selectedStrategy.type === strategy.type;
                           const IconComponent = strategy.icon;
                           const isRecommended =
                             strategy.recommendedFor.includes(
@@ -881,7 +961,10 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                               </div>
 
                               <div className="strategy-card-foot">
-                                <span className="strategy-target-network" title={strategy.targetNetwork}>
+                                <span
+                                  className="strategy-target-network"
+                                  title={strategy.targetNetwork}
+                                >
                                   <Network size={11} />
                                   {strategy.targetNetwork}
                                 </span>
@@ -902,7 +985,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                       <div className="form-field-group">
                         <label className="form-field-label">
                           <span>Tactical Rationale</span>
-                          <small>Audit justification and operational rationale</small>
+                          <small>
+                            Audit justification and operational rationale
+                          </small>
                         </label>
                         <input
                           type="text"
@@ -916,7 +1001,10 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                       <div className="form-field-group">
                         <label className="form-field-label">
                           <span>Defense Directive Note</span>
-                          <small>Synchronizes automatically into Investigation Department dossier</small>
+                          <small>
+                            Synchronizes automatically into Investigation
+                            Department dossier
+                          </small>
                         </label>
                         <textarea
                           className="form-textarea"
@@ -929,7 +1017,8 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
 
                       <div className="containment-form-actions">
                         <div className="target-investigation-badge">
-                          Target Incident Dossier: <strong>{selectedCase.investigation_id}</strong>
+                          Target Incident Dossier:{" "}
+                          <strong>{selectedCase.investigation_id}</strong>
                         </div>
 
                         <button
@@ -941,12 +1030,12 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                           {submitting ? (
                             <>
                               <Loader2 size={15} className="spin-animation" />
-                              <span>Enforcing Containment...</span>
+                              <span>Saving action...</span>
                             </>
                           ) : (
                             <>
                               <ShieldCheck size={16} />
-                              <span>Enforce Containment & Sync Dossier</span>
+                              <span>Record defense action</span>
                             </>
                           )}
                         </button>
@@ -968,7 +1057,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
 
                       <div className="telemetry-specs-grid">
                         <div className="telemetry-spec-tile">
-                          <span className="spec-tile-label">Attacker Origin Host</span>
+                          <span className="spec-tile-label">
+                            Attacker Origin Host
+                          </span>
                           <div className="summary-card-value-row">
                             <span className="spec-tile-value text-high">
                               {selectedCase.source_ip}
@@ -977,11 +1068,16 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                               <button
                                 type="button"
                                 className="summary-copy-btn"
-                                onClick={() => handleCopyIp(selectedCase.source_ip)}
+                                onClick={() =>
+                                  handleCopyIp(selectedCase.source_ip)
+                                }
                                 title="Copy Source IP"
                               >
                                 {copiedIp ? (
-                                  <CheckCircle2 size={12} style={{ color: "#10b981" }} />
+                                  <CheckCircle2
+                                    size={12}
+                                    style={{ color: "#10b981" }}
+                                  />
                                 ) : (
                                   <Copy size={12} />
                                 )}
@@ -989,12 +1085,15 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                             )}
                           </div>
                           <span className="spec-tile-sub">
-                            Source Port: {selectedCase.source_port} | Protocol: {selectedCase.protocol}
+                            Source Port: {selectedCase.source_port} | Protocol:{" "}
+                            {selectedCase.protocol}
                           </span>
                         </div>
 
                         <div className="telemetry-spec-tile">
-                          <span className="spec-tile-label">Target Asset Endpoint</span>
+                          <span className="spec-tile-label">
+                            Target Asset Endpoint
+                          </span>
                           <div className="summary-card-value-row">
                             <span className="spec-tile-value text-target">
                               {selectedCase.destination_ip}
@@ -1003,11 +1102,16 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                               <button
                                 type="button"
                                 className="summary-copy-btn"
-                                onClick={() => handleCopyIp(selectedCase.destination_ip)}
+                                onClick={() =>
+                                  handleCopyIp(selectedCase.destination_ip)
+                                }
                                 title="Copy Destination IP"
                               >
                                 {copiedIp ? (
-                                  <CheckCircle2 size={12} style={{ color: "#10b981" }} />
+                                  <CheckCircle2
+                                    size={12}
+                                    style={{ color: "#10b981" }}
+                                  />
                                 ) : (
                                   <Copy size={12} />
                                 )}
@@ -1021,7 +1125,16 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                       </div>
 
                       <div className="telemetry-diagnosis-box">
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, color: "#38bdf8", fontWeight: 700 }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            marginBottom: 6,
+                            color: "#38bdf8",
+                            fontWeight: 700,
+                          }}
+                        >
                           <Info size={15} />
                           <span>Telemetry Threat Diagnosis:</span>
                         </div>
@@ -1030,16 +1143,24 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
 
                       {!selectedCase.has_real_ips && (
                         <div className="flow-vector-banner">
-                          <HelpCircle size={18} style={{ flexShrink: 0, color: "#38bdf8" }} />
+                          <HelpCircle
+                            size={18}
+                            style={{ flexShrink: 0, color: "#38bdf8" }}
+                          />
                           <div>
-                            <strong>Why is this case showing Flow Telemetry instead of raw IP headers?</strong>
+                            <strong>
+                              Why is this case showing Flow Telemetry instead of
+                              raw IP headers?
+                            </strong>
                             <p>
-                              This detection was captured from statistical network flow vectors
-                              (packet counts, byte rates, flow duration, and inter-arrival time
-                              metrics). Raw IP headers were omitted at ingestion to preserve
-                              bandwidth and IoT privacy, but behavioral flow anomalies clearly
-                              indicated hostile activity. Containment strategies apply to the
-                              affected subnet segment.
+                              This detection was captured from statistical
+                              network flow vectors (packet counts, byte rates,
+                              flow duration, and inter-arrival time metrics).
+                              Raw IP headers were omitted at ingestion to
+                              preserve bandwidth and IoT privacy, but behavioral
+                              flow anomalies clearly indicated hostile activity.
+                              Containment strategies apply to the affected
+                              subnet segment.
                             </p>
                           </div>
                         </div>
@@ -1054,7 +1175,10 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                 {detailTab === "DOSSIER" && (
                   <div className="dossier-tab-container">
                     <div className="dossier-card">
-                      <div className="telemetry-card-title" style={{ marginBottom: 12 }}>
+                      <div
+                        className="telemetry-card-title"
+                        style={{ marginBottom: 12 }}
+                      >
                         <Layers size={16} style={{ color: "#c084fc" }} />
                         <span>Synchronized Investigation Dossier Notes</span>
                       </div>
@@ -1064,8 +1188,9 @@ SOC Directive: Containment directive logged in Analyst Actions ledger and synchr
                           selectedCase.analyst_notes
                         ) : (
                           <div className="dossier-empty-message">
-                            No analyst notes recorded yet. Apply a defense action from the Containment tab
-                            to append the first containment directive.
+                            No analyst notes recorded yet. Apply a defense
+                            action from the Containment tab to append the first
+                            containment directive.
                           </div>
                         )}
                       </div>

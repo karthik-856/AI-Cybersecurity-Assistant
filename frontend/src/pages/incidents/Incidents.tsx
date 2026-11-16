@@ -27,12 +27,7 @@ import type { Incident } from "../../services/api";
 import { formatIncidentDetails } from "./incidentDetailsFormatter";
 
 type FilterStatus =
-  | "ALL"
-  | "OPEN"
-  | "ACKNOWLEDGED"
-  | "INVESTIGATING"
-  | "RESOLVED"
-  | "CLOSED";
+  "ALL" | "OPEN" | "ACKNOWLEDGED" | "INVESTIGATING" | "RESOLVED" | "CLOSED";
 
 const STATUS_ORDER: FilterStatus[] = [
   "ALL",
@@ -79,11 +74,11 @@ function Incidents() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const [selectedIncident, setSelectedIncident] =
-    useState<Incident | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
+    null,
+  );
 
-  const [statusFilter, setStatusFilter] =
-    useState<FilterStatus>("ALL");
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>("ALL");
 
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [copied, setCopied] = useState(false);
@@ -93,15 +88,25 @@ function Incidents() {
   const [actionLoading, setActionLoading] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
-  const [actionMessage, setActionMessage] =
-    useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
 
-  useEffect(() => {
+  const [previousInputs0, setpreviousInputs0] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs1 = [searchParams];
+  if (
+    previousInputs0 === null ||
+    currentInputs1.some(
+      (value, index) => !Object.is(value, previousInputs0?.[index]),
+    )
+  ) {
+    setpreviousInputs0(currentInputs1);
+
     const q = searchParams.get("search");
     if (q !== null && q !== undefined) {
       setSearch(q);
     }
-  }, [searchParams]);
+  }
 
   useEffect(() => {
     if (selectedIncident) {
@@ -112,12 +117,23 @@ function Incidents() {
             alert_id: selectedIncident.alert_id,
             page_route: "/incidents",
           },
-        })
+        }),
       );
     }
   }, [selectedIncident]);
 
-  useEffect(() => {
+  const [previousInputs1, setpreviousInputs1] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs2 = [searchParams, incidents];
+  if (
+    previousInputs1 === null ||
+    currentInputs2.some(
+      (value, index) => !Object.is(value, previousInputs1?.[index]),
+    )
+  ) {
+    setpreviousInputs1(currentInputs2);
+
     const incId = searchParams.get("incident_id");
     if (incId && incidents.length > 0) {
       const found = incidents.find((item) => item.incident_id === incId);
@@ -125,7 +141,7 @@ function Incidents() {
         setSelectedIncident(found);
       }
     }
-  }, [searchParams, incidents]);
+  }
 
   const loadIncidents = useCallback(async () => {
     setLoading(true);
@@ -133,10 +149,7 @@ function Incidents() {
 
     try {
       const response = await getIncidents({
-        status:
-          statusFilter === "ALL"
-            ? undefined
-            : statusFilter,
+        status: statusFilter === "ALL" ? undefined : statusFilter,
         search: search.trim() || undefined,
         limit: pageSize,
         offset: (page - 1) * pageSize,
@@ -146,18 +159,27 @@ function Incidents() {
       setTotal(response.total);
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to load incidents.",
+        err instanceof Error ? err.message : "Unable to load incidents.",
       );
     } finally {
       setLoading(false);
     }
   }, [page, search, statusFilter]);
 
-  useEffect(() => {
+  const [previousInputs2, setpreviousInputs2] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs3 = [search, statusFilter];
+  if (
+    previousInputs2 === null ||
+    currentInputs3.some(
+      (value, index) => !Object.is(value, previousInputs2?.[index]),
+    )
+  ) {
+    setpreviousInputs2(currentInputs3);
+
     setPage(1);
-  }, [search, statusFilter]);
+  }
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -169,9 +191,7 @@ function Incidents() {
     };
   }, [loadIncidents]);
 
-  const loadIncidentDetails = async (
-    incidentId: string,
-  ) => {
+  const loadIncidentDetails = async (incidentId: string) => {
     setDetailLoading(true);
     setError(null);
 
@@ -180,18 +200,14 @@ function Incidents() {
       setSelectedIncident(incident);
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to load incident details.",
+        err instanceof Error ? err.message : "Unable to load incident details.",
       );
     } finally {
       setDetailLoading(false);
     }
   };
 
-  const handleSelectIncident = (
-    incident: Incident,
-  ) => {
+  const handleSelectIncident = (incident: Incident) => {
     setActionMessage(null);
     void loadIncidentDetails(incident.incident_id);
   };
@@ -205,36 +221,46 @@ function Incidents() {
     resolution_summary?: string;
   } | null>(null);
   const [escalateModalOpen, setEscalateModalOpen] = useState(false);
-  const [escalationReason, setEscalationReason] = useState("Critical Asset Compromised - Priority Escalation");
+  const [escalationReason, setEscalationReason] = useState("");
   const [escalationNotes, setEscalationNotes] = useState("");
 
-  const [investigationIncompleteModalOpen, setInvestigationIncompleteModalOpen] = useState(false);
-  const [investigationCaseId, setInvestigationCaseId] = useState<string | null>(null);
+  const [
+    investigationIncompleteModalOpen,
+    setInvestigationIncompleteModalOpen,
+  ] = useState(false);
+  const [investigationCaseId, setInvestigationCaseId] = useState<string | null>(
+    null,
+  );
 
   const [noteModalOpen, setNoteModalOpen] = useState(false);
   const [incidentNoteText, setIncidentNoteText] = useState("");
 
-  const [investigationStatus, setInvestigationStatus] = useState<string | null>(null);
+  const [latestInvestigation, setLatestInvestigation] = useState<{
+    incidentId: string;
+    status: string | null;
+  } | null>(null);
+  const selectedIncidentId = selectedIncident?.incident_id;
+  const selectedIncidentStatus = selectedIncident?.status;
+  const investigationStatus =
+    latestInvestigation?.incidentId === selectedIncidentId
+      ? latestInvestigation?.status
+      : selectedIncident?.investigation_status;
 
   useEffect(() => {
     let isMounted = true;
-    if (!selectedIncident) {
-      setInvestigationStatus(null);
-      return;
-    }
-
-    if (selectedIncident.investigation_status) {
-      setInvestigationStatus(selectedIncident.investigation_status.toUpperCase());
-    }
+    if (!selectedIncidentId) return;
 
     getInvestigations({
-      incident_id: selectedIncident.incident_id,
+      incident_id: selectedIncidentId,
       limit: 1,
     })
       .then((res) => {
         if (!isMounted) return;
         const inv = res.items && res.items.length > 0 ? res.items[0] : null;
-        setInvestigationStatus(inv ? inv.status.toUpperCase() : null);
+        setLatestInvestigation({
+          incidentId: selectedIncidentId,
+          status: inv ? inv.status.toUpperCase() : null,
+        });
         if (inv?.conclusion && inv.conclusion.trim()) {
           setResolutionSummary(inv.conclusion.trim());
         }
@@ -244,19 +270,21 @@ function Incidents() {
     return () => {
       isMounted = false;
     };
-  }, [selectedIncident?.incident_id, selectedIncident?.status]);
+  }, [selectedIncidentId, selectedIncidentStatus]);
 
   const isInvestigationCompleted =
-    (investigationStatus || selectedIncident?.investigation_status || "").toUpperCase() === "COMPLETED";
+    (
+      investigationStatus ||
+      selectedIncident?.investigation_status ||
+      ""
+    ).toUpperCase() === "COMPLETED";
 
   const handleTransition = async () => {
     if (!selectedIncident) {
       return;
     }
 
-    const targetStatus = nextStatus(
-      selectedIncident.status,
-    );
+    const targetStatus = nextStatus(selectedIncident.status);
 
     if (!targetStatus) {
       return;
@@ -276,18 +304,17 @@ function Incidents() {
           incident_id: selectedIncident.incident_id,
           limit: 1,
         });
-        const inv = invRes.items && invRes.items.length > 0 ? invRes.items[0] : null;
+        const inv =
+          invRes.items && invRes.items.length > 0 ? invRes.items[0] : null;
         setInvestigationCaseId(inv ? inv.investigation_id : null);
-        const prefillSummary = (inv?.conclusion && inv.conclusion.trim())
-          ? inv.conclusion.trim()
-          : (selectedIncident.resolution_summary || "Threat actor contained, network indicators mitigated, and forensic investigation completed.");
+        const prefillSummary =
+          inv?.conclusion && inv.conclusion.trim()
+            ? inv.conclusion.trim()
+            : selectedIncident.resolution_summary || "";
         setResolutionSummary(prefillSummary);
         setResolveModalOpen(true);
       } catch {
-        setResolutionSummary(
-          selectedIncident.resolution_summary ||
-          "Threat actor contained, network indicators mitigated, and forensic investigation completed."
-        );
+        setResolutionSummary(selectedIncident.resolution_summary || "");
         setResolveModalOpen(true);
       } finally {
         setActionLoading(false);
@@ -300,20 +327,15 @@ function Incidents() {
     setActionMessage(null);
 
     try {
-      const updated = await updateIncidentStatus(
-        selectedIncident.incident_id,
-        {
-          status: targetStatus,
-        },
-      );
+      const updated = await updateIncidentStatus(selectedIncident.incident_id, {
+        status: targetStatus,
+      });
 
       setSelectedIncident(updated);
 
       setIncidents((current) =>
         current.map((item) =>
-          item.incident_id === updated.incident_id
-            ? updated
-            : item,
+          item.incident_id === updated.incident_id ? updated : item,
         ),
       );
 
@@ -324,7 +346,9 @@ function Incidents() {
       await loadIncidents();
 
       if (targetStatus === "INVESTIGATING") {
-        navigate(`/investigation?incident_id=${encodeURIComponent(updated.incident_id)}`);
+        navigate(
+          `/investigation?incident_id=${encodeURIComponent(updated.incident_id)}`,
+        );
       }
     } catch (err) {
       setError(
@@ -344,21 +368,16 @@ function Incidents() {
     setActionMessage(null);
 
     try {
-      const updated = await updateIncidentStatus(
-        selectedIncident.incident_id,
-        {
-          status: "RESOLVED",
-          resolution_summary: resolutionSummary.trim() || undefined,
-        },
-      );
+      const updated = await updateIncidentStatus(selectedIncident.incident_id, {
+        status: "RESOLVED",
+        resolution_summary: resolutionSummary.trim() || undefined,
+      });
 
       setSelectedIncident(updated);
 
       setIncidents((current) =>
         current.map((item) =>
-          item.incident_id === updated.incident_id
-            ? updated
-            : item,
+          item.incident_id === updated.incident_id ? updated : item,
         ),
       );
 
@@ -375,9 +394,7 @@ function Incidents() {
       await loadIncidents();
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to resolve incident.",
+        err instanceof Error ? err.message : "Unable to resolve incident.",
       );
     } finally {
       setActionLoading(false);
@@ -391,13 +408,10 @@ function Incidents() {
     setActionMessage(null);
 
     try {
-      const updated = await updateIncidentStatus(
-        selectedIncident.incident_id,
-        {
-          status: "CLOSED",
-          resolution_summary: closingSummary.trim() || undefined,
-        },
-      );
+      const updated = await updateIncidentStatus(selectedIncident.incident_id, {
+        status: "CLOSED",
+        resolution_summary: closingSummary.trim() || undefined,
+      });
 
       setSelectedIncident(updated);
       setIncidents((current) =>
@@ -413,9 +427,7 @@ function Incidents() {
       await loadIncidents();
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to close incident.",
+        err instanceof Error ? err.message : "Unable to close incident.",
       );
     } finally {
       setActionLoading(false);
@@ -426,11 +438,11 @@ function Incidents() {
     if (!selectedIncident) return;
     if (selectedIncident.status.toUpperCase() !== "INVESTIGATING") {
       setError(
-        `Cannot escalate incident: An active investigation must be started first (current status is '${selectedIncident.status}'). Please click 'Start Investigation' first.`
+        `Cannot escalate incident: An active investigation must be started first (current status is '${selectedIncident.status}'). Please click 'Start Investigation' first.`,
       );
       return;
     }
-    setEscalationReason("Critical Asset Compromised - Priority Escalation");
+    setEscalationReason("");
     setEscalationNotes("");
     setEscalateModalOpen(true);
   };
@@ -446,10 +458,9 @@ function Incidents() {
         ? `${escalationReason}: ${escalationNotes.trim()}`
         : escalationReason;
 
-      const updated = await escalateIncident(
-        selectedIncident.incident_id,
-        { reason: fullReason },
-      );
+      const updated = await escalateIncident(selectedIncident.incident_id, {
+        reason: fullReason,
+      });
 
       setSelectedIncident(updated);
       setIncidents((current) =>
@@ -465,9 +476,7 @@ function Incidents() {
       await loadIncidents();
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to escalate incident.",
+        err instanceof Error ? err.message : "Unable to escalate incident.",
       );
     } finally {
       setActionLoading(false);
@@ -515,20 +524,15 @@ function Incidents() {
 
   const summary = useMemo(() => {
     const critical = incidents.filter(
-      (item) =>
-        item.severity.toUpperCase() === "CRITICAL",
+      (item) => item.severity.toUpperCase() === "CRITICAL",
     ).length;
 
     const active = incidents.filter(
-      (item) =>
-        !["RESOLVED", "CLOSED"].includes(
-          item.status.toUpperCase(),
-        ),
+      (item) => !["RESOLVED", "CLOSED"].includes(item.status.toUpperCase()),
     ).length;
 
     const closed = incidents.filter(
-      (item) =>
-        item.status.toUpperCase() === "CLOSED",
+      (item) => item.status.toUpperCase() === "CLOSED",
     ).length;
 
     return {
@@ -1556,77 +1560,47 @@ function Incidents() {
       `}</style>
 
       <div className="incident-header">
-        <div className="incident-eyebrow">
-          SOC PLATFORM / RESPONSE
-        </div>
+        <div className="incident-eyebrow">SOC PLATFORM / RESPONSE</div>
 
-        <h1 className="incident-title">
-          Security Incidents
-        </h1>
+        <h1 className="incident-title">Security Incidents</h1>
 
         <p className="incident-description">
-          Manage active incidents, escalation status,
-          investigation history, and resolution.
+          Manage active incidents, escalation status, investigation history, and
+          resolution.
         </p>
       </div>
 
       <div className="incident-kpis">
         <div className="incident-kpi">
-          <div className="incident-kpi-label">
-            Total Incidents
-          </div>
-          <div className="incident-kpi-value">
-            {summary.total}
-          </div>
+          <div className="incident-kpi-label">Total Incidents</div>
+          <div className="incident-kpi-value">{summary.total}</div>
         </div>
 
         <div className="incident-kpi">
-          <div className="incident-kpi-label">
-            Active
-          </div>
-          <div className="incident-kpi-value">
-            {summary.active}
-          </div>
+          <div className="incident-kpi-label">Active</div>
+          <div className="incident-kpi-value">{summary.active}</div>
         </div>
 
         <div className="incident-kpi">
-          <div className="incident-kpi-label">
-            Critical
-          </div>
-          <div className="incident-kpi-value">
-            {summary.critical}
-          </div>
+          <div className="incident-kpi-label">Critical</div>
+          <div className="incident-kpi-value">{summary.critical}</div>
         </div>
 
         <div className="incident-kpi">
-          <div className="incident-kpi-label">
-            Closed
-          </div>
-          <div className="incident-kpi-value">
-            {summary.closed}
-          </div>
+          <div className="incident-kpi-label">Closed</div>
+          <div className="incident-kpi-value">{summary.closed}</div>
         </div>
       </div>
 
-      {error && (
-        <div className="message error">
-          {error}
-        </div>
-      )}
+      {error && <div className="message error">{error}</div>}
 
-      {actionMessage && (
-        <div className="message success">
-          {actionMessage}
-        </div>
-      )}
+      {actionMessage && <div className="message success">{actionMessage}</div>}
 
       <div className="incident-toolbar">
         <input
           className="incident-search"
           value={search}
-          onChange={(event) =>
-            setSearch(event.target.value)
-          }
+          onChange={(event) => setSearch(event.target.value)}
           placeholder="Search incident ID, alert ID, title, or description..."
         />
 
@@ -1645,13 +1619,9 @@ function Incidents() {
               key={status}
               type="button"
               className={`incident-tab ${
-                statusFilter === status
-                  ? "active"
-                  : ""
+                statusFilter === status ? "active" : ""
               }`}
-              onClick={() =>
-                setStatusFilter(status)
-              }
+              onClick={() => setStatusFilter(status)}
             >
               {status}
             </button>
@@ -1662,9 +1632,7 @@ function Incidents() {
       <div className="incident-layout">
         <div className="incident-card">
           <div className="incident-card-header">
-            <div className="incident-card-title">
-              Incident Queue
-            </div>
+            <div className="incident-card-title">Incident Queue</div>
 
             <div className="incident-count">
               {total} record{total === 1 ? "" : "s"}
@@ -1677,9 +1645,7 @@ function Incidents() {
             </div>
           ) : incidents.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-title">
-                NO INCIDENTS FOUND
-              </div>
+              <div className="empty-title">NO INCIDENTS FOUND</div>
               No incidents match the current filters.
             </div>
           ) : (
@@ -1702,25 +1668,18 @@ function Incidents() {
                     <tr
                       key={incident.incident_id}
                       className={`incident-row ${
-                        selectedIncident?.incident_id ===
-                        incident.incident_id
+                        selectedIncident?.incident_id === incident.incident_id
                           ? "selected"
                           : ""
                       }`}
-                      onClick={() =>
-                        handleSelectIncident(
-                          incident,
-                        )
-                      }
+                      onClick={() => handleSelectIncident(incident)}
                     >
                       <td>
                         <div className="incident-id">
                           {incident.incident_id}
                         </div>
 
-                        <div className="incident-name">
-                          {incident.title}
-                        </div>
+                        <div className="incident-name">{incident.title}</div>
                       </td>
 
                       <td>
@@ -1745,22 +1704,27 @@ function Incidents() {
 
                       <td>
                         <span
-                          className={`badge ${statusClass(
-                            incident.status,
-                          )}`}
+                          className={`badge ${statusClass(incident.status)}`}
                         >
                           {incident.status}
                         </span>
                       </td>
 
                       <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                          }}
+                        >
                           <span
                             style={{
                               fontSize: "11px",
                               fontWeight: 700,
                               color:
-                                incident.status.toUpperCase() !== "OPEN" || incident.assigned_to_id
+                                incident.status.toUpperCase() !== "OPEN" ||
+                                incident.assigned_to_id
                                   ? "#27d7a5"
                                   : "#64748b",
                             }}
@@ -1769,21 +1733,15 @@ function Incidents() {
                               (incident.assigned_to_username
                                 ? `${incident.assigned_to_username} (Assigned)`
                                 : incident.status.toUpperCase() !== "OPEN"
-                                ? "karthik admin (Assigned)"
-                                : "Unassigned")}
+                                  ? "karthik admin (Assigned)"
+                                  : "Unassigned")}
                           </span>
                         </div>
                       </td>
 
-                      <td>
-                        L{incident.escalation_level}
-                      </td>
+                      <td>L{incident.escalation_level}</td>
 
-                      <td>
-                        {formatShortDateTime(
-                          incident.created_at,
-                        )}
-                      </td>
+                      <td>{formatShortDateTime(incident.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1794,7 +1752,12 @@ function Incidents() {
           {!loading && total > 0 && (
             <div className="incident-pagination">
               <div className="incident-pagination-info">
-                Showing <strong style={{ color: "#d9e8ed" }}>{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)}</strong> of <strong style={{ color: "#d9e8ed" }}>{total}</strong> incidents
+                Showing{" "}
+                <strong style={{ color: "#d9e8ed" }}>
+                  {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)}
+                </strong>{" "}
+                of <strong style={{ color: "#d9e8ed" }}>{total}</strong>{" "}
+                incidents
               </div>
               <div className="incident-pagination-controls">
                 <button
@@ -1807,26 +1770,36 @@ function Incidents() {
                   <ChevronLeft size={14} />
                   <span>Prev</span>
                 </button>
-                {Array.from({ length: Math.min(Math.ceil(total / pageSize), 5) }, (_, index) => {
-                  const totalPages = Math.ceil(total / pageSize);
-                  const startPage = Math.min(Math.max(1, page - 2), Math.max(1, totalPages - 4));
-                  const pageNumber = startPage + index;
-                  if (pageNumber > totalPages) return null;
-                  return (
-                    <button
-                      key={pageNumber}
-                      type="button"
-                      className={`incident-page-button ${page === pageNumber ? "active" : ""}`}
-                      onClick={() => setPage(pageNumber)}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                })}
+                {Array.from(
+                  { length: Math.min(Math.ceil(total / pageSize), 5) },
+                  (_, index) => {
+                    const totalPages = Math.ceil(total / pageSize);
+                    const startPage = Math.min(
+                      Math.max(1, page - 2),
+                      Math.max(1, totalPages - 4),
+                    );
+                    const pageNumber = startPage + index;
+                    if (pageNumber > totalPages) return null;
+                    return (
+                      <button
+                        key={pageNumber}
+                        type="button"
+                        className={`incident-page-button ${page === pageNumber ? "active" : ""}`}
+                        onClick={() => setPage(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  },
+                )}
                 <button
                   type="button"
                   className="incident-page-button prev-next"
-                  onClick={() => setPage((current) => Math.min(Math.ceil(total / pageSize), current + 1))}
+                  onClick={() =>
+                    setPage((current) =>
+                      Math.min(Math.ceil(total / pageSize), current + 1),
+                    )
+                  }
                   disabled={page >= Math.ceil(total / pageSize) || loading}
                   title="Next Page"
                 >
@@ -1839,10 +1812,15 @@ function Incidents() {
         </div>
 
         <div className="incident-card incident-detail">
-          <div className="incident-card-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div className="incident-card-title">
-              Incident Detail
-            </div>
+          <div
+            className="incident-card-header"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div className="incident-card-title">Incident Detail</div>
             {selectedIncident && (
               <button
                 type="button"
@@ -1871,24 +1849,35 @@ function Incidents() {
           </div>
 
           {detailLoading ? (
-            <div className="loading">
-              Loading incident details...
-            </div>
+            <div className="loading">Loading incident details...</div>
           ) : !selectedIncident ? (
             <div className="empty-state">
-              <div className="empty-title">
-                SELECT AN INCIDENT
-              </div>
-              Select an incident from the queue
-              to inspect its details and available
-              SOC actions.
+              <div className="empty-title">SELECT AN INCIDENT</div>
+              Select an incident from the queue to inspect its details and
+              available SOC actions.
             </div>
           ) : (
             <div className="soc-detail-content">
               {/* HEADER: ID, Title, Badges, Timestamp */}
               <div className="soc-detail-header">
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-                  <div className="detail-id" style={{ fontSize: 13, fontWeight: 800, color: "#38bdf8", letterSpacing: "0.04em" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 10,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div
+                    className="detail-id"
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 800,
+                      color: "#38bdf8",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
                     {selectedIncident.incident_id}
                   </div>
                   <span style={{ fontSize: 11, color: "#64748b" }}>
@@ -1896,22 +1885,43 @@ function Incidents() {
                   </span>
                 </div>
 
-                <h2 className="detail-title" style={{ margin: "8px 0 10px", fontSize: 18, color: "#edf4f7" }}>
+                <h2
+                  className="detail-title"
+                  style={{
+                    margin: "8px 0 10px",
+                    fontSize: 18,
+                    color: "#edf4f7",
+                  }}
+                >
                   {selectedIncident.title}
                 </h2>
 
                 <div className="detail-badges">
-                  <span className={`badge ${severityClass(selectedIncident.severity)}`}>
+                  <span
+                    className={`badge ${severityClass(selectedIncident.severity)}`}
+                  >
                     {selectedIncident.severity}
                   </span>
-                  <span className={`badge ${severityClass(selectedIncident.priority)}`}>
+                  <span
+                    className={`badge ${severityClass(selectedIncident.priority)}`}
+                  >
                     PRIORITY {selectedIncident.priority}
                   </span>
-                  <span className={`badge ${statusClass(selectedIncident.status)}`}>
+                  <span
+                    className={`badge ${statusClass(selectedIncident.status)}`}
+                  >
                     {selectedIncident.status}
                   </span>
-                  <span className="badge" style={{ background: "#0f2334", borderColor: "#1e3d54", color: "#7dd3fc" }}>
-                    L{selectedIncident.escalation_level} (Escalations: {selectedIncident.escalation_count})
+                  <span
+                    className="badge"
+                    style={{
+                      background: "#0f2334",
+                      borderColor: "#1e3d54",
+                      color: "#7dd3fc",
+                    }}
+                  >
+                    L{selectedIncident.escalation_level} (Escalations:{" "}
+                    {selectedIncident.escalation_count})
                   </span>
                 </div>
               </div>
@@ -1946,25 +1956,37 @@ function Incidents() {
                     <div className="soc-assets-grid">
                       <div className="soc-asset-item">
                         <span className="asset-label">Source Host / IP</span>
-                        <span className="asset-value" style={{ fontFamily: "monospace", color: "#38bdf8" }}>
+                        <span
+                          className="asset-value"
+                          style={{ fontFamily: "monospace", color: "#38bdf8" }}
+                        >
                           {formattedDetails.affectedAssets.source}
                         </span>
                       </div>
                       <div className="soc-asset-item">
                         <span className="asset-label">Target Host / IP</span>
-                        <span className="asset-value" style={{ fontFamily: "monospace", color: "#f87171" }}>
+                        <span
+                          className="asset-value"
+                          style={{ fontFamily: "monospace", color: "#f87171" }}
+                        >
                           {formattedDetails.affectedAssets.target}
                         </span>
                       </div>
                       <div className="soc-asset-item">
                         <span className="asset-label">Protocol / Service</span>
-                        <span className="asset-value" style={{ fontWeight: 600 }}>
+                        <span
+                          className="asset-value"
+                          style={{ fontWeight: 600 }}
+                        >
                           {formattedDetails.affectedAssets.service}
                         </span>
                       </div>
                       <div className="soc-asset-item">
                         <span className="asset-label">Assigned Analyst</span>
-                        <span className="asset-value" style={{ color: "#27d7a5", fontWeight: 600 }}>
+                        <span
+                          className="asset-value"
+                          style={{ color: "#27d7a5", fontWeight: 600 }}
+                        >
                           {formattedDetails.affectedAssets.assignedAnalyst}
                         </span>
                       </div>
@@ -1991,15 +2013,20 @@ function Incidents() {
                   <div className="soc-grid-dual">
                     <div className="soc-small-card">
                       <span className="small-card-label">Detection Source</span>
-                      <div className="small-card-value">{formattedDetails.detectionSource}</div>
+                      <div className="small-card-value">
+                        {formattedDetails.detectionSource}
+                      </div>
                     </div>
 
                     <div className="soc-small-card">
                       <span className="small-card-label">MITRE ATT&CK</span>
                       <div className="small-card-value">
-                        <span className="mitre-tag">{formattedDetails.mitreAttack.code}</span>
+                        <span className="mitre-tag">
+                          {formattedDetails.mitreAttack.code}
+                        </span>
                         <span style={{ fontSize: "11px", color: "#cbd5e1" }}>
-                          {formattedDetails.mitreAttack.tactic} - {formattedDetails.mitreAttack.technique}
+                          {formattedDetails.mitreAttack.tactic} -{" "}
+                          {formattedDetails.mitreAttack.technique}
                         </span>
                       </div>
                     </div>
@@ -2012,12 +2039,14 @@ function Incidents() {
                       <span>Recommended Next Steps</span>
                     </div>
                     <ol className="soc-steps-list">
-                      {formattedDetails.recommendedNextSteps.map((step, idx) => (
-                        <li key={idx} className="soc-step-item">
-                          <span className="step-num">{idx + 1}.</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
+                      {formattedDetails.recommendedNextSteps.map(
+                        (step, idx) => (
+                          <li key={idx} className="soc-step-item">
+                            <span className="step-num">{idx + 1}.</span>
+                            <span>{step}</span>
+                          </li>
+                        ),
+                      )}
                     </ol>
                   </div>
                 </>
@@ -2031,7 +2060,11 @@ function Incidents() {
                     <button
                       type="button"
                       className="soc-btn soc-btn-disabled"
-                      style={{ opacity: 0.6, cursor: "not-allowed", border: "1px dashed #64748b" }}
+                      style={{
+                        opacity: 0.6,
+                        cursor: "not-allowed",
+                        border: "1px dashed #64748b",
+                      }}
                       disabled={true}
                       title="Alert must be acknowledged in Alert Center before starting investigation"
                     >
@@ -2044,7 +2077,9 @@ function Incidents() {
                         className="soc-btn soc-btn-secondary"
                         style={{ borderColor: "#19d39d", color: "#19d39d" }}
                         onClick={() =>
-                          navigate(`/alerts?search=${encodeURIComponent(selectedIncident.alert_id!)}`)
+                          navigate(
+                            `/alerts?search=${encodeURIComponent(selectedIncident.alert_id!)}`,
+                          )
                         }
                         title="Go to Alert Center to inspect and acknowledge this alert"
                       >
@@ -2070,7 +2105,9 @@ function Incidents() {
                         setSelectedIncident(updated);
                         setIncidents((current) =>
                           current.map((item) =>
-                            item.incident_id === updated.incident_id ? updated : item,
+                            item.incident_id === updated.incident_id
+                              ? updated
+                              : item,
                           ),
                         );
                         navigate(
@@ -2079,7 +2116,11 @@ function Incidents() {
                           )}`,
                         );
                       } catch (err) {
-                        setError(err instanceof Error ? err.message : "Failed to start investigation");
+                        setError(
+                          err instanceof Error
+                            ? err.message
+                            : "Failed to start investigation",
+                        );
                       } finally {
                         setActionLoading(false);
                       }
@@ -2114,7 +2155,10 @@ function Incidents() {
                       <button
                         type="button"
                         className="soc-btn soc-btn-secondary"
-                        style={{ borderColor: "rgba(239, 68, 68, 0.4)", color: "#f87171" }}
+                        style={{
+                          borderColor: "rgba(239, 68, 68, 0.4)",
+                          color: "#f87171",
+                        }}
                         onClick={() =>
                           navigate(
                             `/defense?case_id=${encodeURIComponent(
@@ -2131,7 +2175,9 @@ function Incidents() {
                   </>
                 )}
 
-                {["RESOLVED", "CLOSED"].includes(selectedIncident.status.toUpperCase()) && (
+                {["RESOLVED", "CLOSED"].includes(
+                  selectedIncident.status.toUpperCase(),
+                ) && (
                   <button
                     type="button"
                     className="soc-btn soc-btn-secondary"
@@ -2150,8 +2196,8 @@ function Incidents() {
                 )}
 
                 {/* 2. RESOLVE INCIDENT (ENABLED WHEN INVESTIGATION IS COMPLETED) */}
-                {selectedIncident.status.toUpperCase() === "INVESTIGATING" && (
-                  isInvestigationCompleted ? (
+                {selectedIncident.status.toUpperCase() === "INVESTIGATING" &&
+                  (isInvestigationCompleted ? (
                     <button
                       type="button"
                       className="soc-btn soc-btn-resolve"
@@ -2167,14 +2213,17 @@ function Incidents() {
                       type="button"
                       className="soc-btn soc-btn-disabled"
                       onClick={() => setInvestigationIncompleteModalOpen(true)}
-                      style={{ opacity: 0.65, cursor: "pointer", border: "1px dashed #64748b" }}
+                      style={{
+                        opacity: 0.65,
+                        cursor: "pointer",
+                        border: "1px dashed #64748b",
+                      }}
                       title="Forensic investigation must be completed with analyst conclusion before resolution"
                     >
                       <CheckCircle2 size={13} style={{ color: "#94a3b8" }} />
                       <span>Resolve Incident (Awaiting Investigation)</span>
                     </button>
-                  )
-                )}
+                  ))}
 
                 {/* 3. CLOSE INCIDENT */}
                 {selectedIncident.status.toUpperCase() === "RESOLVED" && (
@@ -2182,7 +2231,9 @@ function Incidents() {
                     type="button"
                     className="soc-btn soc-btn-close"
                     onClick={() => {
-                      setClosingSummary(selectedIncident.resolution_summary || "");
+                      setClosingSummary(
+                        selectedIncident.resolution_summary || "",
+                      );
                       setCloseModalOpen(true);
                     }}
                     disabled={actionLoading}
@@ -2208,8 +2259,8 @@ function Incidents() {
                 </button>
 
                 {/* 5. ESCALATE (ONLY AVAILABLE WHEN INVESTIGATION IS IN PROGRESS) */}
-                {!["CLOSED"].includes(selectedIncident.status.toUpperCase()) && (
-                  selectedIncident.status.toUpperCase() === "INVESTIGATING" ? (
+                {!["CLOSED"].includes(selectedIncident.status.toUpperCase()) &&
+                  (selectedIncident.status.toUpperCase() === "INVESTIGATING" ? (
                     <button
                       type="button"
                       className="soc-btn soc-btn-secondary"
@@ -2224,22 +2275,27 @@ function Incidents() {
                     <button
                       type="button"
                       className="soc-btn soc-btn-disabled"
-                      style={{ opacity: 0.5, cursor: "not-allowed", border: "1px dashed #475569" }}
+                      style={{
+                        opacity: 0.5,
+                        cursor: "not-allowed",
+                        border: "1px dashed #475569",
+                      }}
                       disabled={true}
                       title="Investigation must be started before escalating this incident"
                     >
                       <AlertTriangle size={13} style={{ color: "#64748b" }} />
                       <span>Escalate (Investigation Required)</span>
                     </button>
-                  )
-                )}
+                  ))}
               </div>
 
               {/* COLLAPSIBLE RAW LOG & JSON TRACE */}
               <details className="soc-raw-trace-details">
                 <summary className="soc-trace-summary">
                   <span>Raw Incident Telemetry & JSON Trace</span>
-                  <span className="soc-trace-hint">(Click to inspect full payload)</span>
+                  <span className="soc-trace-hint">
+                    (Click to inspect full payload)
+                  </span>
                 </summary>
                 <div className="soc-raw-trace-body">
                   <div className="soc-trace-toolbar">
@@ -2253,7 +2309,9 @@ function Incidents() {
                           );
                           setCopied(true);
                           setTimeout(() => setCopied(false), 2000);
-                        } catch {}
+                        } catch {
+                          /* The optional browser feature or response body is unavailable. */
+                        }
                       }}
                     >
                       {copied ? "Copied!" : "Copy Raw JSON"}
@@ -2269,7 +2327,10 @@ function Incidents() {
                     </div>
                   )}
                   {selectedIncident.resolution_summary && (
-                    <div className="soc-raw-description" style={{ marginTop: 8 }}>
+                    <div
+                      className="soc-raw-description"
+                      style={{ marginTop: 8 }}
+                    >
                       <strong>Resolution Summary:</strong>
                       <p>{selectedIncident.resolution_summary}</p>
                     </div>
@@ -2322,10 +2383,20 @@ function Incidents() {
                   lineHeight: 1.5,
                 }}
               >
-                <strong>The investigation is not yet over.</strong> In accordance with standard SOC operating procedures, you must first complete the forensic investigation in the <strong>Investigation Department</strong> (including analyst notes and conclusion) and mark it as <strong>COMPLETED</strong> before this incident can be resolved.
+                <strong>The investigation is not yet over.</strong> Complete the
+                investigation in the <strong>Investigation Department</strong>{" "}
+                with a conclusion and mark it as <strong>COMPLETED</strong>{" "}
+                before this incident can be resolved.
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10 }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 10,
+                  marginTop: 10,
+                }}
+              >
                 <div
                   style={{
                     display: "flex",
@@ -2337,8 +2408,12 @@ function Incidents() {
                     border: "1px solid #1e293b",
                   }}
                 >
-                  <span style={{ fontSize: 12, color: "#94a3b8" }}>Target Incident ID:</span>
-                  <code style={{ fontSize: 12, color: "#38bdf8", fontWeight: 700 }}>
+                  <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                    Target Incident ID:
+                  </span>
+                  <code
+                    style={{ fontSize: 12, color: "#38bdf8", fontWeight: 700 }}
+                  >
                     {selectedIncident.incident_id}
                   </code>
                 </div>
@@ -2354,7 +2429,9 @@ function Incidents() {
                     border: "1px solid #1e293b",
                   }}
                 >
-                  <span style={{ fontSize: 12, color: "#94a3b8" }}>Investigation Status:</span>
+                  <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                    Investigation Status:
+                  </span>
                   <span
                     style={{
                       fontSize: 11,
@@ -2381,8 +2458,16 @@ function Incidents() {
                       border: "1px solid #1e293b",
                     }}
                   >
-                    <span style={{ fontSize: 12, color: "#94a3b8" }}>Investigation Case ID:</span>
-                    <code style={{ fontSize: 12, color: "#a78bfa", fontWeight: 700 }}>
+                    <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                      Investigation Case ID:
+                    </span>
+                    <code
+                      style={{
+                        fontSize: 12,
+                        color: "#a78bfa",
+                        fontWeight: 700,
+                      }}
+                    >
                       {investigationCaseId}
                     </code>
                   </div>
@@ -2442,7 +2527,10 @@ function Incidents() {
 
       {/* RESOLVE INCIDENT MODAL */}
       {resolveModalOpen && selectedIncident && (
-        <div className="soc-modal-backdrop" onClick={() => setResolveModalOpen(false)}>
+        <div
+          className="soc-modal-backdrop"
+          onClick={() => setResolveModalOpen(false)}
+        >
           <div className="soc-modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="soc-modal-header">
               <div className="soc-modal-title">
@@ -2468,15 +2556,27 @@ function Incidents() {
                   color: "#93c5fd",
                 }}
               >
-                <strong>SOC Resolution Protocol:</strong> Forensic investigation has been verified as <strong>COMPLETED</strong> in the Investigation Department. Submitting will mark this incident as <strong>RESOLVED</strong> and synchronize the correlated detection alert.
+                <strong>SOC Resolution Protocol:</strong> Forensic investigation
+                has been verified as <strong>COMPLETED</strong> in the
+                Investigation Department. Submitting will mark this incident as{" "}
+                <strong>RESOLVED</strong> and synchronize the correlated
+                detection alert.
               </div>
 
               <div>
                 <div className="soc-modal-label" style={{ marginBottom: 6 }}>
                   Resolution Summary / Analyst Conclusion
                 </div>
-                <p style={{ fontSize: 11, color: "#7493a8", margin: "0 0 10px", lineHeight: 1.5 }}>
-                  Document the containment actions, root cause findings, and conclusion of this forensic investigation.
+                <p
+                  style={{
+                    fontSize: 11,
+                    color: "#7493a8",
+                    margin: "0 0 10px",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Document the containment actions, root cause findings, and
+                  conclusion of this forensic investigation.
                 </p>
                 <textarea
                   className="soc-modal-textarea"
@@ -2499,7 +2599,11 @@ function Incidents() {
               <button
                 type="button"
                 className="action-button"
-                style={{ background: "#0c3b5e", color: "#38bdf8", borderColor: "#38bdf8" }}
+                style={{
+                  background: "#0c3b5e",
+                  color: "#38bdf8",
+                  borderColor: "#38bdf8",
+                }}
                 onClick={() => void handleConfirmResolve()}
                 disabled={actionLoading}
               >
@@ -2512,12 +2616,24 @@ function Incidents() {
 
       {/* RESOLUTION SUCCESS POP-UP MESSAGE MODAL */}
       {resolvedSuccessModal && (
-        <div className="soc-modal-backdrop" onClick={() => setResolvedSuccessModal(null)}>
-          <div className="soc-modal-box" style={{ maxWidth: 540 }} onClick={(e) => e.stopPropagation()}>
-            <div className="soc-modal-header" style={{ borderBottomColor: "rgba(39, 215, 165, 0.3)" }}>
+        <div
+          className="soc-modal-backdrop"
+          onClick={() => setResolvedSuccessModal(null)}
+        >
+          <div
+            className="soc-modal-box"
+            style={{ maxWidth: 540 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="soc-modal-header"
+              style={{ borderBottomColor: "rgba(39, 215, 165, 0.3)" }}
+            >
               <div className="soc-modal-title">
                 <CheckCircle2 size={20} color="#27d7a5" />
-                <span style={{ color: "#27d7a5", fontWeight: 700 }}>Incident Resolved & Investigation Completed</span>
+                <span style={{ color: "#27d7a5", fontWeight: 700 }}>
+                  Incident Resolved & Investigation Completed
+                </span>
               </div>
               <button
                 type="button"
@@ -2528,31 +2644,144 @@ function Incidents() {
               </button>
             </div>
             <div className="soc-modal-body">
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#0c1524", padding: "10px 14px", borderRadius: 8, border: "1px solid #1e293b" }}>
-                  <span style={{ fontSize: 12, color: "#94a3b8" }}>Target Incident ID:</span>
-                  <code style={{ fontSize: 12, color: "#38bdf8", fontWeight: 700 }}>{resolvedSuccessModal.incident_id}</code>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: "#0c1524",
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    border: "1px solid #1e293b",
+                  }}
+                >
+                  <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                    Target Incident ID:
+                  </span>
+                  <code
+                    style={{ fontSize: 12, color: "#38bdf8", fontWeight: 700 }}
+                  >
+                    {resolvedSuccessModal.incident_id}
+                  </code>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#0c1524", padding: "10px 14px", borderRadius: 8, border: "1px solid #1e293b" }}>
-                  <span style={{ fontSize: 12, color: "#94a3b8" }}>Incident Lifecycle Status:</span>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#27d7a5", background: "rgba(39, 215, 165, 0.15)", padding: "2px 8px", borderRadius: 4 }}>RESOLVED</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: "#0c1524",
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    border: "1px solid #1e293b",
+                  }}
+                >
+                  <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                    Incident Lifecycle Status:
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "#27d7a5",
+                      background: "rgba(39, 215, 165, 0.15)",
+                      padding: "2px 8px",
+                      borderRadius: 4,
+                    }}
+                  >
+                    RESOLVED
+                  </span>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#0c1524", padding: "10px 14px", borderRadius: 8, border: "1px solid #1e293b" }}>
-                  <span style={{ fontSize: 12, color: "#94a3b8" }}>Investigation Department:</span>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#a78bfa", background: "rgba(167, 139, 250, 0.15)", padding: "2px 8px", borderRadius: 4 }}>COMPLETED</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: "#0c1524",
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    border: "1px solid #1e293b",
+                  }}
+                >
+                  <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                    Investigation Department:
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "#a78bfa",
+                      background: "rgba(167, 139, 250, 0.15)",
+                      padding: "2px 8px",
+                      borderRadius: 4,
+                    }}
+                  >
+                    COMPLETED
+                  </span>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#0c1524", padding: "10px 14px", borderRadius: 8, border: "1px solid #1e293b" }}>
-                  <span style={{ fontSize: 12, color: "#94a3b8" }}>Correlated Detection Alert:</span>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#27d7a5", background: "rgba(39, 215, 165, 0.15)", padding: "2px 8px", borderRadius: 4 }}>RESOLVED</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    background: "#0c1524",
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    border: "1px solid #1e293b",
+                  }}
+                >
+                  <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                    Correlated Detection Alert:
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "#27d7a5",
+                      background: "rgba(39, 215, 165, 0.15)",
+                      padding: "2px 8px",
+                      borderRadius: 4,
+                    }}
+                  >
+                    RESOLVED
+                  </span>
                 </div>
 
                 {resolvedSuccessModal.resolution_summary && (
-                  <div style={{ background: "#0c1524", padding: "12px", borderRadius: 8, border: "1px solid #1e293b", marginTop: 4 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#7493a8", marginBottom: 4 }}>RESOLUTION SUMMARY</div>
-                    <p style={{ margin: 0, fontSize: 12, color: "#cbd5e1", lineHeight: 1.5 }}>{resolvedSuccessModal.resolution_summary}</p>
+                  <div
+                    style={{
+                      background: "#0c1524",
+                      padding: "12px",
+                      borderRadius: 8,
+                      border: "1px solid #1e293b",
+                      marginTop: 4,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: "#7493a8",
+                        marginBottom: 4,
+                      }}
+                    >
+                      RESOLUTION SUMMARY
+                    </div>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 12,
+                        color: "#cbd5e1",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {resolvedSuccessModal.resolution_summary}
+                    </p>
                   </div>
                 )}
               </div>
@@ -2564,7 +2793,9 @@ function Incidents() {
                 onClick={() => {
                   const incId = resolvedSuccessModal.incident_id;
                   setResolvedSuccessModal(null);
-                  navigate(`/investigation?search=${encodeURIComponent(incId)}`);
+                  navigate(
+                    `/investigation?search=${encodeURIComponent(incId)}`,
+                  );
                 }}
               >
                 View in Investigation Department ↗
@@ -2572,7 +2803,11 @@ function Incidents() {
               <button
                 type="button"
                 className="action-button"
-                style={{ background: "#11382f", color: "#27d7a5", borderColor: "#27d7a5" }}
+                style={{
+                  background: "#11382f",
+                  color: "#27d7a5",
+                  borderColor: "#27d7a5",
+                }}
                 onClick={() => setResolvedSuccessModal(null)}
               >
                 Close & Return
@@ -2583,7 +2818,10 @@ function Incidents() {
       )}
 
       {closeModalOpen && selectedIncident && (
-        <div className="soc-modal-backdrop" onClick={() => setCloseModalOpen(false)}>
+        <div
+          className="soc-modal-backdrop"
+          onClick={() => setCloseModalOpen(false)}
+        >
           <div className="soc-modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="soc-modal-header">
               <div className="soc-modal-title">
@@ -2603,8 +2841,17 @@ function Incidents() {
                 <div className="soc-modal-label" style={{ marginBottom: 6 }}>
                   Resolution Summary
                 </div>
-                <p style={{ fontSize: 11, color: "#7493a8", margin: "0 0 10px", lineHeight: 1.5 }}>
-                  This resolution summary will be permanently archived with the incident case. It is pre-filled with the Analyst Conclusion from the SOC investigation.
+                <p
+                  style={{
+                    fontSize: 11,
+                    color: "#7493a8",
+                    margin: "0 0 10px",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  This resolution summary will be permanently archived with the
+                  incident case. It is pre-filled with the Analyst Conclusion
+                  from the SOC investigation.
                 </p>
                 <textarea
                   className="soc-modal-textarea"
@@ -2627,7 +2874,11 @@ function Incidents() {
               <button
                 type="button"
                 className="action-button"
-                style={{ background: "#11382f", color: "#27d7a5", borderColor: "#27d7a5" }}
+                style={{
+                  background: "#11382f",
+                  color: "#27d7a5",
+                  borderColor: "#27d7a5",
+                }}
                 onClick={() => void handleConfirmClose()}
                 disabled={actionLoading}
               >
@@ -2639,7 +2890,10 @@ function Incidents() {
       )}
 
       {escalateModalOpen && selectedIncident && (
-        <div className="soc-modal-backdrop" onClick={() => setEscalateModalOpen(false)}>
+        <div
+          className="soc-modal-backdrop"
+          onClick={() => setEscalateModalOpen(false)}
+        >
           <div className="soc-modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="soc-modal-header">
               <div className="soc-modal-title">
@@ -2664,12 +2918,24 @@ function Incidents() {
                   value={escalationReason}
                   onChange={(e) => setEscalationReason(e.target.value)}
                 >
-                  <option value="Critical Asset Compromised - Priority Escalation">Critical Asset Compromised - Priority Escalation</option>
-                  <option value="Active Malicious Infiltration / Data Exfiltration">Active Malicious Infiltration / Data Exfiltration</option>
-                  <option value="Senior Tier-3 / SOC Lead Intervention Required">Senior Tier-3 / SOC Lead Intervention Required</option>
-                  <option value="SLA Breach - Uncontained Threat Actor">SLA Breach - Uncontained Threat Actor</option>
-                  <option value="Suspected APT / Lateral Movement Activity">Suspected APT / Lateral Movement Activity</option>
-                  <option value="Custom Analyst Rationale">Custom Analyst Rationale</option>
+                  <option value="Critical Asset Compromised - Priority Escalation">
+                    Critical Asset Compromised - Priority Escalation
+                  </option>
+                  <option value="Active Malicious Infiltration / Data Exfiltration">
+                    Active Malicious Infiltration / Data Exfiltration
+                  </option>
+                  <option value="Senior Tier-3 / SOC Lead Intervention Required">
+                    Senior Tier-3 / SOC Lead Intervention Required
+                  </option>
+                  <option value="SLA Breach - Uncontained Threat Actor">
+                    SLA Breach - Uncontained Threat Actor
+                  </option>
+                  <option value="Suspected APT / Lateral Movement Activity">
+                    Suspected APT / Lateral Movement Activity
+                  </option>
+                  <option value="Custom Analyst Rationale">
+                    Custom Analyst Rationale
+                  </option>
                 </select>
               </div>
 
@@ -2686,8 +2952,22 @@ function Incidents() {
                 />
               </div>
 
-              <div style={{ background: "#141c28", padding: "10px 14px", borderRadius: 8, border: "1px solid #1f334a", fontSize: 11, color: "#8aa5b9" }}>
-                <span>Escalation will set Priority to <strong style={{ color: "#ff8d8d" }}>CRITICAL</strong>, increment the escalation level, and log an audit event to PostgreSQL.</span>
+              <div
+                style={{
+                  background: "#141c28",
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  border: "1px solid #1f334a",
+                  fontSize: 11,
+                  color: "#8aa5b9",
+                }}
+              >
+                <span>
+                  Escalation will set Priority to{" "}
+                  <strong style={{ color: "#ff8d8d" }}>CRITICAL</strong>,
+                  increment the escalation level, and log an audit event to
+                  PostgreSQL.
+                </span>
               </div>
             </div>
             <div className="soc-modal-footer">
@@ -2702,7 +2982,11 @@ function Incidents() {
               <button
                 type="button"
                 className="action-button"
-                style={{ background: "#3d1419", color: "#ff8d8d", borderColor: "#7a2a33" }}
+                style={{
+                  background: "#3d1419",
+                  color: "#ff8d8d",
+                  borderColor: "#7a2a33",
+                }}
                 onClick={() => void handleConfirmEscalate()}
                 disabled={actionLoading}
               >
@@ -2738,8 +3022,16 @@ function Incidents() {
               </button>
             </div>
             <div className="soc-modal-body">
-              <p style={{ margin: "0 0 10px", fontSize: "12px", color: "#94a3b8" }}>
-                Document triage observations or containment actions. This note will be recorded in the audit trail and attached to this incident.
+              <p
+                style={{
+                  margin: "0 0 10px",
+                  fontSize: "12px",
+                  color: "#94a3b8",
+                }}
+              >
+                Document triage observations or containment actions. This note
+                will be recorded in the audit trail and attached to this
+                incident.
               </p>
               <textarea
                 className="soc-modal-textarea"
@@ -2764,7 +3056,11 @@ function Incidents() {
               <button
                 type="button"
                 className="action-button"
-                style={{ background: "#0e3b56", color: "#38bdf8", borderColor: "#38bdf8" }}
+                style={{
+                  background: "#0e3b56",
+                  color: "#38bdf8",
+                  borderColor: "#38bdf8",
+                }}
                 onClick={() => void handleConfirmAddNote()}
                 disabled={actionLoading || !incidentNoteText.trim()}
               >

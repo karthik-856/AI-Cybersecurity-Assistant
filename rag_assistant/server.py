@@ -1,13 +1,14 @@
 import os
 from pathlib import Path
 from typing import Optional, List, Dict, Any
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header, Depends
+import secrets
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from config import (
+from rag_assistant.config import (
     SERVER_HOST,
     SERVER_PORT,
     CHAT_MODEL,
@@ -18,8 +19,8 @@ from config import (
     COLLECTION_NAME,
     FALLBACK_RESPONSE,
 )
-from rag import RAGPipeline
-from ingest import ingest_document, ingest_documents
+from rag_assistant.rag import RAGPipeline
+from rag_assistant.ingest import ingest_document, ingest_documents
 
 app = FastAPI(
     title="ZUKA Operations RAG Assistant API",
@@ -112,8 +113,13 @@ def chat_endpoint(req: ChatRequest):
 
 
 @app.post("/api/ingest")
-def trigger_ingest(req: IngestRequest):
+def trigger_ingest(req: IngestRequest, authorization: str | None = Header(default=None)):
     """Re-ingest the canonical knowledge sources, or one explicitly selected file."""
+    expected = os.environ.get("RAG_ADMIN_TOKEN", "")
+    if not expected or not authorization or not secrets.compare_digest(authorization, "Bearer " + expected):
+        raise HTTPException(status_code=403, detail="Administrator access is required.")
+    if req.file_path and Path(req.file_path).resolve() not in {Path(path).resolve() for path in DEFAULT_KB_PATHS}:
+        raise HTTPException(status_code=400, detail="Select an approved knowledge source.")
     try:
         if req.file_path:
             ingest_res = ingest_document(
@@ -126,7 +132,8 @@ def trigger_ingest(req: IngestRequest):
                 force_reload=req.force_reload,
             )
         # Refresh pipeline collection handle
-        pipeline.collection = pipeline.client.get_collection(name=COLLECTION_NAME)
+        from rag_assistant.vector_index import VectorIndex
+        pipeline.collection = VectorIndex(CHROMA_PERSIST_DIR, COLLECTION_NAME)
         return ingest_res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

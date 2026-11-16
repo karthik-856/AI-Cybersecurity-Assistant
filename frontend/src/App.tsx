@@ -12,117 +12,78 @@ const NetworkMonitor = lazy(() => import("./pages/network/NetworkMonitor"));
 const Databases = lazy(() => import("./pages/database/Databases"));
 const AlertsPage = lazy(() => import("./pages/alerts/Alerts"));
 const IncidentsPage = lazy(() => import("./pages/incidents/Incidents"));
-const InvestigationPage = lazy(() => import("./pages/investigation/Investigation"));
+const InvestigationPage = lazy(
+  () => import("./pages/investigation/Investigation"),
+);
 const ReportsPage = lazy(() => import("./pages/reports/Reports"));
 const Settings = lazy(() => import("./pages/settings/Settings"));
-const DefenseDepartment = lazy(() => import("./pages/defense/DefenseDepartment"));
-
+const DefenseDepartment = lazy(
+  () => import("./pages/defense/DefenseDepartment"),
+);
 
 function App() {
   return (
-    <Suspense fallback={<div role="status" aria-live="polite" style={{ padding: 24 }}>Loading page…</div>}>
-    <Routes>
-      {/* =================================================
+    <Suspense
+      fallback={
+        <div role="status" aria-live="polite" style={{ padding: 24 }}>
+          Loading page…
+        </div>
+      }
+    >
+      <Routes>
+        {/* =================================================
           PUBLIC ROUTES
       ================================================= */}
 
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+        <Route path="/login" element={<Login />} />
 
-      <Route
-        path="/register"
-        element={<Register />}
-      />
+        <Route path="/register" element={<Register />} />
 
-      {/* =================================================
+        {/* =================================================
           PROTECTED SOC ROUTES
       ================================================= */}
 
-      <Route element={<ProtectedRoute />}>
-        <Route element={<SocLayout />}>
-          {/* Accessible to VIEWER, SOC_ANALYST, and ADMIN */}
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<SocLayout />}>
+            {/* Accessible to VIEWER, SOC_ANALYST, and ADMIN */}
+            <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route
-            path="/network-monitor"
-            element={<NetworkMonitor />}
-          />
+            <Route path="/network-monitor" element={<NetworkMonitor />} />
+            <Route path="/settings" element={<Settings />} />
 
-          {/* Operational routes: ADMIN and SOC_ANALYST only */}
-          <Route element={<ProtectedRoute allowedRoles={["ADMIN", "SOC_ANALYST"]} />}>
+            {/* Operational routes: ADMIN and SOC_ANALYST only */}
             <Route
-              path="/alerts"
-              element={<AlertsPage />}
-            />
-            <Route
-              path="/incidents"
-              element={<IncidentsPage />}
-            />
-            <Route
-              path="/defense"
-              element={<DefenseDepartment />}
-            />
-            <Route
-              path="/investigation"
-              element={<InvestigationPage />}
-            />
-            <Route
-              path="/reports"
-              element={<ReportsPage />}
-            />
-            <Route
-              path="/settings"
-              element={<Settings />}
-            />
-          </Route>
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN", "SOC_ANALYST"]} />
+              }
+            >
+              <Route path="/alerts" element={<AlertsPage />} />
+              <Route path="/incidents" element={<IncidentsPage />} />
+              <Route path="/defense" element={<DefenseDepartment />} />
+              <Route path="/investigation" element={<InvestigationPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+            </Route>
 
-          {/* Admin only: User Management and Database Center */}
-          <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-            <Route
-              path="/databases"
-              element={<Databases />}
-            />
-            <Route
-              path="/users"
-              element={<Users />}
-            />
+            {/* Admin only: User Management and Database Center */}
+            <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+              <Route path="/databases" element={<Databases />} />
+              <Route path="/users" element={<Users />} />
+            </Route>
           </Route>
         </Route>
-      </Route>
 
-      {/* =================================================
+        {/* =================================================
           DEFAULT ROUTE
       ================================================= */}
 
-      <Route
-        path="/"
-        element={
-          <Navigate
-            to="/dashboard"
-            replace
-          />
-        }
-      />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      {/* =================================================
+        {/* =================================================
           UNKNOWN ROUTES
       ================================================= */}
 
-      <Route
-        path="*"
-        element={
-          <Navigate
-            to="/dashboard"
-            replace
-          />
-        }
-      />
-    </Routes>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
     </Suspense>
   );
 }

@@ -1,3 +1,4 @@
+from backend.app.core.time import utc_now
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
@@ -23,13 +24,13 @@ class AuthSession(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=utc_now,
         nullable=False,
     )
 
     last_seen_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=utc_now,
         nullable=False,
     )
 

@@ -1,4 +1,6 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
+from rag_assistant.config import FALLBACK_RESPONSE
 
 import logging
 logger = logging.getLogger(__name__)
@@ -319,8 +321,8 @@ def tool_investigate_incident(db: Session, incident_id: str, user: User) -> dict
             investigation_id=f"INV-{uuid4().hex[:8].upper()}",
             incident_id=inc.incident_id,
             status="IN_PROGRESS",
-            started_at=datetime.utcnow(),
-            created_at=datetime.utcnow(),
+            started_at=utc_now(),
+            created_at=utc_now(),
         )
         db.add(inv)
         db.flush()
@@ -328,7 +330,7 @@ def tool_investigate_incident(db: Session, incident_id: str, user: User) -> dict
     else:
         if inv.status in ["NOT_STARTED", "PENDING"]:
             inv.status = "IN_PROGRESS"
-            inv.started_at = datetime.utcnow()
+            inv.started_at = utc_now()
 
     # Update incident status to INVESTIGATING if currently OPEN or ACKNOWLEDGED
     if inc.status in ["OPEN", "ACKNOWLEDGED"]:
@@ -416,13 +418,13 @@ def tool_add_note(db: Session, incident_id: str, note_text: str, user: User) -> 
             investigation_id=f"INV-{uuid4().hex[:8].upper()}",
             incident_id=inc.incident_id,
             status="IN_PROGRESS",
-            started_at=datetime.utcnow(),
-            created_at=datetime.utcnow(),
+            started_at=utc_now(),
+            created_at=utc_now(),
         )
         db.add(inv)
         db.flush()
 
-    timestamp_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    timestamp_str = utc_now().strftime("%Y-%m-%d %H:%M:%S UTC")
     formatted_entry = f"[{timestamp_str} | Analyst: {user.username}]\n{note_text.strip()}"
 
     if inv.analyst_notes:
@@ -605,12 +607,12 @@ def tool_resolve_incident(db: Session, incident_id: str, summary: str | None, us
     conclusion_text = summary or (inv.conclusion if inv and inv.conclusion else "Resolved by SOC Analyst")
 
     inc.status = "RESOLVED"
-    inc.resolved_at = datetime.utcnow()
+    inc.resolved_at = utc_now()
     inc.resolution_summary = conclusion_text
 
     if inv and inv.status != "COMPLETED":
         inv.status = "COMPLETED"
-        inv.completed_at = datetime.utcnow()
+        inv.completed_at = utc_now()
         if not inv.conclusion:
             inv.conclusion = conclusion_text
 
@@ -663,7 +665,7 @@ def tool_close_incident(db: Session, incident_id: str, user: User) -> dict[str, 
         }
 
     inc.status = "CLOSED"
-    inc.closed_at = datetime.utcnow()
+    inc.closed_at = utc_now()
 
     action_rec = log_analyst_action_entry(
         db=db,
@@ -1120,7 +1122,7 @@ def tool_count_entities(
             query = query.where(func.upper(Alert.status) == status.upper())
             filters.append(f"status: `{status.upper()}`")
         if timeframe == "today":
-            today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+            today_start = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
             query = query.where(Alert.detected_at >= today_start)
             filters.append("detected today")
 
@@ -1159,7 +1161,7 @@ def tool_count_entities(
             query = query.where(func.upper(Incident.status) == status.upper())
             filters.append(f"status: `{status.upper()}`")
         if timeframe == "today":
-            today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+            today_start = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
             query = query.where(Incident.created_at >= today_start)
             filters.append("created today")
 
@@ -1467,13 +1469,13 @@ def tool_answer_from_knowledge_base(question: str) -> dict[str, Any]:
     Answer operational, website, and project questions strictly based on the ChromaDB RAG vector store.
     Adheres strictly to the Zero Hallucination policy:
     If the context does not contain the answer, replies exactly:
-    "I don't have that information. Please contact <chitlakarthik66@gmail.com>."
+    FALLBACK_RESPONSE
     """
     from backend.app.zuka_assistant.rag_engine import query_rag
 
     try:
         rag_res = query_rag(question)
-        answer = rag_res.get("formatted_answer") or rag_res.get("answer") or "I don't have that information. Please contact <chitlakarthik66@gmail.com>."
+        answer = rag_res.get("formatted_answer") or rag_res.get("answer") or FALLBACK_RESPONSE
         sources = rag_res.get("sources", [])
         is_fallback = rag_res.get("is_fallback", False)
 
@@ -1499,7 +1501,7 @@ def tool_answer_from_knowledge_base(question: str) -> dict[str, Any]:
         logger.error(f"[ZUKA_TOOLS] RAG error: {e}")
         return {
             "success": False,
-            "reply": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+            "reply": FALLBACK_RESPONSE,
             "card": None,
         }
 

@@ -1,4 +1,5 @@
 """Regression coverage for application operations and publication fixes."""
+from backend.app.core.time import utc_now
 from datetime import datetime
 from uuid import uuid4
 
@@ -23,7 +24,8 @@ def test_plaintext_passwords_are_rejected():
 
 
 def test_existing_bcrypt_hashes_remain_supported():
-    hashed = pwd_context.hash("Test-Password1!", scheme="bcrypt")
+    from passlib.hash import bcrypt
+    hashed = bcrypt.hash("Test-Password1!")
     assert verify_password("Test-Password1!", hashed)
 
 
@@ -85,7 +87,7 @@ def test_registration_cannot_grant_analyst_privileges(client, monkeypatch):
 def investigation_ids():
     suffix = uuid4().hex[:12]
     with SessionLocal() as db:
-        alert = Alert(alert_id=f"TEST-ALT-{suffix}", detected_at=datetime.utcnow(),
+        alert = Alert(alert_id=f"TEST-ALT-{suffix}", detected_at=utc_now(),
                       predicted_class="DOS", confidence=0.99, severity="HIGH", status="OPEN")
         db.add(alert)
         db.flush()

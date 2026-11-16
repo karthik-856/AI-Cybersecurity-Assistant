@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
-import shap
+import xgboost as xgb
 
 from backend.app.detection.model_service import zuka_model_service
 
@@ -17,9 +16,7 @@ class ZukaXAIService:
         zuka_model_service.load()
 
         if self._explainer is None:
-            self._explainer = shap.TreeExplainer(
-                zuka_model_service._model
-            )
+            self._explainer = zuka_model_service._model
 
         return self._explainer
 
@@ -40,17 +37,16 @@ class ZukaXAIService:
             for feature in features
         }
 
-        dataframe = pd.DataFrame(
-            [row],
-            columns=features,
-        )
+        dataframe = np.asarray([[row[name] for name in features]], dtype=np.float32)
 
         explainer = self._get_explainer()
 
-        shap_values = explainer.shap_values(
-            dataframe,
-            check_additivity=False,
-        )
+        # XGBoost's native TreeSHAP reuses the loaded trees instead of creating
+        # a second full model in memory. The final column is the bias term.
+        shap_values = explainer.predict(
+            xgb.DMatrix(dataframe, feature_names=features), pred_contribs=True, strict_shape=True,
+            iteration_range=zuka_model_service.iteration_range,
+        )[:, :, :-1].transpose(0, 2, 1)
 
         class_id = int(
             prediction["predicted_class_id"]
@@ -135,7 +131,7 @@ class ZukaXAIService:
                 {
                     "feature": features[index],
                     "feature_value": float(
-                        dataframe.iloc[0, index]
+                        dataframe[0, index]
                     ),
                     "shap_value": shap_value,
                     "direction": (

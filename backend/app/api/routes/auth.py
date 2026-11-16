@@ -1,3 +1,4 @@
+from backend.app.core.time import utc_now
 from datetime import datetime, timedelta
 import hashlib
 import hmac
@@ -60,7 +61,7 @@ TWO_FACTOR_CHALLENGE = "2FA_LOGIN_CHALLENGE"
 
 
 def _utcnow() -> datetime:
-    return datetime.utcnow()
+    return utc_now()
 
 
 def _create_auth_session(
@@ -620,7 +621,7 @@ def login(
         challenge_payload = {
             "sub": str(user.id),
             "purpose": TWO_FACTOR_CHALLENGE,
-            "exp": datetime.utcnow() + timedelta(
+            "exp": utc_now() + timedelta(
                 minutes=getattr(settings, "otp_expiry_minutes", 10)
             ),
         }
@@ -1328,3 +1329,18 @@ def change_password(
     return MessageResponse(
         message="Password changed successfully.",
     )
+
+@router.post("/logout", response_model=MessageResponse)
+def logout(request: Request, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    session_id = _get_current_session_id(request)
+    session = db.scalar(select(AuthSession).where(AuthSession.session_id == session_id, AuthSession.user_id == current_user.id))
+    if session:
+        session.revoked_at = _utcnow()
+        db.commit()
+    return MessageResponse(message="Signed out successfully.")
+
+
+@router.get("/features")
+def authentication_features():
+    email_available = bool(settings.smtp_host and settings.smtp_username and settings.smtp_password and settings.smtp_from_email)
+    return {"registration": email_available, "password_recovery": email_available, "two_factor": email_available}

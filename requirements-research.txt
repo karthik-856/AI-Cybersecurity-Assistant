@@ -1,0 +1,7 @@
+# Optional notebook/training dependencies. The production app uses native
+# XGBoost predictions/TreeSHAP and does not import this research toolchain.
+-r requirements.txt
+pandas>=2.2.0
+scikit-learn>=1.4.0
+shap>=0.45.0
+joblib>=1.4.0
