@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import {
   Activity,
@@ -139,7 +140,7 @@ function getHeaders(): HeadersInit {
 }
 
 async function apiGet<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await sessionFetch(`${API_BASE_URL}${endpoint}`, {
     method: "GET",
     headers: getHeaders(),
   });

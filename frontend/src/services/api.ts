@@ -1,3 +1,4 @@
+import { sessionFetch } from "./sessionFetch";
 import { getErrorMessage } from "./errors";
 import { API_BASE_URL } from "./config";
 
@@ -99,16 +100,10 @@ async function authenticatedFetch(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(url, {
+  const response = await sessionFetch(url, {
     ...options,
     headers,
   });
-
-  if (response.status === 401) {
-    localStorage.removeItem("zuka_access_token");
-    localStorage.removeItem("zuka_user");
-    sessionStorage.removeItem("zuka_chat_history");
-  }
 
   return response;
 }
@@ -121,7 +116,7 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   }, 8000);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await sessionFetch(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1137,7 +1132,7 @@ export interface PushSubscriptionPayload {
 }
 
 export async function getPushPublicKey(): Promise<PushPublicKeyResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/push/public-key`, {
+  const response = await sessionFetch(`${API_BASE_URL}/api/push/public-key`, {
     headers: {
       Accept: "application/json",
     },

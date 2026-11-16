@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -175,11 +176,11 @@ function NetworkMonitor() {
       }
 
       const [eventsResponse, statsResponse] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/network/events?limit=1000`, {
+        sessionFetch(`${API_BASE_URL}/api/network/events?limit=1000`, {
           headers,
         }),
 
-        fetch(`${API_BASE_URL}/api/network/stats`, {
+        sessionFetch(`${API_BASE_URL}/api/network/stats`, {
           headers,
         }),
       ]);

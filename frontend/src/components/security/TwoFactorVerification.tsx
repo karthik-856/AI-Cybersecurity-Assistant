@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { useCapabilities } from "../../services/capabilities";
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ type Action = "enable" | "disable";
 
 async function requestJson(path: string, options: RequestInit = {}) {
   const token = localStorage.getItem("zuka_access_token");
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await sessionFetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
       Accept: "application/json",

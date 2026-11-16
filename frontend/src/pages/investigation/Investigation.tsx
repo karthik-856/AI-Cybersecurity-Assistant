@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import { formatShortDateTime } from "../../utils/datetime";
 
@@ -102,7 +103,7 @@ function Investigation() {
       const headers: HeadersInit = {};
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const res = await fetch(
+      const res = await sessionFetch(
         `/api/reports/investigations/${encodeURIComponent(selected.investigation_id)}/pdf`,
         {
           headers,

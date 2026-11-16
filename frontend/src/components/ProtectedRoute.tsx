@@ -1,4 +1,19 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useSyncExternalStore } from "react";
+import { SESSION_EXPIRED_EVENT } from "../services/sessionFetch";
+
+function subscribeToSession(listener: () => void) {
+  window.addEventListener(SESSION_EXPIRED_EVENT, listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    window.removeEventListener(SESSION_EXPIRED_EVENT, listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+function getSessionToken() {
+  return localStorage.getItem("zuka_access_token");
+}
 
 interface ProtectedRouteProps {
   allowedRoles?: string[];
@@ -6,16 +21,10 @@ interface ProtectedRouteProps {
 
 function ProtectedRoute({ allowedRoles }: ProtectedRouteProps = {}) {
   const location = useLocation();
-  const token = localStorage.getItem("zuka_access_token");
+  const token = useSyncExternalStore(subscribeToSession, getSessionToken);
 
   if (!token) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{ from: location.pathname }}
-      />
-    );
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
   if (allowedRoles && allowedRoles.length > 0) {
@@ -31,12 +40,7 @@ function ProtectedRoute({ allowedRoles }: ProtectedRouteProps = {}) {
     }
 
     if (!allowedRoles.includes(role)) {
-      return (
-        <Navigate
-          to="/dashboard"
-          replace
-        />
-      );
+      return <Navigate to="/dashboard" replace />;
     }
   }
 

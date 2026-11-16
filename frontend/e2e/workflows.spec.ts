@@ -92,6 +92,19 @@ test("viewer cannot reach administration", async ({ page }) => {
   await expect(page).toHaveURL(/\/settings$/);
 });
 
+test("revoked sessions return to sign-in", async ({ page, request }) => {
+  await signIn(page);
+  const token = await page.evaluate(() =>
+    localStorage.getItem("zuka_access_token"),
+  );
+  const response = await request.post("/api/auth/logout", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(response.status()).toBe(200);
+  await page.reload();
+  await expect(page).toHaveURL(/\/login$/);
+});
+
 test("mobile navigation and screens fit the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await signIn(page);

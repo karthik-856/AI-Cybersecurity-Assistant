@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
@@ -49,14 +50,12 @@ function restoreHistory(): ChatMessage[] {
             !m.isStreaming,
         );
       if (messages.length)
-        return messages
-          .slice(-50)
-          .map((m) => ({
-            id: text(m.id),
-            sender: m.sender as "user" | "assistant",
-            text: text(m.text),
-            timestamp: text(m.timestamp),
-          }));
+        return messages.slice(-50).map((m) => ({
+          id: text(m.id),
+          sender: m.sender as "user" | "assistant",
+          text: text(m.text),
+          timestamp: text(m.timestamp),
+        }));
     }
   } catch {
     /* History is optional when browser storage is unavailable. */
@@ -213,7 +212,7 @@ export function ZukaAssistant() {
       let streamedText = "";
       try {
         const token = localStorage.getItem("zuka_access_token");
-        const response = await fetch(
+        const response = await sessionFetch(
           `${API_BASE_URL}/api/zuka-assistant/chat/stream`,
           {
             method: "POST",

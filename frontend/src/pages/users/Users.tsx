@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
@@ -96,7 +97,7 @@ function Users() {
     const token = localStorage.getItem("zuka_access_token");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+      const response = await sessionFetch(`${API_BASE_URL}/api/admin/users`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -190,7 +191,7 @@ function Users() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+      const response = await sessionFetch(`${API_BASE_URL}/api/admin/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -245,7 +246,7 @@ function Users() {
     }
 
     try {
-      const response = await fetch(
+      const response = await sessionFetch(
         `${API_BASE_URL}/api/admin/users/${userId}/role`,
         {
           method: "PATCH",
@@ -291,7 +292,7 @@ function Users() {
     }
 
     try {
-      const response = await fetch(
+      const response = await sessionFetch(
         `${API_BASE_URL}/api/admin/users/${userId}/status`,
         {
           method: "PATCH",
@@ -359,7 +360,7 @@ function Users() {
     }
 
     try {
-      const response = await fetch(
+      const response = await sessionFetch(
         `${API_BASE_URL}/api/admin/users/${userToDelete.id}`,
         {
           method: "DELETE",

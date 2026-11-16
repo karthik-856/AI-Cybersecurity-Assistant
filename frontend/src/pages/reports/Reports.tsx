@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -178,7 +179,7 @@ function reportTitle(type: ReportType): string {
 }
 
 async function apiFetch<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await sessionFetch(`${API_BASE}${path}`, {
     headers: authHeaders(),
   });
   if (!response.ok) {
@@ -771,7 +772,7 @@ export default function Reports() {
         selectedAlert,
         selectedInvestigation,
       );
-      const response = await fetch(`${API_BASE}${endpoint}`, {
+      const response = await sessionFetch(`${API_BASE}${endpoint}`, {
         headers: authHeaders(),
       });
 
@@ -843,7 +844,7 @@ export default function Reports() {
         )}/pdf`;
       }
 
-      const response = await fetch(`${API_BASE}${endpoint}`, {
+      const response = await sessionFetch(`${API_BASE}${endpoint}`, {
         headers: authHeaders(),
       });
 
@@ -881,10 +882,13 @@ export default function Reports() {
       return;
     }
     try {
-      await fetch(`${API_BASE}/api/reports/${encodeURIComponent(reportId)}`, {
-        method: "DELETE",
-        headers: authHeaders(),
-      });
+      await sessionFetch(
+        `${API_BASE}/api/reports/${encodeURIComponent(reportId)}`,
+        {
+          method: "DELETE",
+          headers: authHeaders(),
+        },
+      );
       if (viewingReport?.report_id === reportId) {
         setViewingReport(null);
       }

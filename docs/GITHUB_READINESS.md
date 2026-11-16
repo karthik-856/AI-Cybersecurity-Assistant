@@ -1,131 +1,97 @@
-# GitHub readiness review — 16 November 2026
+# Production and GitHub readiness — 16 November 2026
 
-**Current review:** the repository is public. Production hardening and free-tier
-deployment verification are in progress; the original findings below are
-retained as historical context until the final checks complete. Test success is not
-a claim that every possible operation, deployment, or attack scenario was tested.
+The repository is public and the production hardening pull request is merged.
+The application passes the documented functional checks and is prepared for a
+free demonstration deployment. Cloud publication and real-account validation
+remain pending until the private hosting inputs are submitted.
 
-## Current hardening changes
+## Verified evidence
 
-- Frontend lint now passes with zero warnings allowed; the original 78 errors
-  and seven warnings were fixed without disabling the rules. Production builds
-  pass. Browser/container CI now checks desktop and mobile routes.
-- Chroma was replaced by a local SQLite knowledge index with deterministic text
-  vectors. Reviewed knowledge answers and database operations need no external
-  model. Unknown questions return a fallback; optional generation is disabled in
-  the free deployment configuration.
-- Production authentication has persistent, atomic PostgreSQL throttling.
-  Logout revokes the server session. Push destinations are restricted and a
-  subscription cannot be reassigned to a different user.
-- Production secrets are validated, API responses are not cached, security
-  headers are applied, and the built website and API share one origin.
-- Fabricated reports and default containment/escalation claims were removed.
-  UI text distinguishes replay data and recorded defense plans from external
-  device enforcement. All roles can manage their own Settings.
-- Native CPU inference and TreeSHAP share the loaded model. An independent
-  comparison against XGBClassifier matched all 845 probabilities across the
-  65-row sample exactly after preserving early stopping.
-- The current installed Python dependency audit reports zero known advisories.
-  A container build and browser run with a 512 MiB limit are required before
-  accepting the free-server configuration. Cloud publication is also blocked
-  until the hosting/database account connections work.
+[GitHub check run](https://github.com/karthik-856/AI-Cybersecurity-Assistant/actions/runs/43899761998)
+for production hardening commit `90dc8c1` passed all three jobs:
 
-## Original publication results (superseded where noted above)
+- **190 backend tests passed** on Linux/Python 3.12 and PostgreSQL 16. There was
+  one upstream Passlib deprecation warning about Python's `crypt` module; the
+  runtime is pinned to Python 3.12. Local safety tests also pass with warnings
+  treated as errors.
+- **Five browser tests passed**, covering all ten main routes, assistant answers
+  and clearing history, settings saving, logout session invalidation, viewer
+  restrictions, and mobile navigation/layout. A further revoked-session redirect
+  regression is being added after visual review; use the latest check run for
+  its final result.
+- The Docker image builds and runs under a **512 MiB memory limit**. Its smoke
+  checks exercise the actual built website, PostgreSQL initialization, login,
+  detection, native TreeSHAP, PDF generation, and the offline knowledge assistant.
+- Frontend TypeScript/production build and strict ESLint pass. The original
+  **78 errors and seven warnings** were fixed without disabling rules.
+- Both installed Python dependencies and all npm dependencies report **zero
+  known security advisories** at review time. Audits do not establish absence
+  of unknown vulnerabilities.
+- An independent comparison against the original XGBClassifier wrapper matched
+  **all 845 probabilities exactly** across the 65-row sample. Native inference
+  preserves the trained early-stopping point. This is a functional regression
+  check, not a new model accuracy or robustness evaluation.
 
-- Backend: **171 tests passed**, zero failures/skips, in 168.62 seconds on
-  Windows/Python 3.12 with an isolated PostgreSQL 18 database. There were 217
-  warnings, primarily deprecated naive UTC timestamp helpers.
-- Authentication checks cover every API operation marked as protected in the
-  OpenAPI schema. Functional cases include login, email verification, email
-  two-factor login, password recovery/reuse rejection, session revocation,
-  role checks, database record redaction, defense notes, reports/PDF, incident
-  resolution rules, and assistant command parsing/database responses.
-- The compressed production model loads independently of the excluded raw
-  model. Predictions execute on examples from all 13 sample classes. SHAP and
-  replay execute successfully. These are functional checks, not a new accuracy
-  or robustness evaluation.
-- Database migrations apply on an empty database. `alembic check` detects no
-  missing schema changes. All installed Python dependencies are compatible.
-- Python syntax parsed successfully for 157 application/research script files.
-- Frontend TypeScript/production build passes after dependency updates.
-- Live local knowledge integration: 53 chunks indexed into a disposable Chroma
-  store; two project/workflow questions answered with knowledge sources; an
-  unrelated question returned the expected fallback. Models used:
-  `qwen2.5:3b` and `nomic-embed-text` on local Ollama. Three questions are a smoke
-  test, not an exhaustive assistant quality evaluation.
-- npm production dependency audit: **zero known advisories** in the checked
-  installed versions. Compatible updates removed all four originally reported
-  high-severity frontend advisories.
+## Changes
 
-## Fixes made before publication
+Authentication rejects plaintext password records, keeps existing bcrypt hash
+compatibility, and revokes sessions on password changes, resets, and logout.
+Public registration creates VIEWER accounts only; administrators assign roles.
+Persistent atomic PostgreSQL budgets throttle public authentication operations.
+Push destinations are restricted, and subscriptions cannot be reassigned to
+another user. Database Center redacts session, OTP, and push secrets.
 
-- Removed plaintext password fallback, added long-password-safe hashing while
-  retaining existing bcrypt hash compatibility, and revoked active sessions on
-  password changes/resets.
-- Public registration grants VIEWER only. Privileged roles require administrator
-  assignment. Added operational role checks to defense, report mutations,
-  prediction, and replay.
-- Defense mutations validate that the incident exists, the investigation belongs
-  to that incident, and the investigation is still open.
-- Redacted OTP hashes, session identifiers, and push secrets in Database Center.
-- Replaced flagged `python-jose`/`ecdsa` dependencies with PyJWT and locked the
-  Python dependency graph for reproducible installations.
-- Added the missing reports table and investigation workspace migration.
-- Replaced hardcoded browser API loopback URLs with configurable same-origin
-  requests. Fixed container dependency installation for its unprivileged user,
-  included runtime modules, required configured secrets, added migration startup,
-  and corrected optional Ollama configuration.
-- Packaged the required runtime model below GitHub's file-size limit and added
-  a 65-row demonstration dataset. Large research artifacts and local account
-  data remain on the original computer.
-- Added a README, isolated test safeguards, and GitHub Actions checks for backend
-  tests, frontend builds, and production frontend dependency advisories.
+Production requires distinct generated signing/OTP secrets. The built website
+and API share an origin, application deep links work, unknown API routes return
+JSON 404s, and production security/no-cache headers are applied. Migrations and
+role initialization run before server startup; there is no default owner password.
 
-## Original findings and remaining verification
+Chroma and its flagged dependencies were removed. Reviewed project knowledge
+uses local hashed text vectors and an atomic SQLite index. Offline answers and
+record operations need no paid AI API. Unknown questions return a fallback;
+optional generated explanations require a separately configured model service.
+The free deployment disables that optional service.
 
-1. **Resolved — frontend lint:** originally 78 errors and 7 warnings. Findings included effect/state
-   handling, hook dependencies, render purity, loose types, empty handlers, and
-   fast-refresh boundaries. These were reported rather than silenced or globally
-   disabled. CI currently checks compilation/tests, not lint acceptance.
-2. **Resolved — development dependencies:** npm originally reported seven moderate advisories in the
-   TypeScript ESLint/minimatch development toolchain. The offered automatic fix
-   changes the declared toolchain incompatibly, so it was not forced.
-3. **Resolved by removal — Chroma:** the original Python audit reported five entries representing
-   four unique advisories against ChromaDB 1.5.9: PYSEC-2026-311,
-   PYSEC-2026-3814, PYSEC-2026-3815, and PYSEC-2026-3813. The audit lists no fixed
-   versions. These concern Chroma server authorization/code execution. This
-   application uses an embedded persistent client and exposes no Chroma HTTP
-   service, but that narrower use does not establish production safety. Recheck
-   upstream fixes or replace the dependency before approving a deployment.
-4. Docker was unavailable on the review machine. Container changes were inspected
-   and configuration parsed, but images were not built or started locally.
-5. Real SMTP email delivery, real browser/OS push delivery, full browser UI
-   interactions, cloud LLM integrations, load/concurrency, backup recovery, TLS,
-   and real infrastructure integration were not validated. Tests captured emails
-   locally and used disposable data. Configure deployment-wide throttling for
-   public authentication endpoints and review trust/proxy settings.
-6. Research data/model usage rights must be checked before public redistribution.
-   No project-wide license was selected on the owner's behalf. Full raw datasets
-   and experimental models are intentionally excluded from the source upload.
+Frontend loopback URLs, stale state/effect handling, dead duplicate UI, and
+verbose assistant metadata were removed or corrected. Viewers can access their
+own Settings. Copy identifies dataset replay and recorded defense plans, and
+fabricated reports, status claims, and prefilled containment/escalation assertions
+were removed. Defense records do not enforce external firewall/device changes.
 
-## Publication and evidence
+## Deployment limits and remaining validation
 
-The GitHub snapshot starts a fresh history so ignored databases, large raw data,
-scratch transcripts, and historical local state cannot travel in parent commits.
-The original local `master` branch and its history are retained. Private
-presentation/meeting files, credentials, keys, caches, generated vector indexes,
-temporary outputs, and editor/agent settings are excluded.
+Use [the free deployment guide](FREE_DEPLOYMENT.md). A Neon Free project named
+`zuka-soc` has been created in Frankfurt. The Render Free configuration is
+prepared; database/owner credentials must be entered privately before deployment.
+No public website hostname is claimed as live until that service exists and its
+readiness, login, and UI checks pass.
 
-A staged-file check tests for forbidden local-state files, files at least 95 MiB,
-and common credential patterns. Pattern matching is a limited check, not a
-guarantee that every possible secret has been identified.
+Free services sleep, have compute/storage/transfer limits, and provide no
+always-on SOC availability commitment. A provider subdomain is included; a
+custom `.com` domain is separate. Do not enable a paid upgrade automatically.
 
-Local detailed evidence is under ignored `tmp/review/`: `pytest.xml`, `pytest.log`,
-`frontend-lint-final.json`, `npm-production-audit.json`, `npm-audit-fix.json`,
-`python-audit-final.json`, and `live-rag.json`. These may contain test identities
-and temporary test tokens, so raw logs are not uploaded. Reproduce the checks
-using the README; CI produces a test-results artifact after upload.
+Real SMTP delivery and browser/OS push delivery have not been verified. Email
+registration/recovery/two-factor actions are hidden or disabled without SMTP;
+API email workflows are tested using captured messages. Backup restoration,
+production load/concurrency, regional uptime, and real infrastructure integration
+remain separate operational checks. Keep irreplaceable records backed up.
 
-Review consisted of source inspection, functional/regression testing, dependency
-audits, and live local assistant checks. CodeRabbit was not run because a trusted
-CLI installation was not found on PATH.
+This is a research/demonstration SOC, not a production security appliance. The
+65-row replay sample is not representative evidence of detection accuracy.
+Research dataset/model usage terms require review before redistribution; no
+project-wide license was chosen on the owner's behalf.
+
+## Publication and collaboration
+
+The published snapshot starts a fresh history; original local `master` and its
+large research artifacts remain on the review computer. Credentials, account
+databases, generated indexes, private meeting material, temporary evidence, and
+raw/processed research datasets are excluded. Staged publication checks scan
+for common credential patterns, forbidden local state, and oversized files;
+pattern scanning is limited and cannot identify every possible secret.
+
+[CONTRIBUTING.md](../CONTRIBUTING.md) explains teammate invitations, branches,
+pull requests, and required checks. Source review, tests, audits, and browser
+checks were used. CodeRabbit was unavailable because a trusted CLI installation
+was not found. No claim is made that every possible operation, browser,
+deployment, or attack scenario has been tested.

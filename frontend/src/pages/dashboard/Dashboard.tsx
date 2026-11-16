@@ -1,3 +1,4 @@
+import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import {
   Activity,
@@ -97,9 +98,12 @@ function Dashboard() {
 
   const loadDashboard = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/dashboard/summary`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await sessionFetch(
+        `${API_BASE_URL}/api/dashboard/summary`,
+        {
+          headers: getAuthHeaders(),
+        },
+      );
 
       if (!response.ok) {
         throw new Error(

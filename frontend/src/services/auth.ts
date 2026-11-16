@@ -1,3 +1,4 @@
+import { sessionFetch } from "./sessionFetch";
 import { getErrorMessage } from "./errors";
 import { API_BASE_URL } from "./config";
 
@@ -119,7 +120,7 @@ async function getAuthenticatedJson<T>(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
+    const response = await sessionFetch(`${API_BASE_URL}${path}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -162,7 +163,7 @@ async function postAuthenticatedJson<T>(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
+    const response = await sessionFetch(`${API_BASE_URL}${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -332,7 +333,7 @@ export async function logout(): Promise<void> {
   const token = localStorage.getItem("zuka_access_token");
   try {
     if (token)
-      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      await sessionFetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         signal: AbortSignal.timeout(5000),
