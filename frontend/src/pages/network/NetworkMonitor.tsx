@@ -390,10 +390,7 @@ function NetworkMonitor() {
             <div>
               <h1>Network Monitor</h1>
 
-              <p>
-                Inspect real-time telemetry flows and correlate with SOC
-                intelligence.
-              </p>
+              <p>Inspect recorded network flows and their related alerts.</p>
             </div>
           </div>
         </div>

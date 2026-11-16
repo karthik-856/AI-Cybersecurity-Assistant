@@ -532,7 +532,7 @@ function Databases() {
             <div className="db-kpi-details">
               <span>TOTAL PERSISTED ROWS</span>
               <strong>{overview?.total_records.toLocaleString() ?? "—"}</strong>
-              <small>Across all 17 system tables</small>
+              <small>Across available tables</small>
             </div>
           </div>
 
@@ -554,7 +554,7 @@ function Databases() {
             <div className="db-kpi-details">
               <span>ACTIVE SYSTEM TABLES</span>
               <strong>{overview?.available_tables.length ?? 0} Tables</strong>
-              <small>Fully indexed schemas</small>
+              <small>Available for inspection</small>
             </div>
           </div>
 
@@ -564,7 +564,7 @@ function Databases() {
             </div>
             <div className="db-kpi-details">
               <span>ACTIVE CONNECTIONS</span>
-              <strong>{overview?.active_connections ?? 1} Conns</strong>
+              <strong>{overview?.active_connections ?? "—"} Conns</strong>
               <small>PostgreSQL connection pool</small>
             </div>
           </div>
@@ -577,7 +577,7 @@ function Databases() {
             <div className="db-panel-header">
               <div>
                 <span className="db-panel-eyebrow">PERSISTENCE ENGINE</span>
-                <h3>PostgreSQL Production Engine</h3>
+                <h3>Database status</h3>
               </div>
               <Cpu size={20} className="db-accent-icon" />
             </div>
@@ -594,18 +594,14 @@ function Databases() {
                 </span>
               </div>
               <div className="spec-row">
-                <span>Historical Retention</span>
-                <strong style={{ color: "#19d39d" }}>ACTIVE & ENFORCED</strong>
-              </div>
-              <div className="spec-row">
                 <span>Credential Protection</span>
                 <strong style={{ color: "#38bdf8" }}>
-                  AUTOMATIC HASH SCRUBBING
+                  Sensitive fields hidden
                 </strong>
               </div>
               <div className="spec-row">
                 <span>Data Isolation</span>
-                <strong>STRICT RBAC (ADMIN ACCESS ONLY)</strong>
+                <strong>Administrator access only</strong>
               </div>
             </div>
           </div>
@@ -1076,12 +1072,8 @@ function Databases() {
       <div className="databases-header">
         <div className="header-info">
           <div className="databases-eyebrow">DATABASE OPERATIONS & STORAGE</div>
-          <h1>Database Center & Schema Catalog</h1>
-          <p>
-            Inspect and query PostgreSQL historical tables, audit trails,
-            network telemetry, and machine learning alerts in a high-security
-            operational view.
-          </p>
+          <h1>Database Center</h1>
+          <p>Inspect saved SOC records and account activity.</p>
         </div>
 
         {/* STATUS PILL */}
