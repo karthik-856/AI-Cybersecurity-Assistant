@@ -484,22 +484,22 @@ function Investigation() {
         </div>
 
         <div className="investigation-stat-card">
-          <span>Not Started</span>
+          <span>Not started on page</span>
           <strong>{statistics.notStarted}</strong>
         </div>
 
         <div className="investigation-stat-card active">
-          <span>In Progress</span>
+          <span>In progress on page</span>
           <strong>{statistics.inProgress}</strong>
         </div>
 
         <div className="investigation-stat-card hold">
-          <span>On Hold</span>
+          <span>On hold on page</span>
           <strong>{statistics.onHold}</strong>
         </div>
 
         <div className="investigation-stat-card complete">
-          <span>Completed</span>
+          <span>Completed on page</span>
           <strong>{statistics.completed}</strong>
         </div>
       </section>

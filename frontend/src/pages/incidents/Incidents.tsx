@@ -1577,17 +1577,17 @@ function Incidents() {
         </div>
 
         <div className="incident-kpi">
-          <div className="incident-kpi-label">Active</div>
+          <div className="incident-kpi-label">Active on page</div>
           <div className="incident-kpi-value">{summary.active}</div>
         </div>
 
         <div className="incident-kpi">
-          <div className="incident-kpi-label">Critical</div>
+          <div className="incident-kpi-label">Critical on page</div>
           <div className="incident-kpi-value">{summary.critical}</div>
         </div>
 
         <div className="incident-kpi">
-          <div className="incident-kpi-label">Closed</div>
+          <div className="incident-kpi-label">Closed on page</div>
           <div className="incident-kpi-value">{summary.closed}</div>
         </div>
       </div>
