@@ -15,6 +15,8 @@ The source repository is [public on GitHub](https://github.com/karthik-856/AI-Cy
 quality/security findings, and the limits of verification. This is not a
 production security appliance.
 
+Live demonstration: [zuka-soc.onrender.com](https://zuka-soc.onrender.com).
+
 [Free deployment instructions](docs/FREE_DEPLOYMENT.md) cover the complete
 website/API on Render and a separate Neon PostgreSQL database. Free hosting can
 sleep and has quotas; it does not provide an always-on production SLA.

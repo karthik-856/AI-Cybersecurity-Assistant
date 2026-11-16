@@ -1,5 +1,7 @@
 # Free website and database
 
+Current deployment: [zuka-soc.onrender.com](https://zuka-soc.onrender.com).
+
 Use one **Render Free web service** for the built React website and Python API,
 and one **Neon Free PostgreSQL project** for persistent records. The offline
 assistant needs no paid AI service. Never select a paid plan or attach a card
@@ -43,6 +45,10 @@ that a hostname is live until Render has created it and its checks pass.
 
 The container serves website deep links and API requests on the same origin;
 no separate frontend service, CORS setup, or paid static-site host is needed.
+
+If creating a service from a public repository URL instead of a Blueprint, use
+Render's **Manual Deploy → Deploy latest commit** after GitHub checks pass.
+Automatic Git deployments require the supported provider/Blueprint connection.
 
 ## Optional services and limits
 
