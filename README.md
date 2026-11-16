@@ -2,7 +2,7 @@
 
 A research SOC application with a React dashboard, FastAPI backend, PostgreSQL,
 XGBoost detection, SHAP explanations, incident investigations, reports, and a
-local Ollama knowledge assistant.
+offline project knowledge assistant, with optional Ollama generation.
 
 Detection uses **dataset replay**, not live packet capture. Defense actions record
 simulated containment in the investigation ledger; they do not configure real
@@ -10,10 +10,14 @@ firewalls or quarantine devices.
 
 ## Status
 
-Suitable for private source collaboration and local demonstrations. See
+The source repository is [public on GitHub](https://github.com/karthik-856/AI-Cybersecurity-Assistant). See
 [the readiness review](docs/GITHUB_READINESS.md) for test results, remaining
 quality/security findings, and the limits of verification. This is not a
 production security appliance.
+
+[Free deployment instructions](docs/FREE_DEPLOYMENT.md) cover the complete
+website/API on Render and a separate Neon PostgreSQL database. Free hosting can
+sleep and has quotas; it does not provide an always-on production SLA.
 
 ## Local setup
 
@@ -65,25 +69,28 @@ revoke existing sessions.
 
 ## Local knowledge assistant
 
-Install and start Ollama, then prepare its two models and the knowledge index:
+The default knowledge workflow uses local hashed text vectors and a SQLite index.
+Reviewed project answers, record queries, and guided operations work without a
+paid AI API or a model server. The index is built automatically when needed, or:
 
 ```powershell
-ollama pull qwen2.5:3b
-ollama pull nomic-embed-text
 python -m rag_assistant.ingest
 ```
 
-Set `ZUKA_OLLAMA_MODEL=qwen2.5:3b` in `.env` for the operations assistant. The RAG
-component uses `CHAT_MODEL`, `EMBEDDING_MODEL`, and `OLLAMA_BASE_URL` environment
-variables. Its local Chroma index is generated and excluded from Git. Do not
-expose a Chroma server publicly; unresolved dependency advisories are recorded
-in the review.
+Free deployment sets `ZUKA_LLM_PROVIDER=disabled` and
+`RAG_GENERATION_ENABLED=false`. Unknown knowledge questions return a clear
+fallback. For optional local generation, install Ollama separately, pull your
+chosen model, and configure `ZUKA_OLLAMA_MODEL` / `CHAT_MODEL` and the appropriate
+Ollama URL. Set `RAG_GENERATION_ENABLED=true` only when that server is available.
+Chroma, external embeddings, and an external model download are not required.
 
 ## Model and datasets
 
 The required runtime model is included as
 `models/zuka_unified_xgboost/model.json.gz`. The backend loads this compressed
-artifact directly when an uncompressed local model is absent. Schema and label
+artifact directly when an uncompressed local model is absent. Container builds
+convert it losslessly to an untracked UBJ artifact for lower startup memory.
+Native CPU inference and TreeSHAP share one model and honor early stopping. Schema and label
 metadata accompany it. `data/sample_replay.csv` contains five held-out rows from
 each of the 13 documented classes for a small demonstration; it is not a
 representative model evaluation dataset.
@@ -105,6 +112,7 @@ python -m pytest -q
 cd frontend
 npm run build
 npm run lint
+npm audit --audit-level=low
 ```
 
 The test configuration refuses to run against the normal application database.
@@ -124,6 +132,13 @@ with `docker compose run --rm backend python -m scripts.init_database
 --admin-username admin --admin-email your-address@example.com` (one command).
 The frontend is served on port 80; database/API ports bind to loopback.
 
-Docker execution was not verified on the review computer because Docker was
-unavailable. TLS, real email/push delivery, backups, monitoring, rate limiting,
-and deployment-specific security validation remain deployment responsibilities.
+GitHub Actions builds the production image, runs database/model/PDF/assistant
+smoke checks with a 512 MiB memory limit, and runs desktop/mobile browser tests.
+See the linked Actions run for the result of your exact commit. Real email/push
+delivery, backup restoration, and deployment-specific operations require separate
+validation. Authentication requests have persistent database-backed throttling.
+
+## Team collaboration
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for inviting teammates, branches, pull
+requests, required checks, and keeping deployment secrets out of source control.

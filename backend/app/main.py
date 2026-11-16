@@ -1,7 +1,14 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Request, HTTPException
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+from starlette.concurrency import run_in_threadpool
+from sqlalchemy import text
+from backend.app.database.session import engine
+from backend.app.security.auth_rate_limit import PUBLIC_AUTH_LIMITS, allow_auth_request
 from backend.app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -58,6 +65,9 @@ app = FastAPI(
     description="ZUKA Security Operations Center Backend",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url=None if settings.app_env == "production" else "/docs",
+    redoc_url=None if settings.app_env == "production" else "/redoc",
+    openapi_url=None if settings.app_env == "production" else "/openapi.json",
 )
 
 
@@ -67,11 +77,23 @@ app = FastAPI(
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
+    if request.method == "POST" and settings.auth_rate_limit_enabled and request.url.path in PUBLIC_AUTH_LIMITS:
+        try:
+            allowed, retry = await run_in_threadpool(allow_auth_request, request.client.host if request.client else "unknown", request.url.path)
+        except Exception:
+            return JSONResponse({"detail": "Sign-in is temporarily unavailable. Please try again shortly."}, status_code=503)
+        if not allowed:
+            return JSONResponse({"detail": "Too many attempts. Please wait before trying again."}, status_code=429, headers={"Retry-After": str(retry)})
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    if settings.app_env == "production":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
     return response
 
 
@@ -132,6 +154,20 @@ def health_check():
     }
 
 
+@app.get("/api/ready", tags=["System"])
+def readiness_check():
+    root = Path(__file__).resolve().parents[2]
+    model_dir = root / "models" / "zuka_unified_xgboost"
+    if not any((model_dir / name).exists() for name in ("model.ubj", "model.json", "model.json.gz")):
+        raise HTTPException(status_code=503, detail="Detection is temporarily unavailable.")
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+    except Exception:
+        raise HTTPException(status_code=503, detail="The service is temporarily unavailable.")
+    return {"status": "ready"}
+
+
 # ============================================================================
 # CURRENT USER
 # ============================================================================
@@ -157,3 +193,25 @@ def get_me(
         "role": role_name,
         "is_active": current_user.is_active,
     }
+
+
+# Serve the built dashboard from the same origin as its API. Unknown API URLs
+# remain JSON 404s; deep links to application screens receive the SPA entry.
+frontend_root = Path(settings.frontend_dist_dir).resolve()
+if (frontend_root / "assets").is_dir():
+    app.mount("/assets", StaticFiles(directory=frontend_root / "assets"), name="assets")
+
+
+@app.get("/{path:path}", include_in_schema=False)
+def serve_dashboard(path: str):
+    if path == "api" or path.startswith("api/") or path in ("docs", "redoc", "openapi.json"):
+        raise HTTPException(status_code=404, detail="Not found.")
+    target = (frontend_root / path).resolve()
+    if not target.is_relative_to(frontend_root):
+        raise HTTPException(status_code=404, detail="Not found.")
+    if target.is_file():
+        return FileResponse(target)
+    entry = frontend_root / "index.html"
+    if not entry.exists():
+        raise HTTPException(status_code=404, detail="Not found.")
+    return FileResponse(entry)

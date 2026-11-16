@@ -1,3 +1,4 @@
+import { getErrorMessage } from "./errors";
 import { API_BASE_URL } from "./config";
 
 export interface User {
@@ -54,7 +55,7 @@ export interface SessionActionResponse {
   revoked_count?: number;
 }
 
-async function readResponse(response: Response): Promise<any> {
+async function readResponse(response: Response): Promise<unknown> {
   const contentType = response.headers.get("content-type") || "";
 
   if (contentType.includes("application/json")) {
@@ -67,26 +68,6 @@ async function readResponse(response: Response): Promise<any> {
 
   const text = await response.text();
   return { detail: text };
-}
-
-function getErrorMessage(data: any, fallback: string): string {
-  if (typeof data?.detail === "string") {
-    return data.detail;
-  }
-
-  if (Array.isArray(data?.detail)) {
-    return data.detail
-      .map((item: any) =>
-        typeof item === "string" ? item : item?.msg || "Invalid request.",
-      )
-      .join(", ");
-  }
-
-  if (typeof data?.message === "string") {
-    return data.message;
-  }
-
-  return fallback;
 }
 
 async function postJson<T>(
@@ -108,22 +89,24 @@ async function postJson<T>(
 
     if (!response.ok) {
       throw new Error(
-        getErrorMessage(data, `${fallback} Server returned ${response.status}.`),
+        getErrorMessage(
+          data,
+          `${fallback} Server returned ${response.status}.`,
+        ),
       );
     }
 
     return data as T;
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error(
-        "Cannot connect to the ZUKA backend. Start FastAPI on http://127.0.0.1:8000.",
-      );
+      throw new Error("Unable to connect. Please try again shortly.", {
+        cause: error,
+      });
     }
 
     throw error;
   }
 }
-
 
 async function getAuthenticatedJson<T>(
   path: string,
@@ -148,16 +131,19 @@ async function getAuthenticatedJson<T>(
 
     if (!response.ok) {
       throw new Error(
-        getErrorMessage(data, `${fallback} Server returned ${response.status}.`),
+        getErrorMessage(
+          data,
+          `${fallback} Server returned ${response.status}.`,
+        ),
       );
     }
 
     return data as T;
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error(
-        "Cannot connect to the ZUKA backend. Start FastAPI on http://127.0.0.1:8000.",
-      );
+      throw new Error("Unable to connect. Please try again shortly.", {
+        cause: error,
+      });
     }
 
     throw error;
@@ -190,16 +176,19 @@ async function postAuthenticatedJson<T>(
 
     if (!response.ok) {
       throw new Error(
-        getErrorMessage(data, `${fallback} Server returned ${response.status}.`),
+        getErrorMessage(
+          data,
+          `${fallback} Server returned ${response.status}.`,
+        ),
       );
     }
 
     return data as T;
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error(
-        "Cannot connect to the ZUKA backend. Start FastAPI on http://127.0.0.1:8000.",
-      );
+      throw new Error("Unable to connect. Please try again shortly.", {
+        cause: error,
+      });
     }
 
     throw error;
@@ -262,9 +251,7 @@ export async function verifyTwoFactorLogin(payload: {
   );
 }
 
-export async function getLoginActivity(
-  limit = 50,
-): Promise<LoginActivity[]> {
+export async function getLoginActivity(limit = 50): Promise<LoginActivity[]> {
   return getAuthenticatedJson<LoginActivity[]>(
     `/api/auth/login-activity?limit=${encodeURIComponent(limit)}`,
     "Unable to load login activity.",
@@ -339,4 +326,20 @@ export async function revokeAllOtherSessions(): Promise<SessionActionResponse> {
     {},
     "Unable to sign out the other sessions.",
   );
+}
+
+export async function logout(): Promise<void> {
+  const token = localStorage.getItem("zuka_access_token");
+  try {
+    if (token)
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(5000),
+      });
+  } finally {
+    localStorage.removeItem("zuka_access_token");
+    localStorage.removeItem("zuka_user");
+    sessionStorage.removeItem("zuka_chat_history");
+  }
 }

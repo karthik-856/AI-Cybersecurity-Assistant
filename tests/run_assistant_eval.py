@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 import json
 import os
@@ -208,7 +209,7 @@ def run_evaluation():
     }
 
     report_payload = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": utc_now().isoformat(),
         "model": "qwen2.5:3b (Ollama)",
         "project": "AI-Based Cybersecurity Assistant to Detect and Diagnose Network Attacks for Smart Devices",
         "metrics": summary_metrics,

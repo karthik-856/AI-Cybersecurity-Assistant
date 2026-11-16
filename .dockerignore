@@ -22,5 +22,6 @@ rag_assistant/data
 models/multiclass
 models/deep_learning
 models/zuka_unified_xgboost/model.json
+models/zuka_unified_xgboost/model.ubj
 new notebook results
 docs/presentation

@@ -1,3 +1,4 @@
+from backend.app.core.time import utc_now
 import secrets
 import time
 from typing import Any
@@ -257,7 +258,7 @@ class ActionDispatcher:
 
         old_status = alert.status
         alert.status = target_status
-        alert.updated_at = datetime.utcnow()
+        alert.updated_at = utc_now()
         self.db.commit()
         self.db.refresh(alert)
 
@@ -271,7 +272,7 @@ class ActionDispatcher:
                     badge_variant="success" if target_status in {"RESOLVED", "ACKNOWLEDGED"} else "info",
                     fields=[
                         {"label": "New Status", "value": target_status},
-                        {"label": "Updated At", "value": datetime.utcnow().strftime("%H:%M:%S")},
+                        {"label": "Updated At", "value": utc_now().strftime("%H:%M:%S")},
                         {"label": "Updated By", "value": self.current_user.username},
                     ],
                     actions=[ActionButton(label="View Alert", action="execute_command", payload=f"show alert {alert.id}", variant="secondary")],
@@ -397,7 +398,7 @@ class ActionDispatcher:
         old_status = incident.status
         incident.status = target_status
         if target_status == "RESOLVED":
-            incident.resolved_at = datetime.utcnow()
+            incident.resolved_at = utc_now()
             incident.resolution_summary = f"Resolved via Assistant action by {self.current_user.username}"
 
         self.db.commit()
@@ -665,7 +666,7 @@ class ActionDispatcher:
                     fields=[
                         {"label": "Deleted ID", "value": f"#{user_id}"},
                         {"label": "Executed By", "value": self.current_user.username},
-                        {"label": "Timestamp", "value": datetime.utcnow().strftime("%H:%M:%S")},
+                        {"label": "Timestamp", "value": utc_now().strftime("%H:%M:%S")},
                     ],
                 )
             ],

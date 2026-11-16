@@ -1,3 +1,4 @@
+import { scheduleLoad } from "../../utils/scheduleLoad";
 import {
   Activity,
   AlertTriangle,
@@ -33,8 +34,7 @@ import type { ReactNode } from "react";
 import { formatDateTime, formatTime } from "../../utils/datetime";
 import "./Databases.css";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+import { API_BASE_URL } from "../../services/config";
 
 interface TableMeta {
   name: string;
@@ -55,8 +55,6 @@ interface OverviewResponse {
   table_counts: Record<string, number>;
   tables_catalog: TableMeta[];
 }
-
-
 
 interface ColumnSchema {
   name: string;
@@ -151,7 +149,10 @@ async function apiGet<T>(endpoint: string): Promise<T> {
     try {
       const errJson = await response.json();
       if (errJson?.detail) {
-        msg = typeof errJson.detail === "string" ? errJson.detail : JSON.stringify(errJson.detail);
+        msg =
+          typeof errJson.detail === "string"
+            ? errJson.detail
+            : JSON.stringify(errJson.detail);
       }
     } catch {
       // ignore
@@ -163,9 +164,7 @@ async function apiGet<T>(endpoint: string): Promise<T> {
 }
 
 function formatColumnName(col: string): string {
-  return col
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return col.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function isDateTimeCol(col: string): boolean {
@@ -211,7 +210,9 @@ function Databases() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const [jsonModalContent, setJsonModalContent] = useState<unknown | null>(null);
+  const [jsonModalContent, setJsonModalContent] = useState<unknown | null>(
+    null,
+  );
 
   const dbPageButtons = useMemo(() => {
     if (!tableData) return [];
@@ -223,13 +224,9 @@ function Databases() {
 
   // Load Overview Data
   const loadOverview = useCallback(async () => {
-    try {
-      const data = await apiGet<OverviewResponse>("/api/database/overview");
-      setOverview(data);
-      setLastUpdated(new Date());
-    } catch (err) {
-      throw err;
-    }
+    const data = await apiGet<OverviewResponse>("/api/database/overview");
+    setOverview(data);
+    setLastUpdated(new Date());
   }, []);
 
   // Load Specific Table Records & Schema
@@ -240,7 +237,7 @@ function Databases() {
       reqPage = 1,
       reqPageSize = 25,
       reqSortBy = "",
-      reqSortOrder = "desc"
+      reqSortOrder = "desc",
     ) => {
       if (tableName === "overview") {
         setTableData(null);
@@ -266,7 +263,9 @@ function Databases() {
         }
 
         const [recordsRes, schemaRes] = await Promise.all([
-          apiGet<TableResponse>(`/api/database/table/${tableName}?${params.toString()}`),
+          apiGet<TableResponse>(
+            `/api/database/table/${tableName}?${params.toString()}`,
+          ),
           apiGet<SchemaResponse>(`/api/database/table/${tableName}/schema`),
         ]);
 
@@ -277,13 +276,13 @@ function Databases() {
         setError(
           err instanceof Error
             ? err.message
-            : `Unable to load table '${tableName}'.`
+            : `Unable to load table '${tableName}'.`,
         );
       } finally {
         setTableLoading(false);
       }
     },
-    []
+    [],
   );
 
   // Full Refresh
@@ -296,25 +295,53 @@ function Databases() {
       try {
         await loadOverview();
         if (activeTab !== "overview") {
-          await loadTableRecords(activeTab, search, page, pageSize, sortBy, sortOrder);
+          await loadTableRecords(
+            activeTab,
+            search,
+            page,
+            pageSize,
+            sortBy,
+            sortOrder,
+          );
         }
       } catch (err) {
         setError(
           err instanceof Error
             ? err.message
-            : "Failed to connect to Database Center."
+            : "Failed to connect to Database Center.",
         );
       } finally {
         setLoading(false);
         setRefreshing(false);
       }
     },
-    [activeTab, loadOverview, loadTableRecords, search, page, pageSize, sortBy, sortOrder]
+    [
+      activeTab,
+      loadOverview,
+      loadTableRecords,
+      search,
+      page,
+      pageSize,
+      sortBy,
+      sortOrder,
+    ],
   );
 
   useEffect(() => {
-    void handleFullRefresh();
-  }, []); // Run on mount
+    return scheduleLoad(async () => {
+      try {
+        await loadOverview();
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Unable to load database overview.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    });
+  }, [loadOverview]);
 
   // Handle Tab Switch
   function handleSelectTab(tabId: string) {
@@ -344,14 +371,22 @@ function Databases() {
     }, 350);
 
     return () => window.clearTimeout(timer);
-  }, [search]);
+  }, [activeTab, search, pageSize, sortBy, sortOrder, loadTableRecords]);
 
   // Handle Sort Change
   function handleSortChange(newSortBy: string) {
-    const newOrder = sortBy === newSortBy && sortOrder === "desc" ? "asc" : "desc";
+    const newOrder =
+      sortBy === newSortBy && sortOrder === "desc" ? "asc" : "desc";
     setSortBy(newSortBy);
     setSortOrder(newOrder);
-    void loadTableRecords(activeTab, search, page, pageSize, newSortBy, newOrder);
+    void loadTableRecords(
+      activeTab,
+      search,
+      page,
+      pageSize,
+      newSortBy,
+      newOrder,
+    );
   }
 
   // Export CSV
@@ -364,13 +399,15 @@ function Databases() {
         .map((col) => {
           const val = row[col];
           if (val === null || val === undefined) return '""';
-          if (typeof val === "object") return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
+          if (typeof val === "object")
+            return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
           return `"${String(val).replace(/"/g, '""')}"`;
         })
-        .join(",")
+        .join(","),
     );
 
-    const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
+    const csvContent =
+      "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -384,7 +421,7 @@ function Databases() {
   function handleExportJson() {
     if (!tableData || tableData.records.length === 0) return;
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(tableData.records, null, 2)
+      JSON.stringify(tableData.records, null, 2),
     )}`;
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", jsonString);
@@ -429,9 +466,7 @@ function Databases() {
     // Formatted Badges for Severity
     if (column.toLowerCase() === "severity") {
       return (
-        <span className={`db-badge sev-${strVal.toLowerCase()}`}>
-          {strVal}
-        </span>
+        <span className={`db-badge sev-${strVal.toLowerCase()}`}>{strVal}</span>
       );
     }
 
@@ -455,7 +490,8 @@ function Databases() {
 
     // Formatted Dates in local laptop time
     if (
-      (isDateTimeCol(column) || (typeof value === "string" && isIsoDateTimeString(value))) &&
+      (isDateTimeCol(column) ||
+        (typeof value === "string" && isIsoDateTimeString(value))) &&
       typeof value === "string"
     ) {
       return (
@@ -475,7 +511,11 @@ function Databases() {
       return <span className="cell-code">{strVal}</span>;
     }
 
-    return <span className="cell-text" title={strVal}>{strVal}</span>;
+    return (
+      <span className="cell-text" title={strVal}>
+        {strVal}
+      </span>
+    );
   }
 
   // Render Overview View
@@ -558,7 +598,9 @@ function Databases() {
               </div>
               <div className="spec-row">
                 <span>Credential Protection</span>
-                <strong style={{ color: "#38bdf8" }}>AUTOMATIC HASH SCRUBBING</strong>
+                <strong style={{ color: "#38bdf8" }}>
+                  AUTOMATIC HASH SCRUBBING
+                </strong>
               </div>
               <div className="spec-row">
                 <span>Data Isolation</span>
@@ -616,7 +658,10 @@ function Databases() {
             <div>
               <span className="db-panel-eyebrow">SYSTEM INVENTORY</span>
               <h3>Database Table Catalog</h3>
-              <p>Directly inspect rows, schemas, and disk footprint for all tables.</p>
+              <p>
+                Directly inspect rows, schemas, and disk footprint for all
+                tables.
+              </p>
             </div>
             <Layers size={20} className="db-accent-icon" />
           </div>
@@ -626,30 +671,30 @@ function Databases() {
               ?.filter(
                 (t) =>
                   t.name !== "push_subscriptions" &&
-                  !t.name.startsWith("zuka_assistant")
+                  !t.name.startsWith("zuka_assistant"),
               )
               ?.map((t) => (
-              <div
-                key={t.name}
-                className="db-catalog-card"
-                onClick={() => handleSelectTab(t.name)}
-              >
-                <div className="catalog-card-header">
-                  <div className="catalog-card-icon">
-                    <Table size={18} />
+                <div
+                  key={t.name}
+                  className="db-catalog-card"
+                  onClick={() => handleSelectTab(t.name)}
+                >
+                  <div className="catalog-card-header">
+                    <div className="catalog-card-icon">
+                      <Table size={18} />
+                    </div>
+                    <span className="catalog-card-size">{t.size}</span>
                   </div>
-                  <span className="catalog-card-size">{t.size}</span>
+                  <strong className="catalog-card-name">{t.name}</strong>
+                  <span className="catalog-card-title">{t.title}</span>
+                  <div className="catalog-card-footer">
+                    <span className="catalog-card-records">
+                      {t.records.toLocaleString()} rows
+                    </span>
+                    <span className="catalog-card-explore">Inspect →</span>
+                  </div>
                 </div>
-                <strong className="catalog-card-name">{t.name}</strong>
-                <span className="catalog-card-title">{t.title}</span>
-                <div className="catalog-card-footer">
-                  <span className="catalog-card-records">
-                    {t.records.toLocaleString()} rows
-                  </span>
-                  <span className="catalog-card-explore">Inspect →</span>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
@@ -784,7 +829,7 @@ function Databases() {
                   page,
                   pageSize,
                   sortBy,
-                  sortOrder
+                  sortOrder,
                 )
               }
               disabled={tableLoading}
@@ -806,7 +851,9 @@ function Databases() {
               <div className="db-table-state-box">
                 <RefreshCw size={28} className="dashboard-spin" />
                 <h3>Querying PostgreSQL...</h3>
-                <p>Retrieving page {page} of table `{tableData?.table}`</p>
+                <p>
+                  Retrieving page {page} of table `{tableData?.table}`
+                </p>
               </div>
             ) : !tableData || tableData.records.length === 0 ? (
               <div className="db-table-state-box">
@@ -862,9 +909,7 @@ function Databases() {
               <div className="db-pagination-bar">
                 <div className="pagination-info">
                   Showing <strong>{(page - 1) * pageSize + 1}</strong> to{" "}
-                  <strong>
-                    {Math.min(page * pageSize, tableData.total)}
-                  </strong>{" "}
+                  <strong>{Math.min(page * pageSize, tableData.total)}</strong>{" "}
                   of <strong>{tableData.total.toLocaleString()}</strong> records
                 </div>
 
@@ -883,7 +928,7 @@ function Databases() {
                           1,
                           newSz,
                           sortBy,
-                          sortOrder
+                          sortOrder,
                         );
                       }}
                     >
@@ -906,7 +951,7 @@ function Databases() {
                         nextP,
                         pageSize,
                         sortBy,
-                        sortOrder
+                        sortOrder,
                       );
                     }}
                     title="Previous Page"
@@ -930,7 +975,7 @@ function Databases() {
                             num,
                             pageSize,
                             sortBy,
-                            sortOrder
+                            sortOrder,
                           );
                         }}
                       >
@@ -957,7 +1002,7 @@ function Databases() {
                         nextP,
                         pageSize,
                         sortBy,
-                        sortOrder
+                        sortOrder,
                       );
                     }}
                     title="Next Page"
@@ -1029,13 +1074,12 @@ function Databases() {
       ===================================================== */}
       <div className="databases-header">
         <div className="header-info">
-          <div className="databases-eyebrow">
-            DATABASE OPERATIONS & STORAGE
-          </div>
+          <div className="databases-eyebrow">DATABASE OPERATIONS & STORAGE</div>
           <h1>Database Center & Schema Catalog</h1>
           <p>
-            Inspect and query PostgreSQL historical tables, audit trails, network telemetry,
-            and machine learning alerts in a high-security operational view.
+            Inspect and query PostgreSQL historical tables, audit trails,
+            network telemetry, and machine learning alerts in a high-security
+            operational view.
           </p>
         </div>
 
@@ -1045,7 +1089,9 @@ function Databases() {
           <div className="pill-text">
             <strong>PostgreSQL Engine</strong>
             <span>
-              {loading ? "Connecting..." : `${overview?.db_size ?? "Active"} · ${overview?.total_records.toLocaleString() ?? 0} Rows`}
+              {loading
+                ? "Connecting..."
+                : `${overview?.db_size ?? "Active"} · ${overview?.total_records.toLocaleString() ?? 0} Rows`}
             </span>
           </div>
           <button
@@ -1135,10 +1181,7 @@ function Databases() {
           className="db-modal-overlay"
           onClick={() => setJsonModalContent(null)}
         >
-          <div
-            className="db-modal-window"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="db-modal-window" onClick={(e) => e.stopPropagation()}>
             <div className="db-modal-header">
               <div className="modal-title">
                 <FileCode size={18} style={{ color: "#38bdf8" }} />

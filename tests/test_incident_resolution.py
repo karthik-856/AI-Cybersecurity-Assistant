@@ -1,3 +1,4 @@
+from backend.app.core.time import utc_now
 from datetime import datetime, timedelta
 import pytest
 from fastapi.testclient import TestClient
@@ -23,8 +24,8 @@ def get_analyst_token() -> str:
 
     user_id = user.id
     role_name = getattr(user.role, "name", str(user.role))
-    session_id = f"test-sess-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}"
-    now = datetime.utcnow()
+    session_id = f"test-sess-{utc_now().strftime('%Y%m%d%H%M%S%f')}"
+    now = utc_now()
     auth_session = AuthSession(
         session_id=session_id,
         user_id=user_id,
@@ -48,7 +49,7 @@ def get_analyst_token() -> str:
 
 def create_test_incident(status: str = "INVESTIGATING") -> str:
     db = SessionLocal()
-    now = datetime.utcnow()
+    now = utc_now()
     ts = now.strftime("%Y%m%d%H%M%S%f")
     alert_id = f"ZUKA-TEST-ALERT-{ts}"
     alert = Alert(
@@ -101,7 +102,7 @@ def test_resolution_with_in_progress_investigation_is_rejected():
 
     # Investigation exists and has conclusion, but status is IN_PROGRESS
     db = SessionLocal()
-    now = datetime.utcnow()
+    now = utc_now()
     inv = Investigation(
         investigation_id=f"ZUKA-INV-TEST-{now.strftime('%Y%m%d%H%M%S%f')}",
         incident_id=incident_id,
@@ -129,7 +130,7 @@ def test_resolution_with_blank_conclusion_is_rejected():
     incident_id = create_test_incident(status="INVESTIGATING")
 
     db = SessionLocal()
-    now = datetime.utcnow()
+    now = utc_now()
     inv = Investigation(
         investigation_id=f"ZUKA-INV-TEST-{now.strftime('%Y%m%d%H%M%S%f')}",
         incident_id=incident_id,
@@ -159,7 +160,7 @@ def test_resolution_with_completed_investigation_prefills_conclusion():
 
     investigation_conclusion = "Threat actor contained, malicious IPs blocklisted, network restored."
     db = SessionLocal()
-    now = datetime.utcnow()
+    now = utc_now()
     inv = Investigation(
         investigation_id=f"ZUKA-INV-TEST-{now.strftime('%Y%m%d%H%M%S%f')}",
         incident_id=incident_id,
@@ -195,7 +196,7 @@ def test_resolution_with_completed_investigation_analyst_override():
     override_summary = "Custom analyst override: Verified zero customer impact."
 
     db = SessionLocal()
-    now = datetime.utcnow()
+    now = utc_now()
     inv = Investigation(
         investigation_id=f"ZUKA-INV-TEST-{now.strftime('%Y%m%d%H%M%S%f')}",
         incident_id=incident_id,

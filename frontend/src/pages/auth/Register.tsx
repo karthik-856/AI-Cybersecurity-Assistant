@@ -1,22 +1,27 @@
+import { Link } from "react-router-dom";
+import { useCapabilities } from "../../services/capabilities";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, Eye, EyeOff, LockKeyhole, Mail, Shield, User } from "lucide-react";
 import {
-  register,
-  resendVerification,
-  verifyEmail,
-} from "../../services/auth";
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  Shield,
+  User,
+} from "lucide-react";
+import { register, resendVerification, verifyEmail } from "../../services/auth";
 import OtpInput from "../../components/auth/OtpInput";
-import PasswordRequirements, {
-  evaluatePassword,
-} from "../../components/auth/PasswordRequirements";
+import PasswordRequirements from "../../components/auth/PasswordRequirements";
+import { evaluatePassword } from "../../utils/password";
 import "./Register.css";
-
 
 type RegisterView = "form" | "verify";
 
 function Register() {
+  const capabilities = useCapabilities();
   const navigate = useNavigate();
 
   const [view, setView] = useState<RegisterView>("form");
@@ -81,7 +86,9 @@ function Register() {
       setOtp("");
       setResendSeconds(60);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to create account.");
+      setError(
+        err instanceof Error ? err.message : "Unable to create account.",
+      );
     } finally {
       setLoading(false);
     }
@@ -116,7 +123,9 @@ function Register() {
         },
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Email verification failed.");
+      setError(
+        err instanceof Error ? err.message : "Email verification failed.",
+      );
     } finally {
       setLoading(false);
     }
@@ -134,11 +143,26 @@ function Register() {
       setSuccess(result.message || "A new verification code has been sent.");
       setResendSeconds(60);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to resend verification code.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to resend verification code.",
+      );
     } finally {
       setLoading(false);
     }
   }
+
+  if (!capabilities.registration)
+    return (
+      <main className="register-page">
+        <section className="register-card">
+          <h1>Join your workspace</h1>
+          <p>Contact your administrator for an invitation.</p>
+          <Link to="/login">Back to sign in</Link>
+        </section>
+      </main>
+    );
 
   return (
     <main className="register-page">
@@ -168,7 +192,9 @@ function Register() {
             </div>
             <div className="register-mobile-titles">
               <span className="register-mobile-name">ZUKA</span>
-              <span className="register-mobile-sub">SECURITY OPERATIONS CENTER</span>
+              <span className="register-mobile-sub">
+                SECURITY OPERATIONS CENTER
+              </span>
             </div>
           </div>
 
@@ -177,7 +203,9 @@ function Register() {
               {view === "form" ? "ACCOUNT REGISTRATION" : "EMAIL VERIFICATION"}
             </p>
 
-            <h2>{view === "form" ? "Create your account" : "Verify your email"}</h2>
+            <h2>
+              {view === "form" ? "Create your account" : "Verify your email"}
+            </h2>
 
             <p>
               {view === "form"
@@ -240,11 +268,7 @@ function Register() {
               <label htmlFor="role">Role</label>
               <div className="input-wrapper">
                 <Shield size={17} />
-                <select
-                  id="role"
-                  value={role}
-                  disabled={loading}
-                >
+                <select id="role" value={role} disabled={loading}>
                   <option value="VIEWER">Viewer (Read-Only Access)</option>
                 </select>
               </div>
@@ -296,11 +320,19 @@ function Register() {
                   type="button"
                   className="password-toggle-btn"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                  title={showConfirmPassword ? "Hide password" : "Show password"}
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
+                  title={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
                   tabIndex={-1}
                 >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
 
@@ -327,7 +359,15 @@ function Register() {
                 />
               </div>
 
-              <label style={{ display: "block", textAlign: "center", marginBottom: "8px", color: "#38bdf8", fontWeight: 700 }}>
+              <label
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  marginBottom: "8px",
+                  color: "#38bdf8",
+                  fontWeight: 700,
+                }}
+              >
                 6-Digit Verification Code
               </label>
               <OtpInput
@@ -338,7 +378,6 @@ function Register() {
                 }}
                 disabled={loading}
               />
-
 
               <button
                 type="submit"
@@ -373,7 +412,8 @@ function Register() {
           <div className="register-footer">
             <Shield size={14} />
             <span>
-              All accounts activate immediately upon 6-digit email OTP verification.
+              All accounts activate immediately upon 6-digit email OTP
+              verification.
             </span>
           </div>
         </div>

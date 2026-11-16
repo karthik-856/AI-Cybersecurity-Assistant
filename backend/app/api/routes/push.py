@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, field_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -23,6 +23,15 @@ class PushKeys(BaseModel):
 class PushSubscriptionRequest(BaseModel):
     endpoint: HttpUrl
     keys: PushKeys
+
+    @field_validator("endpoint")
+    @classmethod
+    def validate_push_provider(cls, value):
+        host = (value.host or "").lower()
+        providers = ("fcm.googleapis.com", "push.services.mozilla.com", "notify.windows.com", "push.apple.com")
+        if value.scheme != "https" or value.username or value.password or value.port not in (None, 443) or not any(host == domain or host.endswith("." + domain) for domain in providers):
+            raise ValueError("Use a supported browser push provider with HTTPS.")
+        return value
 
 
 @router.get("/public-key")
@@ -61,6 +70,8 @@ def subscribe(
         )
         db.add(subscription)
     else:
+        if subscription.user_id != current_user.id:
+            raise HTTPException(status_code=409, detail="This push subscription belongs to another account.")
         subscription.user_id = current_user.id
         subscription.p256dh = payload.keys.p256dh
         subscription.auth = payload.keys.auth

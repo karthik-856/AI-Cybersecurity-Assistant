@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import datetime
 from uuid import uuid4
@@ -27,83 +28,6 @@ router = APIRouter(
 )
 
 
-def _seed_reports_if_empty(db: Session) -> None:
-    """Ensure essential initial reports exist in the PostgreSQL database."""
-    count = db.scalar(select(func.count(Report.id))) or 0
-    if count > 0:
-        return
-
-    now = datetime.utcnow()
-    initial_reports = [
-        Report(
-            report_id="REP-SOC-SUMMARY-001",
-            title="ZUKA Enterprise SOC Executive Security Summary",
-            report_type="summary",
-            entity_id="SOC-SYSTEM",
-            status="READY",
-            format="PDF",
-            summary="Automated high-level situational awareness summary highlighting real-time detection counts, MTTR triage velocity, and threat distribution.",
-            file_path="reports/ZUKA-SOC-Summary-Report.pdf",
-            file_size_bytes=108420,
-            generated_by_username="system_scheduler",
-            parameters_json={"scope": "global", "metrics": ["alerts", "incidents", "investigations", "network_events"]},
-            created_at=now,
-            updated_at=now,
-        ),
-        Report(
-            report_id="REP-INC-POSTMORTEM-002",
-            title="Post-Incident Threat Dossier: Network Reconnaissance & Port Scan",
-            report_type="incident",
-            entity_id="INC-2026-001",
-            status="READY",
-            format="PDF",
-            summary="Detailed forensic breakdown and timeline analysis of distributed port scanning events targeting internal subnets.",
-            file_path="reports/ZUKA-INC-2026-001-Incident-Report.pdf",
-            file_size_bytes=142600,
-            generated_by_username="soc_analyst",
-            parameters_json={"incident_id": "INC-2026-001", "mitre_tactic": "Reconnaissance"},
-            created_at=now,
-            updated_at=now,
-        ),
-        Report(
-            report_id="REP-XAI-AUDIT-003",
-            title="XGBoost & SHAP Explainability Model Governance Report",
-            report_type="detection-xai",
-            entity_id="ALT-XAI-BENCHMARK",
-            status="READY",
-            format="PDF",
-            summary="Technical feature attribution evidence verifying the top 5 network flow indicators driving machine learning attack classifications.",
-            file_path="reports/ZUKA-Detection-XAI-Audit.pdf",
-            file_size_bytes=195200,
-            generated_by_username="soc_lead",
-            parameters_json={"model": "XGBoost Classifier", "features_evaluated": 78, "explainer": "TreeSHAP"},
-            created_at=now,
-            updated_at=now,
-        ),
-        Report(
-            report_id="REP-INV-CASEFILE-004",
-            title="Investigation Casefile: Lateral Movement Anomaly Inspection",
-            report_type="investigation",
-            entity_id="INV-2026-001",
-            status="READY",
-            format="PDF",
-            summary="Forensic log containing attached packet captures, IOC tagging, and analyst action verification for anomalous internal flows.",
-            file_path="reports/ZUKA-INV-2026-001-Investigation-Report.pdf",
-            file_size_bytes=168900,
-            generated_by_username="lead_investigator",
-            parameters_json={"investigation_id": "INV-2026-001", "status": "IN_PROGRESS"},
-            created_at=now,
-            updated_at=now,
-        ),
-    ]
-
-    try:
-        db.add_all(initial_reports)
-        db.commit()
-    except Exception:
-        db.rollback()
-
-
 def _record_generated_report(
     db: Session,
     title: str,
@@ -114,7 +38,7 @@ def _record_generated_report(
     username: str = "soc_operator",
 ) -> Report | None:
     try:
-        now = datetime.utcnow()
+        now = utc_now()
         report_id = f"REP-{now.strftime('%Y%m%d-%H%M%S')}-{uuid4().hex[:4].upper()}"
         report_record = Report(
             report_id=report_id,
@@ -180,7 +104,6 @@ def list_reports(
     report_type: str | None = Query(None),
     search: str | None = Query(None),
 ):
-    _seed_reports_if_empty(db)
 
     query = select(Report)
 
@@ -220,7 +143,7 @@ def create_report(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_role("ADMIN", "SOC_ANALYST")),
 ):
-    report_id = f"REP-{datetime.utcnow().strftime('%Y%m%d')}-{uuid4().hex[:6].upper()}"
+    report_id = f"REP-{utc_now().strftime('%Y%m%d')}-{uuid4().hex[:6].upper()}"
     new_report = Report(
         report_id=report_id,
         title=payload.title,
@@ -232,8 +155,8 @@ def create_report(
         parameters_json=payload.parameters_json or {},
         generated_by_id=current_user.id,
         generated_by_username=current_user.username,
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=utc_now(),
+        updated_at=utc_now(),
     )
     db.add(new_report)
     db.commit()

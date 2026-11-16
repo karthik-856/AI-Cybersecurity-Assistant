@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import date, datetime
 from decimal import Decimal
@@ -319,9 +320,9 @@ def database_health(
     """
     Verify PostgreSQL connectivity and query response time.
     """
-    start = datetime.utcnow()
+    start = utc_now()
     db.execute(text("SELECT 1"))
-    latency_ms = (datetime.utcnow() - start).total_seconds() * 1000
+    latency_ms = (utc_now() - start).total_seconds() * 1000
 
     return {
         "status": "healthy",

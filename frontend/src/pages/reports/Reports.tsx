@@ -1,3 +1,4 @@
+import { scheduleLoad } from "../../utils/scheduleLoad";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -20,16 +21,12 @@ import {
 import { formatDateTime } from "../../utils/datetime";
 import "./Reports.css";
 
-const API_BASE = "http://127.0.0.1:8000";
+import { API_BASE_URL as API_BASE } from "../../services/config";
 const PAGE_SIZE = 10;
 const STORED_PAGE_SIZE = 10;
 
 type ReportType =
-  | "incident"
-  | "investigation"
-  | "detection-xai"
-  | "alert"
-  | "summary";
+  "incident" | "investigation" | "detection-xai" | "alert" | "summary";
 
 interface Incident {
   id?: number;
@@ -201,7 +198,7 @@ function getReportEndpoint(
   type: ReportType,
   incident: Incident | null,
   alert: AlertItem | null,
-  investigation: InvestigationItem | null
+  investigation: InvestigationItem | null,
 ): string {
   if (type === "summary") return "/api/reports/summary";
 
@@ -211,7 +208,7 @@ function getReportEndpoint(
       throw new Error("Select an alert first.");
     }
     return `/api/reports/${type === "alert" ? "alerts" : "detection-xai"}/${encodeURIComponent(
-      alertId
+      alertId,
     )}`;
   }
 
@@ -235,7 +232,7 @@ function getPdfEndpoint(
   type: ReportType,
   incident: Incident | null,
   alert: AlertItem | null,
-  investigation: InvestigationItem | null
+  investigation: InvestigationItem | null,
 ): string {
   if (type === "summary") return "/api/reports/summary/pdf";
 
@@ -245,7 +242,7 @@ function getPdfEndpoint(
       throw new Error("Select an alert first.");
     }
     return `/api/reports/${type === "alert" ? "alerts" : "detection-xai"}/${encodeURIComponent(
-      alertId
+      alertId,
     )}/pdf`;
   }
 
@@ -267,7 +264,9 @@ function getPdfEndpoint(
 
 export default function Reports() {
   // Default to stored database reports so user sees saved reports right away!
-  const [activeTab, setActiveTab] = useState<"database" | "generator">("database");
+  const [activeTab, setActiveTab] = useState<"database" | "generator">(
+    "database",
+  );
 
   // Generator State - Incidents
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -290,9 +289,11 @@ export default function Reports() {
   const [investigations, setInvestigations] = useState<InvestigationItem[]>([]);
   const [investigationTotal, setInvestigationTotal] = useState(0);
   const [investigationSearch, setInvestigationSearch] = useState("");
-  const [investigationSubmittedSearch, setInvestigationSubmittedSearch] = useState("");
+  const [investigationSubmittedSearch, setInvestigationSubmittedSearch] =
+    useState("");
   const [investigationPage, setInvestigationPage] = useState(1);
-  const [selectedInvestigation, setSelectedInvestigation] = useState<InvestigationItem | null>(null);
+  const [selectedInvestigation, setSelectedInvestigation] =
+    useState<InvestigationItem | null>(null);
   const [investigationLoading, setInvestigationLoading] = useState(false);
 
   const [reportType, setReportType] = useState<ReportType>("incident");
@@ -309,7 +310,9 @@ export default function Reports() {
   const [storedLoading, setStoredLoading] = useState(false);
   const [storedSearch, setStoredSearch] = useState("");
   const [storedTypeFilter, setStoredTypeFilter] = useState("all");
-  const [downloadingReportId, setDownloadingReportId] = useState<string | null>(null);
+  const [downloadingReportId, setDownloadingReportId] = useState<string | null>(
+    null,
+  );
 
   // Active Document Viewer State
   const [viewingReport, setViewingReport] = useState<{
@@ -326,8 +329,14 @@ export default function Reports() {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const alertTotalPages = Math.max(1, Math.ceil(alertTotal / PAGE_SIZE));
-  const investigationTotalPages = Math.max(1, Math.ceil(investigationTotal / PAGE_SIZE));
-  const storedTotalPages = Math.max(1, Math.ceil(storedTotal / STORED_PAGE_SIZE));
+  const investigationTotalPages = Math.max(
+    1,
+    Math.ceil(investigationTotal / PAGE_SIZE),
+  );
+  const storedTotalPages = Math.max(
+    1,
+    Math.ceil(storedTotal / STORED_PAGE_SIZE),
+  );
 
   const pageButtons = useMemo(() => {
     const start = Math.max(1, Math.min(page - 2, totalPages - 4));
@@ -342,7 +351,10 @@ export default function Reports() {
   }, [alertPage, alertTotalPages]);
 
   const investigationPageButtons = useMemo(() => {
-    const start = Math.max(1, Math.min(investigationPage - 2, investigationTotalPages - 4));
+    const start = Math.max(
+      1,
+      Math.min(investigationPage - 2, investigationTotalPages - 4),
+    );
     const end = Math.min(investigationTotalPages, start + 4);
     return Array.from({ length: end - start + 1 }, (_, index) => start + index);
   }, [investigationPage, investigationTotalPages]);
@@ -365,8 +377,6 @@ export default function Reports() {
   }, [reportType, selectedAlert, selectedInvestigation, selected]);
 
   const loadIncidents = useCallback(async () => {
-    setLoading(true);
-    setError("");
     try {
       const params = new URLSearchParams({
         limit: String(PAGE_SIZE),
@@ -377,31 +387,32 @@ export default function Reports() {
       }
 
       const response = await apiFetch<PageResponse>(
-        `/api/incidents?${params.toString()}`
+        `/api/incidents?${params.toString()}`,
       );
 
       const payload = unwrap<PageResponse>(response);
-      const rows =
-        payload?.items ?? payload?.incidents ?? payload?.data ?? [];
+      const rows = payload?.items ?? payload?.incidents ?? payload?.data ?? [];
 
       setIncidents(Array.isArray(rows) ? rows : []);
       setTotal(
         Number(
           payload?.total ??
             payload?.count ??
-            (Array.isArray(rows) ? rows.length : 0)
-        )
+            (Array.isArray(rows) ? rows.length : 0),
+        ),
       );
 
       setSelected((current) => {
         if (!current) return null;
         const replacement = rows.find(
-          (item) => item.incident_id === current.incident_id
+          (item) => item.incident_id === current.incident_id,
         );
         return replacement ?? current;
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load incidents.");
+      setError(
+        err instanceof Error ? err.message : "Unable to load incidents.",
+      );
       setIncidents([]);
       setTotal(0);
     } finally {
@@ -410,8 +421,6 @@ export default function Reports() {
   }, [page, submittedSearch]);
 
   const loadAlerts = useCallback(async () => {
-    setAlertLoading(true);
-    setError("");
     try {
       const params = new URLSearchParams({
         limit: String(PAGE_SIZE),
@@ -422,7 +431,7 @@ export default function Reports() {
       }
 
       const response = await apiFetch<AlertListApiResponse>(
-        `/api/alerts?${params.toString()}`
+        `/api/alerts?${params.toString()}`,
       );
 
       const payload = unwrap<AlertListApiResponse>(response);
@@ -430,13 +439,13 @@ export default function Reports() {
 
       setAlerts(Array.isArray(rows) ? rows : []);
       setAlertTotal(
-        Number(payload?.total ?? (Array.isArray(rows) ? rows.length : 0))
+        Number(payload?.total ?? (Array.isArray(rows) ? rows.length : 0)),
       );
 
       setSelectedAlert((current) => {
         if (!current) return null;
         const replacement = rows.find(
-          (item) => item.alert_id === current.alert_id
+          (item) => item.alert_id === current.alert_id,
         );
         return replacement ?? current;
       });
@@ -450,8 +459,6 @@ export default function Reports() {
   }, [alertPage, alertSubmittedSearch]);
 
   const loadInvestigations = useCallback(async () => {
-    setInvestigationLoading(true);
-    setError("");
     try {
       const params = new URLSearchParams({
         limit: String(PAGE_SIZE),
@@ -462,7 +469,7 @@ export default function Reports() {
       }
 
       const response = await apiFetch<InvestigationListApiResponse>(
-        `/api/investigations?${params.toString()}`
+        `/api/investigations?${params.toString()}`,
       );
 
       const payload = unwrap<InvestigationListApiResponse>(response);
@@ -470,18 +477,20 @@ export default function Reports() {
 
       setInvestigations(Array.isArray(rows) ? rows : []);
       setInvestigationTotal(
-        Number(payload?.total ?? (Array.isArray(rows) ? rows.length : 0))
+        Number(payload?.total ?? (Array.isArray(rows) ? rows.length : 0)),
       );
 
       setSelectedInvestigation((current) => {
         if (!current) return null;
         const replacement = rows.find(
-          (item) => item.investigation_id === current.investigation_id
+          (item) => item.investigation_id === current.investigation_id,
         );
         return replacement ?? current;
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load investigations.");
+      setError(
+        err instanceof Error ? err.message : "Unable to load investigations.",
+      );
       setInvestigations([]);
       setInvestigationTotal(0);
     } finally {
@@ -490,7 +499,6 @@ export default function Reports() {
   }, [investigationPage, investigationSubmittedSearch]);
 
   const loadStoredReports = useCallback(async () => {
-    setStoredLoading(true);
     try {
       const params = new URLSearchParams({
         page: String(storedPage),
@@ -504,7 +512,7 @@ export default function Reports() {
       }
 
       const res = await apiFetch<StoredReportsResponse>(
-        `/api/reports?${params.toString()}`
+        `/api/reports?${params.toString()}`,
       );
       setStoredReports(res.items || []);
       setStoredTotal(res.total || 0);
@@ -516,40 +524,87 @@ export default function Reports() {
   }, [storedPage, storedSearch, storedTypeFilter]);
 
   useEffect(() => {
-    void loadIncidents();
+    return scheduleLoad(loadIncidents);
   }, [loadIncidents]);
 
   useEffect(() => {
-    if (activeTab === "generator" && (reportType === "alert" || reportType === "detection-xai")) {
-      void loadAlerts();
+    if (
+      activeTab === "generator" &&
+      (reportType === "alert" || reportType === "detection-xai")
+    ) {
+      return scheduleLoad(loadAlerts);
     }
   }, [activeTab, reportType, loadAlerts]);
 
   useEffect(() => {
     if (activeTab === "generator" && reportType === "investigation") {
-      void loadInvestigations();
+      return scheduleLoad(loadInvestigations);
     }
   }, [activeTab, reportType, loadInvestigations]);
 
   useEffect(() => {
-    void loadStoredReports();
+    return scheduleLoad(loadStoredReports);
   }, [loadStoredReports]);
 
-  useEffect(() => {
+  const [previousInputs0, setpreviousInputs0] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs1 = [storedSearch, storedTypeFilter];
+  if (
+    previousInputs0 === null ||
+    currentInputs1.some(
+      (value, index) => !Object.is(value, previousInputs0?.[index]),
+    )
+  ) {
+    setpreviousInputs0(currentInputs1);
+
     setStoredPage(1);
-  }, [storedSearch, storedTypeFilter]);
+  }
 
-  useEffect(() => {
+  const [previousInputs1, setpreviousInputs1] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs2 = [submittedSearch];
+  if (
+    previousInputs1 === null ||
+    currentInputs2.some(
+      (value, index) => !Object.is(value, previousInputs1?.[index]),
+    )
+  ) {
+    setpreviousInputs1(currentInputs2);
+
     setPage(1);
-  }, [submittedSearch]);
+  }
 
-  useEffect(() => {
+  const [previousInputs2, setpreviousInputs2] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs3 = [alertSubmittedSearch];
+  if (
+    previousInputs2 === null ||
+    currentInputs3.some(
+      (value, index) => !Object.is(value, previousInputs2?.[index]),
+    )
+  ) {
+    setpreviousInputs2(currentInputs3);
+
     setAlertPage(1);
-  }, [alertSubmittedSearch]);
+  }
 
-  useEffect(() => {
+  const [previousInputs3, setpreviousInputs3] = useState<
+    readonly unknown[] | null
+  >(null);
+  const currentInputs4 = [investigationSubmittedSearch];
+  if (
+    previousInputs3 === null ||
+    currentInputs4.some(
+      (value, index) => !Object.is(value, previousInputs3?.[index]),
+    )
+  ) {
+    setpreviousInputs3(currentInputs4);
+
     setInvestigationPage(1);
-  }, [investigationSubmittedSearch]);
+  }
 
   function submitSearch() {
     setPage(1);
@@ -616,7 +671,12 @@ export default function Reports() {
     setPreviewLoading(true);
     setError("");
     try {
-      const endpoint = getReportEndpoint(reportType, selected, selectedAlert, selectedInvestigation);
+      const endpoint = getReportEndpoint(
+        reportType,
+        selected,
+        selectedAlert,
+        selectedInvestigation,
+      );
       const data = await apiFetch<Record<string, unknown>>(endpoint);
       const content = unwrap<Record<string, unknown>>(data);
 
@@ -625,23 +685,31 @@ export default function Reports() {
       let summaryText = "Generated forensic and compliance preview report.";
 
       if (reportType === "alert" || reportType === "detection-xai") {
-        targetId = selectedAlert?.alert_id || selected?.alert_id || "ALERT-UNKNOWN";
+        targetId =
+          selectedAlert?.alert_id || selected?.alert_id || "ALERT-UNKNOWN";
         targetTitle = `Alert Telemetry: ${selectedAlert?.predicted_class || selectedAlert?.alert_id || "Threat Event"}`;
-        summaryText = selectedAlert?.description || `Live SOC detection event: ${selectedAlert?.predicted_class || "Threat"}`;
+        summaryText =
+          selectedAlert?.description ||
+          `Live SOC detection event: ${selectedAlert?.predicted_class || "Threat"}`;
       } else if (reportType === "investigation") {
         targetId = selectedInvestigation?.investigation_id || "INV-UNKNOWN";
         targetTitle = `Investigation Casefile: ${selectedInvestigation?.investigation_id}`;
-        summaryText = selectedInvestigation?.conclusion || selectedInvestigation?.analyst_notes || "Forensic investigation casefile and threat dossier.";
+        summaryText =
+          selectedInvestigation?.conclusion ||
+          selectedInvestigation?.analyst_notes ||
+          "Forensic investigation casefile and threat dossier.";
       } else if (reportType === "incident") {
         targetId = selected?.incident_id || "INC-UNKNOWN";
-        targetTitle = selected?.title || `Incident Report: ${selected?.incident_id}`;
-        summaryText = selected?.description || "Incident post-mortem and forensic analysis report.";
+        targetTitle =
+          selected?.title || `Incident Report: ${selected?.incident_id}`;
+        summaryText =
+          selected?.description ||
+          "Incident post-mortem and forensic analysis report.";
       }
 
       setViewingReport({
         report_id:
-          targetId ||
-          `PREVIEW-${Date.now().toString(36).toUpperCase()}`,
+          targetId || `PREVIEW-${Date.now().toString(36).toUpperCase()}`,
         title: targetTitle,
         report_type: reportType,
         entity_id: targetId,
@@ -653,7 +721,9 @@ export default function Reports() {
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to preview report.");
+      setError(
+        err instanceof Error ? err.message : "Unable to preview report.",
+      );
     } finally {
       setPreviewLoading(false);
     }
@@ -665,7 +735,7 @@ export default function Reports() {
     setStoredLoading(true);
     try {
       const res = await apiFetch<StoredReportDetailResponse>(
-        `/api/reports/${encodeURIComponent(report.report_id)}`
+        `/api/reports/${encodeURIComponent(report.report_id)}`,
       );
       setViewingReport({
         report_id: res.report_id,
@@ -681,7 +751,9 @@ export default function Reports() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Unable to load stored report details."
+        err instanceof Error
+          ? err.message
+          : "Unable to load stored report details.",
       );
     } finally {
       setStoredLoading(false);
@@ -693,7 +765,12 @@ export default function Reports() {
     setError("");
     setSuccessNotice("");
     try {
-      const endpoint = getPdfEndpoint(reportType, selected, selectedAlert, selectedInvestigation);
+      const endpoint = getPdfEndpoint(
+        reportType,
+        selected,
+        selectedAlert,
+        selectedInvestigation,
+      );
       const response = await fetch(`${API_BASE}${endpoint}`, {
         headers: authHeaders(),
       });
@@ -716,8 +793,8 @@ export default function Reports() {
         reportType === "investigation"
           ? selectedInvestigation?.investigation_id
           : reportType === "alert" || reportType === "detection-xai"
-          ? selectedAlert?.alert_id
-          : selected?.incident_id;
+            ? selectedAlert?.alert_id
+            : selected?.incident_id;
       const filename =
         match?.[1] ||
         `${reportType}-report${entityTag ? `-${entityTag}` : ""}.pdf`;
@@ -732,7 +809,7 @@ export default function Reports() {
       URL.revokeObjectURL(url);
 
       setSuccessNotice(
-        `Report successfully downloaded and preserved in PostgreSQL database ('reports' table).`
+        `Report successfully downloaded and preserved in PostgreSQL database ('reports' table).`,
       );
       setStoredPage(1);
       void loadStoredReports();
@@ -750,19 +827,19 @@ export default function Reports() {
       let endpoint = "/api/reports/summary/pdf";
       if (report.report_type === "incident" && report.entity_id) {
         endpoint = `/api/reports/incidents/${encodeURIComponent(
-          report.entity_id
+          report.entity_id,
         )}/pdf`;
       } else if (report.report_type === "investigation" && report.entity_id) {
         endpoint = `/api/reports/investigations/${encodeURIComponent(
-          report.entity_id
+          report.entity_id,
         )}/pdf`;
       } else if (report.report_type === "alert" && report.entity_id) {
         endpoint = `/api/reports/alerts/${encodeURIComponent(
-          report.entity_id
+          report.entity_id,
         )}/pdf`;
       } else if (report.report_type === "detection-xai" && report.entity_id) {
         endpoint = `/api/reports/detection-xai/${encodeURIComponent(
-          report.entity_id
+          report.entity_id,
         )}/pdf`;
       }
 
@@ -786,7 +863,9 @@ export default function Reports() {
       URL.revokeObjectURL(url);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Unable to download stored report."
+        err instanceof Error
+          ? err.message
+          : "Unable to download stored report.",
       );
     } finally {
       setDownloadingReportId(null);
@@ -796,7 +875,7 @@ export default function Reports() {
   async function deleteStoredReport(reportId: string) {
     if (
       !window.confirm(
-        `Are you sure you want to delete report ${reportId} from the database?`
+        `Are you sure you want to delete report ${reportId} from the database?`,
       )
     ) {
       return;
@@ -815,18 +894,14 @@ export default function Reports() {
     }
   }
 
-
   return (
     <div className="reports-page-container">
       {/* HEADER */}
       <header className="reports-header">
         <div>
           <span className="reports-eyebrow">SECURITY OPERATIONS / AUDIT</span>
-          <h1>Security Operations Reports</h1>
-          <p>
-            Persisted compliance archives and forensic telemetry generated from
-            the live PostgreSQL database.
-          </p>
+          <h1>Reports</h1>
+          <p>Reports created from the live PostgreSQL database.</p>
         </div>
         <div className="reports-header-actions">
           <button
@@ -857,7 +932,7 @@ export default function Reports() {
           }}
         >
           <Database size={16} />
-          Database Stored Reports ({storedTotal})
+          Saved reports ({storedTotal})
         </button>
         <button
           type="button"
@@ -870,7 +945,7 @@ export default function Reports() {
           }}
         >
           <FileBarChart2 size={16} />
-          Report Generator & Exporter
+          Create report
         </button>
         {viewingReport && (
           <button
@@ -937,7 +1012,7 @@ export default function Reports() {
                     void downloadPdf();
                   } else {
                     const match = storedReports.find(
-                      (r) => r.report_id === viewingReport.report_id
+                      (r) => r.report_id === viewingReport.report_id,
                     );
                     if (match) void downloadStoredReport(match);
                     else void downloadPdf();
@@ -972,15 +1047,25 @@ export default function Reports() {
                   <Shield size={28} />
                 </div>
                 <div>
-                  <div className="report-doc-org">ZUKA CYBERSECURITY DEFENSE</div>
-                  <h2 className="report-doc-title">{String(viewingReport.title)}</h2>
+                  <div className="report-doc-org">
+                    ZUKA CYBERSECURITY DEFENSE
+                  </div>
+                  <h2 className="report-doc-title">
+                    {String(viewingReport.title)}
+                  </h2>
                   <div className="report-doc-meta">
                     <span>
-                      Type: <strong>{String(viewingReport.report_type).toUpperCase()}</strong>
+                      Type:{" "}
+                      <strong>
+                        {String(viewingReport.report_type).toUpperCase()}
+                      </strong>
                     </span>
                     <span>&bull;</span>
                     <span>
-                      Entity: <code>{String(viewingReport.entity_id || "GLOBAL-SYSTEM")}</code>
+                      Entity:{" "}
+                      <code>
+                        {String(viewingReport.entity_id || "GLOBAL-SYSTEM")}
+                      </code>
                     </span>
                     <span>&bull;</span>
                     <span>
@@ -1011,19 +1096,29 @@ export default function Reports() {
               viewingReport.report_type === "detection-xai") && (
               <>
                 <section className="report-doc-section">
-                  <h3 className="report-doc-heading">2. THREAT DETECTION & NETWORK TELEMETRY</h3>
+                  <h3 className="report-doc-heading">
+                    2. THREAT DETECTION & NETWORK TELEMETRY
+                  </h3>
                   <div className="report-doc-kpi-grid">
                     <div className="report-doc-kpi-card">
                       <span className="kpi-label">ATTACK CLASSIFICATION</span>
                       <strong className="kpi-val text-red">
                         {String(
-                          (viewingReport.content.alert as Record<string, unknown>)
-                            ?.predicted_class ||
+                          (
+                            viewingReport.content.alert as Record<
+                              string,
+                              unknown
+                            >
+                          )?.predicted_class ||
                             (viewingReport.content as Record<string, unknown>)
                               ?.predicted_class ||
-                            (viewingReport.content.incident as Record<string, unknown>)
-                              ?.title ||
-                            "THREAT EVENT"
+                            (
+                              viewingReport.content.incident as Record<
+                                string,
+                                unknown
+                              >
+                            )?.title ||
+                            "THREAT EVENT",
                         )}
                       </strong>
                     </div>
@@ -1032,23 +1127,39 @@ export default function Reports() {
                       <span className="kpi-label">THREAT SEVERITY</span>
                       <strong
                         className={`kpi-val severity-${String(
-                          (viewingReport.content.incident as Record<string, unknown>)
-                            ?.severity ||
-                            (viewingReport.content.alert as Record<string, unknown>)
-                              ?.severity ||
+                          (
+                            viewingReport.content.incident as Record<
+                              string,
+                              unknown
+                            >
+                          )?.severity ||
+                            (
+                              viewingReport.content.alert as Record<
+                                string,
+                                unknown
+                              >
+                            )?.severity ||
                             (viewingReport.content as Record<string, unknown>)
                               ?.severity ||
-                            "HIGH"
+                            "HIGH",
                         ).toLowerCase()}`}
                       >
                         {String(
-                          (viewingReport.content.incident as Record<string, unknown>)
-                            ?.severity ||
-                            (viewingReport.content.alert as Record<string, unknown>)
-                              ?.severity ||
+                          (
+                            viewingReport.content.incident as Record<
+                              string,
+                              unknown
+                            >
+                          )?.severity ||
+                            (
+                              viewingReport.content.alert as Record<
+                                string,
+                                unknown
+                              >
+                            )?.severity ||
                             (viewingReport.content as Record<string, unknown>)
                               ?.severity ||
-                            "HIGH"
+                            "HIGH",
                         )}
                       </strong>
                     </div>
@@ -1056,20 +1167,30 @@ export default function Reports() {
                     <div className="report-doc-kpi-card">
                       <span className="kpi-label">MODEL CONFIDENCE</span>
                       <strong className="kpi-val text-cyan">
-                        {((viewingReport.content.alert as Record<string, unknown>)
-                          ?.confidence ??
+                        {((
+                          viewingReport.content.alert as Record<string, unknown>
+                        )?.confidence ??
                           (viewingReport.content as Record<string, unknown>)
                             ?.confidence) !== undefined &&
-                        ((viewingReport.content.alert as Record<string, unknown>)
-                          ?.confidence ??
+                        ((
+                          viewingReport.content.alert as Record<string, unknown>
+                        )?.confidence ??
                           (viewingReport.content as Record<string, unknown>)
                             ?.confidence) !== null
                           ? `${(
                               Number(
-                                (viewingReport.content.alert as Record<string, unknown>)
-                                  ?.confidence ??
-                                  (viewingReport.content as Record<string, unknown>)
-                                    ?.confidence
+                                (
+                                  viewingReport.content.alert as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.confidence ??
+                                  (
+                                    viewingReport.content as Record<
+                                      string,
+                                      unknown
+                                    >
+                                  )?.confidence,
                               ) * 100
                             ).toFixed(1)}%`
                           : "98.4%"}
@@ -1080,13 +1201,21 @@ export default function Reports() {
                       <span className="kpi-label">STATUS</span>
                       <strong className="kpi-val text-green">
                         {String(
-                          (viewingReport.content.incident as Record<string, unknown>)
-                            ?.status ||
-                            (viewingReport.content.alert as Record<string, unknown>)
-                              ?.status ||
+                          (
+                            viewingReport.content.incident as Record<
+                              string,
+                              unknown
+                            >
+                          )?.status ||
+                            (
+                              viewingReport.content.alert as Record<
+                                string,
+                                unknown
+                              >
+                            )?.status ||
                             (viewingReport.content as Record<string, unknown>)
                               ?.status ||
-                            "OPEN"
+                            "OPEN",
                         )}
                       </strong>
                     </div>
@@ -1094,7 +1223,9 @@ export default function Reports() {
 
                   {/* Network Vector Table */}
                   <div className="report-doc-subtable-wrap">
-                    <div className="report-doc-subheading">Network Vector Telemetry</div>
+                    <div className="report-doc-subheading">
+                      Network Vector Telemetry
+                    </div>
                     <table className="report-doc-data-table">
                       <tbody>
                         <tr>
@@ -1102,14 +1233,26 @@ export default function Reports() {
                           <td>
                             <code>
                               {String(
-                                (viewingReport.content.alert as Record<string, unknown>)
-                                  ?.alert_id ||
-                                  (viewingReport.content.incident as Record<string, unknown>)
-                                    ?.alert_id ||
-                                  (viewingReport.content as Record<string, unknown>)
-                                    ?.alert_id ||
+                                (
+                                  viewingReport.content.alert as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.alert_id ||
+                                  (
+                                    viewingReport.content.incident as Record<
+                                      string,
+                                      unknown
+                                    >
+                                  )?.alert_id ||
+                                  (
+                                    viewingReport.content as Record<
+                                      string,
+                                      unknown
+                                    >
+                                  )?.alert_id ||
                                   viewingReport.entity_id ||
-                                  "N/A"
+                                  "N/A",
                               )}
                             </code>
                           </td>
@@ -1117,11 +1260,19 @@ export default function Reports() {
                           <td>
                             <code>
                               {String(
-                                (viewingReport.content.alert as Record<string, unknown>)
-                                  ?.protocol ||
-                                  (viewingReport.content as Record<string, unknown>)
-                                    ?.protocol ||
-                                  "Unknown"
+                                (
+                                  viewingReport.content.alert as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.protocol ||
+                                  (
+                                    viewingReport.content as Record<
+                                      string,
+                                      unknown
+                                    >
+                                  )?.protocol ||
+                                  "Unknown",
                               )}
                             </code>
                           </td>
@@ -1131,19 +1282,41 @@ export default function Reports() {
                           <td>
                             <code>
                               {String(
-                                (viewingReport.content.alert as Record<string, unknown>)
-                                  ?.source_ip ||
-                                  (viewingReport.content as Record<string, unknown>)
-                                    ?.source_ip ||
-                                  "Unknown"
+                                (
+                                  viewingReport.content.alert as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.source_ip ||
+                                  (
+                                    viewingReport.content as Record<
+                                      string,
+                                      unknown
+                                    >
+                                  )?.source_ip ||
+                                  "Unknown",
                               )}
-                              {(viewingReport.content.alert as Record<string, unknown>)?.source_port ||
-                              (viewingReport.content as Record<string, unknown>)?.source_port
+                              {(
+                                viewingReport.content.alert as Record<
+                                  string,
+                                  unknown
+                                >
+                              )?.source_port ||
+                              (viewingReport.content as Record<string, unknown>)
+                                ?.source_port
                                 ? `:${String(
-                                    (viewingReport.content.alert as Record<string, unknown>)
-                                      ?.source_port ||
-                                      (viewingReport.content as Record<string, unknown>)
-                                        ?.source_port
+                                    (
+                                      viewingReport.content.alert as Record<
+                                        string,
+                                        unknown
+                                      >
+                                    )?.source_port ||
+                                      (
+                                        viewingReport.content as Record<
+                                          string,
+                                          unknown
+                                        >
+                                      )?.source_port,
                                   )}`
                                 : ""}
                             </code>
@@ -1152,19 +1325,41 @@ export default function Reports() {
                           <td>
                             <code>
                               {String(
-                                (viewingReport.content.alert as Record<string, unknown>)
-                                  ?.destination_ip ||
-                                  (viewingReport.content as Record<string, unknown>)
-                                    ?.destination_ip ||
-                                  "Unknown"
+                                (
+                                  viewingReport.content.alert as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.destination_ip ||
+                                  (
+                                    viewingReport.content as Record<
+                                      string,
+                                      unknown
+                                    >
+                                  )?.destination_ip ||
+                                  "Unknown",
                               )}
-                              {(viewingReport.content.alert as Record<string, unknown>)?.destination_port ||
-                              (viewingReport.content as Record<string, unknown>)?.destination_port
+                              {(
+                                viewingReport.content.alert as Record<
+                                  string,
+                                  unknown
+                                >
+                              )?.destination_port ||
+                              (viewingReport.content as Record<string, unknown>)
+                                ?.destination_port
                                 ? `:${String(
-                                    (viewingReport.content.alert as Record<string, unknown>)
-                                      ?.destination_port ||
-                                      (viewingReport.content as Record<string, unknown>)
-                                        ?.destination_port
+                                    (
+                                      viewingReport.content.alert as Record<
+                                        string,
+                                        unknown
+                                      >
+                                    )?.destination_port ||
+                                      (
+                                        viewingReport.content as Record<
+                                          string,
+                                          unknown
+                                        >
+                                      )?.destination_port,
                                   )}`
                                 : ""}
                             </code>
@@ -1172,17 +1367,23 @@ export default function Reports() {
                         </tr>
                         <tr>
                           <th>Detection Dataset</th>
-                          <td>
-                            Unknown
-                          </td>
+                          <td>Unknown</td>
                           <th>Capture Source</th>
                           <td>
                             {String(
-                              (viewingReport.content.alert as Record<string, unknown>)
-                                ?.capture_source ||
-                                (viewingReport.content as Record<string, unknown>)
-                                  ?.capture_source ||
-                                "Network Flow Replay"
+                              (
+                                viewingReport.content.alert as Record<
+                                  string,
+                                  unknown
+                                >
+                              )?.capture_source ||
+                                (
+                                  viewingReport.content as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.capture_source ||
+                                "Network Flow Replay",
                             )}
                           </td>
                         </tr>
@@ -1195,8 +1396,8 @@ export default function Reports() {
                 {Boolean(
                   (viewingReport.content.alert as Record<string, unknown>)
                     ?.xai_explanation ||
-                    (viewingReport.content as Record<string, unknown>)
-                      ?.xai_explanation
+                  (viewingReport.content as Record<string, unknown>)
+                    ?.xai_explanation,
                 ) && (
                   <section className="report-doc-section">
                     <h3 className="report-doc-heading">
@@ -1219,8 +1420,12 @@ export default function Reports() {
                       <tbody>
                         {(
                           (
-                            ((viewingReport.content.alert as Record<string, unknown>)
-                              ?.xai_explanation as Record<string, unknown>) ||
+                            ((
+                              viewingReport.content.alert as Record<
+                                string,
+                                unknown
+                              >
+                            )?.xai_explanation as Record<string, unknown>) ||
                             ((viewingReport.content as Record<string, unknown>)
                               ?.xai_explanation as Record<string, unknown>)
                           )?.top_contributions as Array<Record<string, unknown>>
@@ -1247,7 +1452,7 @@ export default function Reports() {
                                   style={{
                                     width: `${Math.min(
                                       100,
-                                      Math.abs(Number(c.shap_value) || 0) * 120
+                                      Math.abs(Number(c.shap_value) || 0) * 120,
                                     )}%`,
                                   }}
                                 />
@@ -1264,11 +1469,19 @@ export default function Reports() {
 
                 {/* Investigation Notes - Only if investigation info exists */}
                 {Boolean(
-                  (viewingReport.content.investigation as Record<string, unknown>)
-                    ?.investigation_id ||
-                    (viewingReport.content.investigation as Record<string, unknown>)
-                      ?.status ||
-                    viewingReport.report_type === "investigation"
+                  (
+                    viewingReport.content.investigation as Record<
+                      string,
+                      unknown
+                    >
+                  )?.investigation_id ||
+                  (
+                    viewingReport.content.investigation as Record<
+                      string,
+                      unknown
+                    >
+                  )?.status ||
+                  viewingReport.report_type === "investigation",
                 ) && (
                   <section className="report-doc-section">
                     <h3 className="report-doc-heading">
@@ -1279,10 +1492,12 @@ export default function Reports() {
                         <span>Investigation Department Status:</span>
                         <strong>
                           {String(
-                            (viewingReport.content.investigation as Record<
-                              string,
-                              unknown
-                            >)?.status || "ASSIGNED_TO_SOC"
+                            (
+                              viewingReport.content.investigation as Record<
+                                string,
+                                unknown
+                              >
+                            )?.status || "ASSIGNED_TO_SOC",
                           )}
                         </strong>
                       </div>
@@ -1290,10 +1505,12 @@ export default function Reports() {
                         <span>Forensic Casefile ID:</span>
                         <code>
                           {String(
-                            (viewingReport.content.investigation as Record<
-                              string,
-                              unknown
-                            >)?.investigation_id || "INV-ZUKA-ONLINE"
+                            (
+                              viewingReport.content.investigation as Record<
+                                string,
+                                unknown
+                              >
+                            )?.investigation_id || "INV-ZUKA-ONLINE",
                           )}
                         </code>
                       </div>
@@ -1301,62 +1518,82 @@ export default function Reports() {
                         <span>Investigator Forensic Notes:</span>
                         <p>
                           {String(
-                            (viewingReport.content.investigation as Record<
-                              string,
-                              unknown
-                            >)?.analyst_notes ||
-                              "Preliminary triage notes recorded during active forensic analysis."
+                            (
+                              viewingReport.content.investigation as Record<
+                                string,
+                                unknown
+                              >
+                            )?.analyst_notes ||
+                              "Preliminary triage notes recorded during active forensic analysis.",
                           )}
                         </p>
                       </div>
                       {Boolean(
-                        (viewingReport.content.investigation as Record<string, unknown>)
-                          ?.conclusion
+                        (
+                          viewingReport.content.investigation as Record<
+                            string,
+                            unknown
+                          >
+                        )?.conclusion,
                       ) && (
                         <div className="inv-row" style={{ marginTop: 8 }}>
                           <span>Formal Investigation Conclusion:</span>
                           <p style={{ color: "#34d399", fontWeight: 600 }}>
                             {String(
-                              (viewingReport.content.investigation as Record<
-                                string,
-                                unknown
-                              >)?.conclusion
+                              (
+                                viewingReport.content.investigation as Record<
+                                  string,
+                                  unknown
+                                >
+                              )?.conclusion,
                             )}
                           </p>
                         </div>
                       )}
                       {Boolean(
-                        (viewingReport.content.investigation as Record<string, unknown>)
-                          ?.started_at
+                        (
+                          viewingReport.content.investigation as Record<
+                            string,
+                            unknown
+                          >
+                        )?.started_at,
                       ) && (
                         <div className="inv-row" style={{ fontSize: 12 }}>
                           <span>Case Initiated:</span>
                           <strong>
                             {formatDate(
                               String(
-                                (viewingReport.content.investigation as Record<
-                                  string,
-                                  unknown
-                                >)?.started_at
-                              )
+                                (
+                                  viewingReport.content.investigation as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.started_at,
+                              ),
                             )}
                           </strong>
                         </div>
                       )}
                       {Boolean(
-                        (viewingReport.content.investigation as Record<string, unknown>)
-                          ?.completed_at
+                        (
+                          viewingReport.content.investigation as Record<
+                            string,
+                            unknown
+                          >
+                        )?.completed_at,
                       ) && (
                         <div className="inv-row" style={{ fontSize: 12 }}>
                           <span>Case Completed:</span>
                           <strong>
                             {formatDate(
                               String(
-                                (viewingReport.content.investigation as Record<
-                                  string,
-                                  unknown
-                                >)?.completed_at
-                              )
+                                (
+                                  viewingReport.content.investigation as Record<
+                                    string,
+                                    unknown
+                                  >
+                                )?.completed_at,
+                              ),
                             )}
                           </strong>
                         </div>
@@ -1370,14 +1607,20 @@ export default function Reports() {
             {/* SOC SUMMARY REPORT DETAILS */}
             {Boolean(viewingReport.content?.totals) && (
               <section className="report-doc-section">
-                <h3 className="report-doc-heading">2. PLATFORM TELEMETRY & TOTALS</h3>
+                <h3 className="report-doc-heading">
+                  2. PLATFORM TELEMETRY & TOTALS
+                </h3>
                 <div className="report-doc-kpi-grid">
                   <div className="report-doc-kpi-card">
                     <span className="kpi-label">TOTAL ALERTS</span>
                     <strong className="kpi-val text-cyan">
                       {Number(
-                        (viewingReport.content.totals as Record<string, unknown>)
-                          ?.alerts || 0
+                        (
+                          viewingReport.content.totals as Record<
+                            string,
+                            unknown
+                          >
+                        )?.alerts || 0,
                       ).toLocaleString("en-IN")}
                     </strong>
                   </div>
@@ -1385,8 +1628,12 @@ export default function Reports() {
                     <span className="kpi-label">TOTAL INCIDENTS</span>
                     <strong className="kpi-val text-red">
                       {Number(
-                        (viewingReport.content.totals as Record<string, unknown>)
-                          ?.incidents || 0
+                        (
+                          viewingReport.content.totals as Record<
+                            string,
+                            unknown
+                          >
+                        )?.incidents || 0,
                       ).toLocaleString("en-IN")}
                     </strong>
                   </div>
@@ -1394,8 +1641,12 @@ export default function Reports() {
                     <span className="kpi-label">ACTIVE INVESTIGATIONS</span>
                     <strong className="kpi-val text-green">
                       {Number(
-                        (viewingReport.content.totals as Record<string, unknown>)
-                          ?.investigations || 0
+                        (
+                          viewingReport.content.totals as Record<
+                            string,
+                            unknown
+                          >
+                        )?.investigations || 0,
                       ).toLocaleString("en-IN")}
                     </strong>
                   </div>
@@ -1403,8 +1654,12 @@ export default function Reports() {
                     <span className="kpi-label">NETWORK EVENTS</span>
                     <strong className="kpi-val text-gold">
                       {Number(
-                        (viewingReport.content.totals as Record<string, unknown>)
-                          ?.network_events || 0
+                        (
+                          viewingReport.content.totals as Record<
+                            string,
+                            unknown
+                          >
+                        )?.network_events || 0,
                       ).toLocaleString("en-IN")}
                     </strong>
                   </div>
@@ -1412,7 +1667,10 @@ export default function Reports() {
 
                 {/* Attack distribution */}
                 {Boolean(viewingReport.content?.attack_distribution) && (
-                  <div className="report-doc-subtable-wrap" style={{ marginTop: "24px" }}>
+                  <div
+                    className="report-doc-subtable-wrap"
+                    style={{ marginTop: "24px" }}
+                  >
                     <div className="report-doc-subheading">
                       Attack Class Distribution in Database
                     </div>
@@ -1428,7 +1686,7 @@ export default function Reports() {
                           (viewingReport.content.attack_distribution as Record<
                             string,
                             number
-                          >) || {}
+                          >) || {},
                         ).map(([cat, count]) => (
                           <tr key={cat}>
                             <td>
@@ -1517,8 +1775,8 @@ export default function Reports() {
                 <Database size={32} />
                 <strong>No stored reports found</strong>
                 <span>
-                  Switch to "Report Generator & Exporter" to generate and save your
-                  first report.
+                  Switch to "Create report" to generate and save your first
+                  report.
                 </span>
               </div>
             ) : (
@@ -1540,13 +1798,16 @@ export default function Reports() {
                       <td>
                         <span className="reports-id">{r.report_id}</span>
                         <div className="reports-status-sub">
-                          Status: <strong className="text-green">{r.status}</strong>
+                          Status:{" "}
+                          <strong className="text-green">{r.status}</strong>
                         </div>
                       </td>
                       <td>
                         <div className="reports-stored-title">{r.title}</div>
                         {r.summary && (
-                          <div className="reports-stored-summary">{r.summary}</div>
+                          <div className="reports-stored-summary">
+                            {r.summary}
+                          </div>
                         )}
                       </td>
                       <td>
@@ -1637,7 +1898,9 @@ export default function Reports() {
               <button
                 type="button"
                 disabled={storedPage >= storedTotalPages || storedLoading}
-                onClick={() => setStoredPage((v) => Math.min(storedTotalPages, v + 1))}
+                onClick={() =>
+                  setStoredPage((v) => Math.min(storedTotalPages, v + 1))
+                }
               >
                 Next <ChevronRight size={15} />
               </button>
@@ -1651,9 +1914,10 @@ export default function Reports() {
                   gap: "0.25rem",
                 }}
               >
-                Page <strong style={{ color: "#f8fafc" }}>{storedPage}</strong> of{" "}
-                <strong style={{ color: "#f8fafc" }}>{storedTotalPages}</strong> (
-                {storedTotal} total reports)
+                Page <strong style={{ color: "#f8fafc" }}>{storedPage}</strong>{" "}
+                of{" "}
+                <strong style={{ color: "#f8fafc" }}>{storedTotalPages}</strong>{" "}
+                ({storedTotal} total reports)
               </span>
             </div>
           )}
@@ -1718,11 +1982,20 @@ export default function Reports() {
             <div className="reports-list-panel">
               <div className="reports-panel-heading">
                 <div>
-                  <span className="reports-panel-eyebrow">TARGET CASE (INCIDENT QUEUE)</span>
+                  <span className="reports-panel-eyebrow">
+                    TARGET CASE (INCIDENT QUEUE)
+                  </span>
                   <h2>
                     Select an Incident{" "}
                     {selected && (
-                      <span className="selected-tag" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                      <span
+                        className="selected-tag"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
+                      >
                         Selected: <code>{selected.incident_id}</code>
                         <button
                           type="button"
@@ -1814,7 +2087,7 @@ export default function Reports() {
                             <td>
                               <span
                                 className={`reports-severity severity-${String(
-                                  incident.severity ?? "unknown"
+                                  incident.severity ?? "unknown",
                                 ).toLowerCase()}`}
                               >
                                 {formatValue(incident.severity)}
@@ -1872,11 +2145,16 @@ export default function Reports() {
                     <button
                       type="button"
                       disabled={page >= totalPages}
-                      onClick={() => setPage((v) => Math.min(totalPages, v + 1))}
+                      onClick={() =>
+                        setPage((v) => Math.min(totalPages, v + 1))
+                      }
                     >
                       Next <ChevronRight size={15} />
                     </button>
-                    <span>Page <strong>{page}</strong> of <strong>{totalPages}</strong></span>
+                    <span>
+                      Page <strong>{page}</strong> of{" "}
+                      <strong>{totalPages}</strong>
+                    </span>
                   </div>
                 </>
               )}
@@ -1888,12 +2166,22 @@ export default function Reports() {
             <div className="reports-list-panel">
               <div className="reports-panel-heading">
                 <div>
-                  <span className="reports-panel-eyebrow">TARGET CASE (INVESTIGATION CASES QUEUE)</span>
+                  <span className="reports-panel-eyebrow">
+                    TARGET CASE (INVESTIGATION CASES QUEUE)
+                  </span>
                   <h2>
                     Select an Investigation Case{" "}
                     {selectedInvestigation && (
-                      <span className="selected-tag" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                        Selected: <code>{selectedInvestigation.investigation_id}</code>
+                      <span
+                        className="selected-tag"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
+                      >
+                        Selected:{" "}
+                        <code>{selectedInvestigation.investigation_id}</code>
                         <button
                           type="button"
                           onClick={() => setSelectedInvestigation(null)}
@@ -1965,7 +2253,8 @@ export default function Reports() {
                           <tr
                             key={inv.investigation_id}
                             className={
-                              selectedInvestigation?.investigation_id === inv.investigation_id
+                              selectedInvestigation?.investigation_id ===
+                              inv.investigation_id
                                 ? "reports-selected-row"
                                 : ""
                             }
@@ -1973,17 +2262,22 @@ export default function Reports() {
                             style={{ cursor: "pointer" }}
                           >
                             <td>
-                              <span className="reports-id">{inv.investigation_id}</span>
+                              <span className="reports-id">
+                                {inv.investigation_id}
+                              </span>
                             </td>
                             <td>
-                              <span className="reports-id" style={{ color: "#38bdf8" }}>
+                              <span
+                                className="reports-id"
+                                style={{ color: "#38bdf8" }}
+                              >
                                 {inv.incident_id}
                               </span>
                             </td>
                             <td>
                               <span
                                 className={`reports-severity severity-${String(
-                                  inv.status ?? "unknown"
+                                  inv.status ?? "unknown",
                                 ).toLowerCase()}`}
                               >
                                 {formatValue(inv.status)}
@@ -2004,29 +2298,38 @@ export default function Reports() {
                                     <strong>Verdict:</strong> {inv.conclusion}
                                   </span>
                                 ) : inv.analyst_notes ? (
-                                  <span style={{ color: "#cbd5e1" }}>{inv.analyst_notes}</span>
+                                  <span style={{ color: "#cbd5e1" }}>
+                                    {inv.analyst_notes}
+                                  </span>
                                 ) : (
-                                  <span style={{ color: "#64748b" }}>No notes logged</span>
+                                  <span style={{ color: "#64748b" }}>
+                                    No notes logged
+                                  </span>
                                 )}
                               </div>
                             </td>
-                            <td>{formatDate(inv.started_at || inv.created_at)}</td>
+                            <td>
+                              {formatDate(inv.started_at || inv.created_at)}
+                            </td>
                             <td>
                               <button
                                 className={`reports-select-button ${
-                                  selectedInvestigation?.investigation_id === inv.investigation_id
+                                  selectedInvestigation?.investigation_id ===
+                                  inv.investigation_id
                                     ? "selected"
                                     : ""
                                 }`}
                                 type="button"
                                 onClick={() => selectInvestigation(inv)}
                                 title={
-                                  selectedInvestigation?.investigation_id === inv.investigation_id
+                                  selectedInvestigation?.investigation_id ===
+                                  inv.investigation_id
                                     ? "Click to deselect"
                                     : "Select investigation"
                                 }
                               >
-                                {selectedInvestigation?.investigation_id === inv.investigation_id
+                                {selectedInvestigation?.investigation_id ===
+                                inv.investigation_id
                                   ? "Deselect ✕"
                                   : "Select"}
                               </button>
@@ -2042,7 +2345,9 @@ export default function Reports() {
                     <button
                       type="button"
                       disabled={investigationPage <= 1}
-                      onClick={() => setInvestigationPage((v) => Math.max(1, v - 1))}
+                      onClick={() =>
+                        setInvestigationPage((v) => Math.max(1, v - 1))
+                      }
                     >
                       <ChevronLeft size={15} /> Previous
                     </button>
@@ -2051,7 +2356,9 @@ export default function Reports() {
                         <button
                           key={number}
                           type="button"
-                          className={number === investigationPage ? "active" : ""}
+                          className={
+                            number === investigationPage ? "active" : ""
+                          }
                           onClick={() => setInvestigationPage(number)}
                         >
                           {number}
@@ -2061,11 +2368,18 @@ export default function Reports() {
                     <button
                       type="button"
                       disabled={investigationPage >= investigationTotalPages}
-                      onClick={() => setInvestigationPage((v) => Math.min(investigationTotalPages, v + 1))}
+                      onClick={() =>
+                        setInvestigationPage((v) =>
+                          Math.min(investigationTotalPages, v + 1),
+                        )
+                      }
                     >
                       Next <ChevronRight size={15} />
                     </button>
-                    <span>Page <strong>{investigationPage}</strong> of <strong>{investigationTotalPages}</strong></span>
+                    <span>
+                      Page <strong>{investigationPage}</strong> of{" "}
+                      <strong>{investigationTotalPages}</strong>
+                    </span>
                   </div>
                 </>
               )}
@@ -2077,11 +2391,20 @@ export default function Reports() {
             <div className="reports-list-panel">
               <div className="reports-panel-heading">
                 <div>
-                  <span className="reports-panel-eyebrow">TARGET DETECTION (ALERT QUEUE)</span>
+                  <span className="reports-panel-eyebrow">
+                    TARGET DETECTION (ALERT QUEUE)
+                  </span>
                   <h2>
                     Select an Alert{" "}
                     {selectedAlert && (
-                      <span className="selected-tag" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                      <span
+                        className="selected-tag"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
+                      >
                         Selected: <code>{selectedAlert.alert_id}</code>
                         <button
                           type="button"
@@ -2165,7 +2488,13 @@ export default function Reports() {
                             <td>
                               <span className="reports-id">{al.alert_id}</span>
                               {al.incident_id && (
-                                <span className="reports-title" style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                                <span
+                                  className="reports-title"
+                                  style={{
+                                    fontSize: "0.75rem",
+                                    color: "#64748b",
+                                  }}
+                                >
                                   Incident: {al.incident_id}
                                 </span>
                               )}
@@ -2176,14 +2505,18 @@ export default function Reports() {
                               </strong>
                             </td>
                             <td>
-                              <span style={{ color: "#38bdf8", fontWeight: 600 }}>
-                                {al.confidence ? `${(Number(al.confidence) * 100).toFixed(1)}%` : "N/A"}
+                              <span
+                                style={{ color: "#38bdf8", fontWeight: 600 }}
+                              >
+                                {al.confidence
+                                  ? `${(Number(al.confidence) * 100).toFixed(1)}%`
+                                  : "N/A"}
                               </span>
                             </td>
                             <td>
                               <span
                                 className={`reports-severity severity-${String(
-                                  al.severity ?? "unknown"
+                                  al.severity ?? "unknown",
                                 ).toLowerCase()}`}
                               >
                                 {formatValue(al.severity)}
@@ -2241,11 +2574,16 @@ export default function Reports() {
                     <button
                       type="button"
                       disabled={alertPage >= alertTotalPages}
-                      onClick={() => setAlertPage((v) => Math.min(alertTotalPages, v + 1))}
+                      onClick={() =>
+                        setAlertPage((v) => Math.min(alertTotalPages, v + 1))
+                      }
                     >
                       Next <ChevronRight size={15} />
                     </button>
-                    <span>Page <strong>{alertPage}</strong> of <strong>{alertTotalPages}</strong></span>
+                    <span>
+                      Page <strong>{alertPage}</strong> of{" "}
+                      <strong>{alertTotalPages}</strong>
+                    </span>
                   </div>
                 </>
               )}
@@ -2258,11 +2596,19 @@ export default function Reports() {
               <div style={{ flex: 1 }}>
                 <h3>SOC Global Executive Summary & Security Posture Report</h3>
                 <p>
-                  Generates an executive situational awareness document consolidating
-                  all database alerts, correlated incidents, open/closed investigations,
-                  forensic conclusions, and network traffic telemetry.
+                  Generates an executive situational awareness document
+                  consolidating all database alerts, correlated incidents,
+                  open/closed investigations, forensic conclusions, and network
+                  traffic telemetry.
                 </p>
-                <div style={{ display: "flex", gap: 12, marginTop: 14, flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    marginTop: 14,
+                    flexWrap: "wrap",
+                  }}
+                >
                   <button
                     className="reports-primary-btn"
                     type="button"

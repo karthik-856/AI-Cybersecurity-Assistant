@@ -2,7 +2,8 @@ import os
 import re
 from typing import List, Dict, Any, Optional
 import requests
-import chromadb
+from rag_assistant.vector_index import VectorIndex
+from rag_assistant.text_encoder import encode_text
 
 try:
     from config import (
@@ -55,36 +56,11 @@ class RAGPipeline:
         self.num_ctx = num_ctx
         self.top_k = top_k
 
-        # Initialize ChromaDB persistent client
-        self.client = chromadb.PersistentClient(path=self.persist_dir)
-        try:
-            self.collection = self.client.get_collection(name=self.collection_name)
-        except Exception:
-            self.collection = self.client.get_or_create_collection(name=self.collection_name)
+        self.collection = VectorIndex(self.persist_dir, self.collection_name)
 
     def embed_query(self, query: str) -> List[float]:
         """Fetch query embedding from Ollama using nomic-embed-text."""
-        url = f"{self.ollama_url}/api/embed"
-        try:
-            res = requests.post(
-                url,
-                json={"model": self.embedding_model, "input": query},
-                timeout=60,
-            )
-            if res.status_code == 200:
-                return res.json()["embeddings"][0]
-        except Exception:
-            pass
-
-        # Fallback to legacy endpoint
-        legacy_url = f"{self.ollama_url}/api/embeddings"
-        res = requests.post(
-            legacy_url,
-            json={"model": self.embedding_model, "prompt": query},
-            timeout=60,
-        )
-        res.raise_for_status()
-        return res.json()["embedding"]
+        return encode_text(query)
 
     def retrieve(self, query: str, top_k: Optional[int] = None) -> List[Dict[str, Any]]:
         """
@@ -269,6 +245,10 @@ ANSWER:"""
                 "model": active_model,
                 "fast_path": "matched_faq",
             }
+
+        if os.environ.get("RAG_GENERATION_ENABLED", "false").lower() != "true":
+            return {"question": question, "answer": FALLBACK_RESPONSE, "formatted_answer": FALLBACK_RESPONSE,
+                    "sources": [], "is_fallback": True, "chunks": chunks, "model": "reviewed-knowledge"}
 
         # 2. Build prompt
         prompt = self.format_prompt(question, chunks)

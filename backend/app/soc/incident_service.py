@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import datetime
 from typing import Any
@@ -101,7 +102,7 @@ ATTACK_CONTEXT = {
 
 def generate_incident_id() -> str:
     """Generate a unique human-readable ZUKA incident identifier."""
-    timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S%f")
+    timestamp = utc_now().strftime("%Y%m%d%H%M%S%f")
     return f"ZUKA-INC-{timestamp}"
 
 

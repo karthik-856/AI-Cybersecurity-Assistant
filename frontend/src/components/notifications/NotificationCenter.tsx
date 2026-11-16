@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertTriangle,
@@ -15,7 +9,10 @@ import {
   X,
 } from "lucide-react";
 import { getAlerts, type Alert } from "../../services/api";
-import { disablePersistentPush, ensurePersistentPush } from "../../services/push";
+import {
+  disablePersistentPush,
+  ensurePersistentPush,
+} from "../../services/push";
 import { playAlertSound, prepareAlertAudio } from "../../services/alertSound";
 import "./NotificationCenter.css";
 
@@ -41,11 +38,15 @@ function readPreferences(): Preferences {
     const v2 = rawV2 ? JSON.parse(rawV2) : {};
     const v1 = rawV1 ? JSON.parse(rawV1) : {};
     return {
-      notificationsCritical: v2.criticalAlerts ?? v1.notificationsCritical ?? true,
+      notificationsCritical:
+        v2.criticalAlerts ?? v1.notificationsCritical ?? true,
       notificationsHigh: v2.highAlerts ?? v1.notificationsHigh ?? true,
-      browserNotifications: v2.browserNotifications ?? v1.browserNotifications ?? false,
-      soundNotifications: v2.soundNotifications ?? v1.soundNotifications ?? true,
-      notificationPreview: v2.notificationPreview ?? v1.notificationPreview ?? true,
+      browserNotifications:
+        v2.browserNotifications ?? v1.browserNotifications ?? false,
+      soundNotifications:
+        v2.soundNotifications ?? v1.soundNotifications ?? true,
+      notificationPreview:
+        v2.notificationPreview ?? v1.notificationPreview ?? true,
     };
   } catch {
     return {};
@@ -71,10 +72,7 @@ function parseAlertDate(value: string): Date {
   if (!raw) return new Date(NaN);
 
   // Backend may return a UTC-naive ISO datetime. Treat it as UTC.
-  if (
-    !raw.endsWith("Z") &&
-    !/[+-]\d{2}:?\d{2}$/.test(raw)
-  ) {
+  if (!raw.endsWith("Z") && !/[+-]\d{2}:?\d{2}$/.test(raw)) {
     return new Date(`${raw}Z`);
   }
 
@@ -134,8 +132,7 @@ export default function NotificationCenter() {
       const relevant = response.alerts
         .filter(
           (alert: Alert) =>
-            alert.severity === "CRITICAL" ||
-            alert.severity === "HIGH",
+            alert.severity === "CRITICAL" || alert.severity === "HIGH",
         )
         .sort(
           (a: Alert, b: Alert) =>
@@ -144,8 +141,7 @@ export default function NotificationCenter() {
         );
 
       const visible = relevant.filter(
-        (alert) =>
-          !dismissedRef.current.has(String(alert.alert_id)),
+        (alert) => !dismissedRef.current.has(String(alert.alert_id)),
       );
 
       setAlerts(visible.slice(0, MAX_ITEMS));
@@ -202,7 +198,7 @@ export default function NotificationCenter() {
           : "Unable to load security notifications.",
       );
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     prepareAlertAudio();
@@ -211,7 +207,11 @@ export default function NotificationCenter() {
   useEffect(() => {
     const syncPushPermission = () => {
       const preferences = readPreferences();
-      if (preferences.browserNotifications && "Notification" in window && Notification.permission === "granted") {
+      if (
+        preferences.browserNotifications &&
+        "Notification" in window &&
+        Notification.permission === "granted"
+      ) {
         void ensurePersistentPush();
       } else {
         void disablePersistentPush();
@@ -222,7 +222,10 @@ export default function NotificationCenter() {
     window.addEventListener("zuka_preferences_updated", syncPushPermission);
     window.addEventListener("focus", syncPushPermission);
     return () => {
-      window.removeEventListener("zuka_preferences_updated", syncPushPermission);
+      window.removeEventListener(
+        "zuka_preferences_updated",
+        syncPushPermission,
+      );
       window.removeEventListener("focus", syncPushPermission);
     };
   }, []);
@@ -240,9 +243,7 @@ export default function NotificationCenter() {
   const unreadCount = unreadIds.size;
 
   const criticalCount = useMemo(
-    () =>
-      alerts.filter((alert) => alert.severity === "CRITICAL")
-        .length,
+    () => alerts.filter((alert) => alert.severity === "CRITICAL").length,
     [alerts],
   );
 
@@ -358,15 +359,11 @@ export default function NotificationCenter() {
     event: React.PointerEvent<HTMLButtonElement>,
   ) {
     const start = pointerStartRef.current[alertId];
-    const delta =
-      start === undefined ? 0 : event.clientX - start;
+    const delta = start === undefined ? 0 : event.clientX - start;
 
     delete pointerStartRef.current[alertId];
 
-    if (
-      swipeTriggeredRef.current.has(alertId) ||
-      delta <= -SWIPE_DISTANCE
-    ) {
+    if (swipeTriggeredRef.current.has(alertId) || delta <= -SWIPE_DISTANCE) {
       swipeTriggeredRef.current.delete(alertId);
       suppressClickRef.current = true;
       dismissAlert(alertId);
@@ -432,8 +429,7 @@ export default function NotificationCenter() {
                 <h2>Security Notifications</h2>
                 <p>
                   {alerts.length} critical/high alert
-                  {alerts.length === 1 ? "" : "s"} in the
-                  current queue.
+                  {alerts.length === 1 ? "" : "s"} in the current queue.
                 </p>
               </div>
 
@@ -449,9 +445,7 @@ export default function NotificationCenter() {
 
             <div className="zuka-notification-toolbar">
               <span>
-                {unreadCount > 0
-                  ? `${unreadCount} unread`
-                  : "All viewed"}
+                {unreadCount > 0 ? `${unreadCount} unread` : "All viewed"}
               </span>
 
               <button
@@ -476,8 +470,8 @@ export default function NotificationCenter() {
                   <ShieldAlert size={28} />
                   <strong>No critical or high alerts</strong>
                   <span>
-                    Swipe a notification left or use Clear All.
-                    New security alerts will appear automatically.
+                    Swipe a notification left or use Clear All. New security
+                    alerts will appear automatically.
                   </span>
                 </div>
               )}
@@ -492,24 +486,14 @@ export default function NotificationCenter() {
                   <button
                     type="button"
                     key={id}
-                    className={`zuka-notification-item ${
-                      alert.severity.toLowerCase()
-                    } ${isUnread ? "unread" : ""}`}
+                    className={`zuka-notification-item ${alert.severity.toLowerCase()} ${isUnread ? "unread" : ""}`}
                     style={{
                       transform: `translateX(${offset}px)`,
                     }}
-                    onPointerDown={(event) =>
-                      handlePointerDown(id, event)
-                    }
-                    onPointerMove={(event) =>
-                      handlePointerMove(id, event)
-                    }
-                    onPointerUp={(event) =>
-                      handlePointerUp(id, event)
-                    }
-                    onPointerCancel={() =>
-                      handlePointerCancel(id)
-                    }
+                    onPointerDown={(event) => handlePointerDown(id, event)}
+                    onPointerMove={(event) => handlePointerMove(id, event)}
+                    onPointerUp={(event) => handlePointerUp(id, event)}
+                    onPointerCancel={() => handlePointerCancel(id)}
                     onClick={() => {
                       if (suppressClickRef.current) {
                         suppressClickRef.current = false;
@@ -526,10 +510,7 @@ export default function NotificationCenter() {
                     <span className="zuka-notification-item-copy">
                       <span className="zuka-notification-item-top">
                         <strong>{alert.severity}</strong>
-                        <time
-                          dateTime={alert.detected_at}
-                          title={exactTime}
-                        >
+                        <time dateTime={alert.detected_at} title={exactTime}>
                           {exactTime}
                         </time>
                       </span>
@@ -542,8 +523,7 @@ export default function NotificationCenter() {
                       </span>
 
                       <small>
-                        Confidence {(alert.confidence * 100).toFixed(2)}%
-                        {" · "}
+                        Confidence {(alert.confidence * 100).toFixed(2)}%{" · "}
                         {alert.alert_id}
                       </small>
                     </span>

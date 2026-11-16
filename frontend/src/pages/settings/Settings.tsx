@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Bell,
   Check,
@@ -21,10 +21,8 @@ import {
 import { formatShortDateTime } from "../../utils/datetime";
 import "./Settings.css";
 import TwoFactorVerification from "../../components/security/TwoFactorVerification";
-import PasswordRequirements, {
-  evaluatePassword,
-} from "../../components/auth/PasswordRequirements";
-import { getChromeSiteSound, setChromeSiteSound } from "../../services/chromeSoundBridge";
+import PasswordRequirements from "../../components/auth/PasswordRequirements";
+import { evaluatePassword } from "../../utils/password";
 import {
   changePassword,
   getActiveSessions,
@@ -71,17 +69,44 @@ const DEFAULT_PREFERENCES: Preferences = {
   defaultEscalationPriority: "P1",
 };
 
-const sections: Array<{ key: SectionKey; label: string; description: string; icon: typeof UserRound }> = [
-  { key: "profile", label: "Profile & Account", description: "Identity and password credentials", icon: CircleUserRound },
-  { key: "security", label: "Security & Sessions", description: "Active sessions and login audit logs", icon: ShieldCheck },
-  { key: "notifications", label: "Alert Notifications", description: "Severity thresholds and Web Push", icon: Bell },
-  { key: "appearance", label: "Workspace & Display", description: "Interface density and motion", icon: Palette },
+const sections: Array<{
+  key: SectionKey;
+  label: string;
+  description: string;
+  icon: typeof UserRound;
+}> = [
+  {
+    key: "profile",
+    label: "Profile & Account",
+    description: "Identity and password credentials",
+    icon: CircleUserRound,
+  },
+  {
+    key: "security",
+    label: "Security & Sessions",
+    description: "Active sessions and login audit logs",
+    icon: ShieldCheck,
+  },
+  {
+    key: "notifications",
+    label: "Alert Notifications",
+    description: "Severity thresholds and Web Push",
+    icon: Bell,
+  },
+  {
+    key: "appearance",
+    label: "Workspace & Display",
+    description: "Interface density and motion",
+    icon: Palette,
+  },
 ];
 
 function loadPreferences(): Preferences {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...DEFAULT_PREFERENCES, ...JSON.parse(raw) } : DEFAULT_PREFERENCES;
+    return raw
+      ? { ...DEFAULT_PREFERENCES, ...JSON.parse(raw) }
+      : DEFAULT_PREFERENCES;
   } catch {
     return DEFAULT_PREFERENCES;
   }
@@ -89,13 +114,31 @@ function loadPreferences(): Preferences {
 
 function persistSoundPreference(enabled: boolean) {
   try {
-    const currentV2 = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") as Record<string, unknown>;
+    const currentV2 = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "{}",
+    ) as Record<string, unknown>;
     const rawV1 = localStorage.getItem("zuka_settings_preferences");
     const currentV1 = JSON.parse(rawV1 || "{}") as Record<string, unknown>;
-    const legacySeed = rawV1 ? {} : { browserNotifications: currentV2.browserNotifications };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...currentV2, soundNotifications: enabled }));
-    localStorage.setItem("zuka_settings_preferences", JSON.stringify({ ...legacySeed, ...currentV1, soundNotifications: enabled }));
-    window.dispatchEvent(new CustomEvent("zuka_preferences_updated", { detail: { soundNotifications: enabled } }));
+    const legacySeed = rawV1
+      ? {}
+      : { browserNotifications: currentV2.browserNotifications };
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...currentV2, soundNotifications: enabled }),
+    );
+    localStorage.setItem(
+      "zuka_settings_preferences",
+      JSON.stringify({
+        ...legacySeed,
+        ...currentV1,
+        soundNotifications: enabled,
+      }),
+    );
+    window.dispatchEvent(
+      new CustomEvent("zuka_preferences_updated", {
+        detail: { soundNotifications: enabled },
+      }),
+    );
   } catch {
     // The in-memory setting still applies for this page session.
   }
@@ -105,7 +148,12 @@ function getStoredUser() {
   try {
     const raw = localStorage.getItem("zuka_user");
     if (!raw) return null;
-    return JSON.parse(raw) as { username?: string; email?: string; role?: string; is_active?: boolean };
+    return JSON.parse(raw) as {
+      username?: string;
+      email?: string;
+      role?: string;
+      is_active?: boolean;
+    };
   } catch {
     return null;
   }
@@ -118,9 +166,23 @@ function maskEmail(email: string) {
   return `${name[0]}${"*".repeat(Math.min(Math.max(name.length - 2, 3), 7))}${name.at(-1)}@${domain}`;
 }
 
-function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (value: boolean) => void; label: string }) {
+function Toggle({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+}) {
   return (
-    <button type="button" className={`settings-toggle ${checked ? "active" : ""}`} aria-label={label} aria-pressed={checked} onClick={() => onChange(!checked)}>
+    <button
+      type="button"
+      className={`settings-toggle ${checked ? "active" : ""}`}
+      aria-label={label}
+      aria-pressed={checked}
+      onClick={() => onChange(!checked)}
+    >
       <span />
     </button>
   );
@@ -156,23 +218,53 @@ function SettingRow({
   );
 }
 
-function StatusPill({ children, tone = "success" }: { children: ReactNode; tone?: "success" | "neutral" | "warning" }) {
-  return <span className={`settings-status-pill ${tone}`}><span />{children}</span>;
+function StatusPill({
+  children,
+  tone = "success",
+}: {
+  children: ReactNode;
+  tone?: "success" | "neutral" | "warning";
+}) {
+  return (
+    <span className={`settings-status-pill ${tone}`}>
+      <span />
+      {children}
+    </span>
+  );
 }
 
-function ActionRow({ icon, label, description, action, danger = false }: { icon: ReactNode; label: string; description: string; action: ReactNode; danger?: boolean }) {
-  return <div className={`settings-action-row ${danger ? "danger" : ""}`}><div className="settings-action-icon">{icon}</div><div className="settings-action-copy"><strong>{label}</strong><span>{description}</span></div><div>{action}</div></div>;
+function ActionRow({
+  icon,
+  label,
+  description,
+  action,
+  danger = false,
+}: {
+  icon: ReactNode;
+  label: string;
+  description: string;
+  action: ReactNode;
+  danger?: boolean;
+}) {
+  return (
+    <div className={`settings-action-row ${danger ? "danger" : ""}`}>
+      <div className="settings-action-icon">{icon}</div>
+      <div className="settings-action-copy">
+        <strong>{label}</strong>
+        <span>{description}</span>
+      </div>
+      <div>{action}</div>
+    </div>
+  );
 }
 
 export default function Settings() {
   const [activeSection, setActiveSection] = useState<SectionKey>("profile");
   const [preferences, setPreferences] = useState<Preferences>(loadPreferences);
   const [saved, setSaved] = useState(false);
-  const [browserPermission, setBrowserPermission] = useState<NotificationPermission | "unsupported">(
-    () => ("Notification" in window ? Notification.permission : "unsupported"),
-  );
-  const [soundSyncStatus, setSoundSyncStatus] = useState("Checking Chrome site sound…");
-  const soundEditedRef = useRef(false);
+  const [browserPermission, setBrowserPermission] = useState<
+    NotificationPermission | "unsupported"
+  >(() => ("Notification" in window ? Notification.permission : "unsupported"));
   const [showPasswordPanel, setShowPasswordPanel] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -194,54 +286,30 @@ export default function Settings() {
 
   useEffect(() => {
     document.documentElement.dataset.zukaDensity = preferences.density;
-    document.documentElement.dataset.zukaReducedMotion = String(preferences.reducedMotion);
+    document.documentElement.dataset.zukaReducedMotion = String(
+      preferences.reducedMotion,
+    );
   }, [preferences.density, preferences.reducedMotion]);
 
   useEffect(() => {
     if (!("Notification" in window)) {
-      setBrowserPermission("unsupported");
       return;
     }
 
     let permissionStatus: PermissionStatus | undefined;
-    const refreshPermission = () => setBrowserPermission(Notification.permission);
-    refreshPermission();
-    void navigator.permissions?.query({ name: "notifications" as PermissionName }).then((status) => {
-      permissionStatus = status;
-      status.addEventListener("change", refreshPermission);
-      refreshPermission();
-    }).catch(() => undefined);
+    const refreshPermission = () =>
+      setBrowserPermission(Notification.permission);
+    void navigator.permissions
+      ?.query({ name: "notifications" as PermissionName })
+      .then((status) => {
+        permissionStatus = status;
+        status.addEventListener("change", refreshPermission);
+      })
+      .catch(() => undefined);
     window.addEventListener("focus", refreshPermission);
     return () => {
       window.removeEventListener("focus", refreshPermission);
       permissionStatus?.removeEventListener("change", refreshPermission);
-    };
-  }, []);
-
-  useEffect(() => {
-    let active = true;
-    const syncFromChrome = async () => {
-      const sound = await getChromeSiteSound();
-      if (!active) return;
-      if (!sound) {
-        setSoundSyncStatus("Chrome sync needs the ZUKA Site Sound Sync extension.");
-        return;
-      }
-
-      setSoundSyncStatus(sound.allowed ? "Chrome site sound is on." : "Chrome site sound is off.");
-      if (!soundEditedRef.current) {
-        setPreferences((current) => ({ ...current, soundNotifications: sound.allowed }));
-        persistSoundPreference(sound.allowed);
-      }
-    };
-
-    void syncFromChrome();
-    window.addEventListener("focus", syncFromChrome);
-    document.addEventListener("visibilitychange", syncFromChrome);
-    return () => {
-      active = false;
-      window.removeEventListener("focus", syncFromChrome);
-      document.removeEventListener("visibilitychange", syncFromChrome);
     };
   }, []);
 
@@ -251,17 +319,8 @@ export default function Settings() {
   }
 
   function updateSoundAlerts(enabled: boolean) {
-    soundEditedRef.current = true;
     update("soundNotifications", enabled);
     persistSoundPreference(enabled);
-    setSoundSyncStatus("Updating Chrome site sound…");
-    void setChromeSiteSound(enabled).then((sound) => {
-      if (!sound) {
-        setSoundSyncStatus("Chrome sync needs the ZUKA Site Sound Sync extension.");
-        return;
-      }
-      setSoundSyncStatus(sound.allowed ? "Chrome site sound is on." : "Chrome site sound is off.");
-    });
   }
 
   function syncPreferencesToStorage(prefs: Preferences) {
@@ -282,7 +341,9 @@ export default function Settings() {
         defaultEscalationPriority: prefs.defaultEscalationPriority,
       }),
     );
-    window.dispatchEvent(new CustomEvent("zuka_preferences_updated", { detail: prefs }));
+    window.dispatchEvent(
+      new CustomEvent("zuka_preferences_updated", { detail: prefs }),
+    );
     window.dispatchEvent(new Event("storage"));
   }
 
@@ -299,17 +360,16 @@ export default function Settings() {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem("zuka_settings_preferences");
     document.documentElement.dataset.zukaDensity = DEFAULT_PREFERENCES.density;
-    document.documentElement.dataset.zukaReducedMotion = String(DEFAULT_PREFERENCES.reducedMotion);
-    window.dispatchEvent(new CustomEvent("zuka_preferences_updated", { detail: DEFAULT_PREFERENCES }));
+    document.documentElement.dataset.zukaReducedMotion = String(
+      DEFAULT_PREFERENCES.reducedMotion,
+    );
+    window.dispatchEvent(
+      new CustomEvent("zuka_preferences_updated", {
+        detail: DEFAULT_PREFERENCES,
+      }),
+    );
     window.dispatchEvent(new Event("storage"));
     setSaved(false);
-    soundEditedRef.current = true;
-    setSoundSyncStatus("Updating Chrome site sound…");
-    void setChromeSiteSound(DEFAULT_PREFERENCES.soundNotifications).then((sound) => {
-      setSoundSyncStatus(sound
-        ? (sound.allowed ? "Chrome site sound is on." : "Chrome site sound is off.")
-        : "Chrome sync needs the ZUKA Site Sound Sync extension.");
-    });
   }
 
   function toggleBrowserNotifications() {
@@ -320,13 +380,14 @@ export default function Settings() {
     }
   }
 
-  const browserPermissionDescription = browserPermission === "granted"
-    ? "Chrome allows notifications for this site."
-    : browserPermission === "denied"
-      ? "Notifications are blocked in Chrome site settings."
-      : browserPermission === "unsupported"
-        ? "This browser does not support notifications."
-        : "Allow notifications in Chrome site settings to enable banners.";
+  const browserPermissionDescription =
+    browserPermission === "granted"
+      ? "Browser notifications are enabled."
+      : browserPermission === "denied"
+        ? "Notifications are blocked in your browser."
+        : browserPermission === "unsupported"
+          ? "This browser does not support notifications."
+          : "Allow browser notifications to enable alerts.";
 
   async function openLoginActivity() {
     setShowActivityPanel(true);
@@ -339,7 +400,9 @@ export default function Settings() {
     } catch (error) {
       setLoginActivity([]);
       setActivityError(
-        error instanceof Error ? error.message : "Unable to load login activity.",
+        error instanceof Error
+          ? error.message
+          : "Unable to load login activity.",
       );
     } finally {
       setActivityLoading(false);
@@ -357,7 +420,9 @@ export default function Settings() {
     } catch (error) {
       setSessions([]);
       setSessionsError(
-        error instanceof Error ? error.message : "Unable to load active sessions.",
+        error instanceof Error
+          ? error.message
+          : "Unable to load active sessions.",
       );
     } finally {
       setSessionsLoading(false);
@@ -373,7 +438,9 @@ export default function Settings() {
       setSessions(records);
     } catch (error) {
       setSessionsError(
-        error instanceof Error ? error.message : "Unable to refresh active sessions.",
+        error instanceof Error
+          ? error.message
+          : "Unable to refresh active sessions.",
       );
     } finally {
       setSessionsLoading(false);
@@ -393,7 +460,9 @@ export default function Settings() {
       );
     } catch (error) {
       setSessionsError(
-        error instanceof Error ? error.message : "Unable to sign out the selected session.",
+        error instanceof Error
+          ? error.message
+          : "Unable to sign out the selected session.",
       );
     } finally {
       setRevokingSessionId("");
@@ -420,11 +489,15 @@ export default function Settings() {
       setSessions(records);
 
       if (result.revoked_count !== undefined) {
-        console.info(`ZUKA: signed out ${result.revoked_count} other session(s).`);
+        console.info(
+          `ZUKA: signed out ${result.revoked_count} other session(s).`,
+        );
       }
     } catch (error) {
       setSessionsError(
-        error instanceof Error ? error.message : "Unable to sign out the other sessions.",
+        error instanceof Error
+          ? error.message
+          : "Unable to sign out the other sessions.",
       );
     } finally {
       setRevokeAllLoading(false);
@@ -438,7 +511,8 @@ export default function Settings() {
 
   function formatSessionDevice(value?: string | null) {
     if (!value) return "Browser / device unavailable";
-    if (/Code\//i.test(value) || /Electron\//i.test(value)) return "VS Code / Electron";
+    if (/Code\//i.test(value) || /Electron\//i.test(value))
+      return "VS Code / Electron";
     if (/Edg\//i.test(value)) return "Microsoft Edge";
     if (/OPR\//i.test(value)) return "Opera";
     if (/Firefox\//i.test(value)) return "Mozilla Firefox";
@@ -449,7 +523,8 @@ export default function Settings() {
 
   function formatSessionAgent(value?: string | null) {
     if (!value) return "Browser details unavailable";
-    if (/Code\//i.test(value) || /Electron\//i.test(value)) return "Desktop application";
+    if (/Code\//i.test(value) || /Electron\//i.test(value))
+      return "Desktop application";
     if (/Windows NT/i.test(value)) return "Windows";
     if (/Macintosh/i.test(value)) return "macOS";
     if (/Linux/i.test(value)) return "Linux";
@@ -486,15 +561,51 @@ export default function Settings() {
   return (
     <main className="settings-page">
       <header className="settings-header">
-        <div><span className="settings-eyebrow">ACCOUNT / PREFERENCES</span><h1>Settings</h1><p>Manage your ZUKA analyst workspace, notifications, privacy, and account security.</p></div>
-        <div className="settings-account-chip"><div className="settings-avatar"><UserRound size={17} /></div><div><strong>{username}</strong><span>{role}</span></div></div>
+        <div>
+          <span className="settings-eyebrow">ACCOUNT / PREFERENCES</span>
+          <h1>Settings</h1>
+          <p>
+            Manage your ZUKA analyst workspace, notifications, privacy, and
+            account security.
+          </p>
+        </div>
+        <div className="settings-account-chip">
+          <div className="settings-avatar">
+            <UserRound size={17} />
+          </div>
+          <div>
+            <strong>{username}</strong>
+            <span>{role}</span>
+          </div>
+        </div>
       </header>
 
       <section className="settings-shell">
         <aside className="settings-sidebar">
-          <div className="settings-sidebar-title"><LockKeyhole size={14} /><span>SETTINGS</span></div>
+          <div className="settings-sidebar-title">
+            <LockKeyhole size={14} />
+            <span>SETTINGS</span>
+          </div>
           <nav className="settings-nav" aria-label="Settings sections">
-            {sections.map((section) => { const Icon = section.icon; const active = activeSection === section.key; return <button key={section.key} type="button" className={`settings-nav-item ${active ? "active" : ""}`} onClick={() => setActiveSection(section.key)}><Icon size={16} /><span><strong>{section.label}</strong><small>{section.description}</small></span><ChevronRight size={14} /></button>; })}
+            {sections.map((section) => {
+              const Icon = section.icon;
+              const active = activeSection === section.key;
+              return (
+                <button
+                  key={section.key}
+                  type="button"
+                  className={`settings-nav-item ${active ? "active" : ""}`}
+                  onClick={() => setActiveSection(section.key)}
+                >
+                  <Icon size={16} />
+                  <span>
+                    <strong>{section.label}</strong>
+                    <small>{section.description}</small>
+                  </span>
+                  <ChevronRight size={14} />
+                </button>
+              );
+            })}
           </nav>
           <div className="settings-sidebar-note">
             <ShieldCheck size={15} />
@@ -517,7 +628,9 @@ export default function Settings() {
                 </div>
                 <div className="settings-profile-main">
                   <div className="settings-profile-name">{username}</div>
-                  <div className="settings-profile-email">{maskEmail(email)}</div>
+                  <div className="settings-profile-email">
+                    {maskEmail(email)}
+                  </div>
                 </div>
                 <StatusPill tone={accountActive ? "success" : "warning"}>
                   {accountActive ? "Account Active" : "Account Inactive"}
@@ -525,16 +638,28 @@ export default function Settings() {
               </div>
 
               <div className="settings-card">
-                <SettingRow label="Username" description="Analyst account identifier.">
+                <SettingRow
+                  label="Username"
+                  description="Analyst account identifier."
+                >
                   <span className="settings-value">{username}</span>
                 </SettingRow>
-                <SettingRow label="Email address" description="Registered email for system notifications.">
+                <SettingRow
+                  label="Email address"
+                  description="Registered email for system notifications."
+                >
                   <span className="settings-value">{maskEmail(email)}</span>
                 </SettingRow>
-                <SettingRow label="Role authorization" description="Access permissions assigned in PostgreSQL RBAC.">
+                <SettingRow
+                  label="Role authorization"
+                  description="Access permissions assigned in PostgreSQL RBAC."
+                >
                   <span className="settings-value">{role}</span>
                 </SettingRow>
-                <SettingRow label="Account state" description="Authentication lifecycle status.">
+                <SettingRow
+                  label="Account state"
+                  description="Authentication lifecycle status."
+                >
                   <StatusPill tone={accountActive ? "success" : "warning"}>
                     {accountActive ? "Active" : "Inactive"}
                   </StatusPill>
@@ -616,7 +741,9 @@ export default function Settings() {
                 <SettingRow
                   label="Critical severity alerts"
                   description="Notify immediately for CRITICAL machine learning detections."
-                  onClick={() => update("criticalAlerts", !preferences.criticalAlerts)}
+                  onClick={() =>
+                    update("criticalAlerts", !preferences.criticalAlerts)
+                  }
                 >
                   <Toggle
                     checked={preferences.criticalAlerts}
@@ -644,7 +771,10 @@ export default function Settings() {
                 >
                   <div className="settings-control-stack">
                     <Toggle
-                      checked={preferences.browserNotifications && browserPermission === "granted"}
+                      checked={
+                        preferences.browserNotifications &&
+                        browserPermission === "granted"
+                      }
                       onChange={toggleBrowserNotifications}
                       label="Browser notifications"
                     />
@@ -653,8 +783,10 @@ export default function Settings() {
 
                 <SettingRow
                   label="Sound alerts"
-                  description={`Play a ZUKA chime for Critical or High alerts. ${soundSyncStatus}`}
-                  onClick={() => updateSoundAlerts(!preferences.soundNotifications)}
+                  description="Play a sound for critical and high-severity alerts."
+                  onClick={() =>
+                    updateSoundAlerts(!preferences.soundNotifications)
+                  }
                 >
                   <div className="settings-inline-control">
                     <button
@@ -683,7 +815,12 @@ export default function Settings() {
                 <SettingRow
                   label="Attack preview in notifications"
                   description="Display predicted attack class and confidence score in alerts."
-                  onClick={() => update("notificationPreview", !preferences.notificationPreview)}
+                  onClick={() =>
+                    update(
+                      "notificationPreview",
+                      !preferences.notificationPreview,
+                    )
+                  }
                 >
                   <Toggle
                     checked={preferences.notificationPreview}
@@ -712,14 +849,18 @@ export default function Settings() {
                   <div className="settings-segmented">
                     <button
                       type="button"
-                      className={preferences.density === "comfortable" ? "selected" : ""}
+                      className={
+                        preferences.density === "comfortable" ? "selected" : ""
+                      }
                       onClick={() => update("density", "comfortable")}
                     >
                       Comfortable
                     </button>
                     <button
                       type="button"
-                      className={preferences.density === "compact" ? "selected" : ""}
+                      className={
+                        preferences.density === "compact" ? "selected" : ""
+                      }
                       onClick={() => update("density", "compact")}
                     >
                       Compact
@@ -730,7 +871,9 @@ export default function Settings() {
                 <SettingRow
                   label="Reduced motion"
                   description="Disable non-essential dashboard animations."
-                  onClick={() => update("reducedMotion", !preferences.reducedMotion)}
+                  onClick={() =>
+                    update("reducedMotion", !preferences.reducedMotion)
+                  }
                 >
                   <Toggle
                     checked={preferences.reducedMotion}
@@ -747,7 +890,11 @@ export default function Settings() {
       <footer className="settings-footer">
         <div />
         <div className="settings-actions">
-          <button type="button" className="settings-reset-button" onClick={reset}>
+          <button
+            type="button"
+            className="settings-reset-button"
+            onClick={reset}
+          >
             <RotateCcw size={14} /> Reset Defaults
           </button>
           <button type="button" className="settings-save-button" onClick={save}>
@@ -803,16 +950,18 @@ export default function Settings() {
               </div>
             )}
 
-            {!activityLoading && !activityError && loginActivity.length === 0 && (
-              <div className="settings-activity-state">
-                <Clock3 size={22} />
-                <strong>No login activity found</strong>
-                <span>
-                  There are no authentication records available for this
-                  account yet.
-                </span>
-              </div>
-            )}
+            {!activityLoading &&
+              !activityError &&
+              loginActivity.length === 0 && (
+                <div className="settings-activity-state">
+                  <Clock3 size={22} />
+                  <strong>No login activity found</strong>
+                  <span>
+                    There are no authentication records available for this
+                    account yet.
+                  </span>
+                </div>
+              )}
 
             {!activityLoading && !activityError && loginActivity.length > 0 && (
               <div className="settings-activity-list">
@@ -877,7 +1026,9 @@ export default function Settings() {
         <div
           className="settings-modal-backdrop"
           role="presentation"
-          onClick={() => !sessionsLoading && !revokeAllLoading && setShowSessionsPanel(false)}
+          onClick={() =>
+            !sessionsLoading && !revokeAllLoading && setShowSessionsPanel(false)
+          }
         >
           <div
             className="settings-modal settings-sessions-modal"
@@ -924,7 +1075,8 @@ export default function Settings() {
                 <Laptop size={22} />
                 <strong>No active sessions found</strong>
                 <span>
-                  No unrevoked and unexpired authentication sessions are available.
+                  No unrevoked and unexpired authentication sessions are
+                  available.
                 </span>
               </div>
             )}
@@ -944,7 +1096,9 @@ export default function Settings() {
 
                     <div className="settings-session-copy">
                       <div className="settings-session-title">
-                        <strong>{formatSessionDevice(session.user_agent)}</strong>
+                        <strong>
+                          {formatSessionDevice(session.user_agent)}
+                        </strong>
                         {session.is_current && (
                           <span className="settings-session-current">
                             CURRENT SESSION
@@ -962,8 +1116,8 @@ export default function Settings() {
                       </small>
 
                       <small>
-                        Signed in {formatSessionTime(session.created_at)} · Expires{" "}
-                        {formatSessionTime(session.expires_at)}
+                        Signed in {formatSessionTime(session.created_at)} ·
+                        Expires {formatSessionTime(session.expires_at)}
                       </small>
 
                       <small className="settings-session-id">
@@ -1080,18 +1234,22 @@ export default function Settings() {
                 if (!pwdCheck.isValid) {
                   setPasswordError(
                     pwdCheck.firstError ||
-                      "New password must meet enterprise complexity conditions (e.g. first letter capital, minimum 8 characters, number, symbol)."
+                      "New password must meet enterprise complexity conditions (e.g. first letter capital, minimum 8 characters, number, symbol).",
                   );
                   return;
                 }
 
                 if (newPassword !== confirmPassword) {
-                  setPasswordError("New password and confirmation do not match.");
+                  setPasswordError(
+                    "New password and confirmation do not match.",
+                  );
                   return;
                 }
 
                 if (currentPassword === newPassword) {
-                  setPasswordError("New password must be different from your current password.");
+                  setPasswordError(
+                    "New password must be different from your current password.",
+                  );
                   return;
                 }
 
@@ -1102,13 +1260,17 @@ export default function Settings() {
                     new_password: newPassword,
                     confirm_password: confirmPassword,
                   });
-                  setPasswordSuccess(result.message || "Password changed successfully.");
+                  setPasswordSuccess(
+                    result.message || "Password changed successfully.",
+                  );
                   setCurrentPassword("");
                   setNewPassword("");
                   setConfirmPassword("");
                 } catch (error) {
                   setPasswordError(
-                    error instanceof Error ? error.message : "Unable to change password."
+                    error instanceof Error
+                      ? error.message
+                      : "Unable to change password.",
                   );
                 } finally {
                   setPasswordLoading(false);
@@ -1181,8 +1343,8 @@ export default function Settings() {
                   {passwordLoading
                     ? "Changing…"
                     : passwordSuccess
-                    ? "Password Changed"
-                    : "Change Password"}
+                      ? "Password Changed"
+                      : "Change Password"}
                 </button>
               </div>
             </form>
@@ -1193,5 +1355,20 @@ export default function Settings() {
   );
 }
 
-function SectionHeader({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) { return <header className="settings-section-header"><span>{eyebrow}</span><h2>{title}</h2><p>{description}</p></header>; }
-
+function SectionHeader({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <header className="settings-section-header">
+      <span>{eyebrow}</span>
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </header>
+  );
+}

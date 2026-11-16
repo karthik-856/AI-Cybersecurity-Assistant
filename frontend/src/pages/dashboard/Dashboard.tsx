@@ -1,3 +1,4 @@
+import { scheduleLoad } from "../../utils/scheduleLoad";
 import {
   Activity,
   AlertTriangle,
@@ -67,8 +68,7 @@ interface DashboardSummaryData {
   }>;
 }
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+import { API_BASE_URL } from "../../services/config";
 
 function formatNumber(value: number): string {
   return new Intl.NumberFormat("en-US").format(value);
@@ -95,20 +95,15 @@ function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const loadDashboard = useCallback(async (manual = false) => {
+  const loadDashboard = useCallback(async () => {
     try {
-      if (manual) {
-        setRefreshing(true);
-      }
-      setError(null);
-
       const response = await fetch(`${API_BASE_URL}/api/dashboard/summary`, {
         headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
         throw new Error(
-          `Unable to retrieve dashboard metrics (${response.status}).`
+          `Unable to retrieve dashboard metrics (${response.status}).`,
         );
       }
 
@@ -119,7 +114,7 @@ function Dashboard() {
       setError(
         err instanceof Error
           ? err.message
-          : "Unable to connect to SOC dashboard backend."
+          : "Unable to connect to SOC dashboard backend.",
       );
     } finally {
       setLoading(false);
@@ -128,13 +123,14 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    void loadDashboard();
+    const cancelInitialLoad = scheduleLoad(loadDashboard);
 
     const interval = window.setInterval(() => {
       void loadDashboard();
     }, 6000);
 
     return () => {
+      cancelInitialLoad();
       window.clearInterval(interval);
     };
   }, [loadDashboard]);
@@ -144,8 +140,9 @@ function Dashboard() {
       ? Math.max(...data.attack_distribution.map((item) => item.count))
       : 1;
 
-  const totalResolved =
-    data ? (data.alerts.resolved || 0) + (data.incidents.closed || 0) : 0;
+  const totalResolved = data
+    ? (data.alerts.resolved || 0) + (data.incidents.closed || 0)
+    : 0;
 
   return (
     <div className="dashboard-page">
@@ -154,40 +151,45 @@ function Dashboard() {
       ===================================================== */}
       <section className="dashboard-header">
         <div className="dashboard-header-text">
-          <div className="dashboard-eyebrow">
-            ENTERPRISE SOC COMMAND CENTER
-          </div>
-          <h1>Security Operations Center</h1>
-          <p>
-            Real-time PostgreSQL telemetry, ML detection model analytics, and
-            incident orchestration across security telemetry and live feeds.
-          </p>
+          <div className="dashboard-eyebrow">SECURITY WORKSPACE</div>
+          <h1>Overview</h1>
+          <p>Review alerts, investigate incidents, and track response work.</p>
         </div>
 
         <div className="dashboard-status-row">
           <div className="dashboard-engine-status">
             <span className="dashboard-engine-dot" />
-            <span>Detection Engine: Active</span>
+            <span>
+              {error
+                ? "Connection unavailable"
+                : data
+                  ? "Workspace connected"
+                  : "Connecting..."}
+            </span>
           </div>
 
           <div className="dashboard-live-card">
             <div className="dashboard-live-card-top">
-              <span className="dashboard-live-title">TELEMETRY STREAM</span>
+              <span className="dashboard-live-title">RECENT ACTIVITY</span>
               <div className="dashboard-live-indicator">
                 <Radio size={14} className="dashboard-pulse-icon" />
-                <span>LIVE</span>
+                <span>DATASET REPLAY</span>
               </div>
             </div>
             <div className="dashboard-live-status">
               <Wifi size={14} />
-              <span>Unknown</span>
+              <span>
+                {data?.network.total_events
+                  ? `${formatNumber(data.network.total_events)} recorded events`
+                  : "No events yet"}
+              </span>
             </div>
             <div className="dashboard-live-meta">
               <Clock size={12} />
               <span>
                 {lastUpdated
                   ? `Updated at ${formatTime(lastUpdated)}`
-                  : "Syncing with PostgreSQL..."}
+                  : "Loading activity..."}
               </span>
             </div>
           </div>
@@ -204,7 +206,7 @@ function Dashboard() {
           <button
             type="button"
             className="dashboard-retry-btn"
-            onClick={() => void loadDashboard(true)}
+            onClick={() => void loadDashboard()}
           >
             Retry
           </button>
@@ -219,14 +221,11 @@ function Dashboard() {
         <button
           type="button"
           className="dashboard-quick-refresh"
-          onClick={() => void loadDashboard(true)}
+          onClick={() => void loadDashboard()}
           disabled={refreshing}
           title="Refresh All Metrics"
         >
-          <RefreshCw
-            size={14}
-            className={refreshing ? "dashboard-spin" : ""}
-          />
+          <RefreshCw size={14} className={refreshing ? "dashboard-spin" : ""} />
           <span>{refreshing ? "Syncing..." : "Refresh"}</span>
         </button>
       </div>
@@ -238,7 +237,11 @@ function Dashboard() {
             <div className="dashboard-kpi-icon alert">
               <AlertTriangle size={22} />
             </div>
-            <Link to="/alerts" className="dashboard-kpi-link" title="Open Alert Center">
+            <Link
+              to="/alerts"
+              className="dashboard-kpi-link"
+              title="Open Alert Center"
+            >
               <ArrowUpRight size={16} />
             </Link>
           </div>
@@ -275,7 +278,11 @@ function Dashboard() {
             <div className="dashboard-kpi-icon network">
               <Activity size={22} />
             </div>
-            <Link to="/network-monitor" className="dashboard-kpi-link" title="Open Network Monitor">
+            <Link
+              to="/network-monitor"
+              className="dashboard-kpi-link"
+              title="Open Network Monitor"
+            >
               <ArrowUpRight size={16} />
             </Link>
           </div>
@@ -304,7 +311,11 @@ function Dashboard() {
             <div className="dashboard-kpi-icon incident">
               <Shield size={22} />
             </div>
-            <Link to="/incidents" className="dashboard-kpi-link" title="Open Incidents">
+            <Link
+              to="/incidents"
+              className="dashboard-kpi-link"
+              title="Open Incidents"
+            >
               <ArrowUpRight size={16} />
             </Link>
           </div>
@@ -385,7 +396,7 @@ function Dashboard() {
                 <strong className="data-box-val">
                   {data ? formatNumber(data.network.total_events) : "—"}
                 </strong>
-                <small className="data-box-meta">Indexed in PostgreSQL</small>
+                <small className="data-box-meta">Recorded events</small>
               </div>
 
               <div className="dashboard-data-box">
@@ -399,7 +410,9 @@ function Dashboard() {
               <div className="dashboard-data-box">
                 <span className="data-box-label">Unique Dest IPs</span>
                 <strong className="data-box-val">
-                  {data ? formatNumber(data.network.unique_destination_ips) : "—"}
+                  {data
+                    ? formatNumber(data.network.unique_destination_ips)
+                    : "—"}
                 </strong>
                 <small className="data-box-meta">Target servers</small>
               </div>
@@ -423,7 +436,9 @@ function Dashboard() {
               <div className="dashboard-data-box">
                 <span className="data-box-label">Raw Protocols</span>
                 <strong className="data-box-val">
-                  {data ? formatNumber(data.network.other_protocol_events) : "—"}
+                  {data
+                    ? formatNumber(data.network.other_protocol_events)
+                    : "—"}
                 </strong>
                 <small className="data-box-meta">ICMP / Custom</small>
               </div>
@@ -449,8 +464,8 @@ function Dashboard() {
                 </div>
                 <h3>No attack detections</h3>
                 <p>
-                  ML detection records will populate distribution bars as
-                  replay feeds are processed.
+                  ML detection records will populate distribution bars as replay
+                  feeds are processed.
                 </p>
               </div>
             ) : (
@@ -469,9 +484,7 @@ function Dashboard() {
                           <strong className="attack-count">
                             {formatNumber(item.count)}
                           </strong>
-                          <span className="attack-share">
-                            ({percentage}%)
-                          </span>
+                          <span className="attack-share">({percentage}%)</span>
                         </div>
                       </div>
 
@@ -496,7 +509,7 @@ function Dashboard() {
       <section className="dashboard-panel recent-panel">
         <div className="dashboard-panel-header">
           <div>
-            <div className="dashboard-panel-eyebrow">LIVE FEED</div>
+            <div className="dashboard-panel-eyebrow">RECENT DETECTIONS</div>
             <h2>Recent Detection Records</h2>
           </div>
           <div className="dashboard-header-right">
@@ -530,10 +543,7 @@ function Dashboard() {
                 {data.recent_alerts.map((alert) => (
                   <tr key={alert.alert_id}>
                     <td>
-                      <Link
-                        to={`/alerts`}
-                        className="dashboard-cell-id"
-                      >
+                      <Link to={`/alerts`} className="dashboard-cell-id">
                         {alert.alert_id}
                       </Link>
                     </td>
@@ -562,9 +572,7 @@ function Dashboard() {
                       </span>
                     </td>
                     <td>
-                      <span className="dashboard-cell-dataset">
-                        Unknown
-                      </span>
+                      <span className="dashboard-cell-dataset">Unknown</span>
                     </td>
                     <td>
                       <span className="dashboard-cell-time">

@@ -1,0 +1,34 @@
+# No database is created here: use a separate Neon Free project and its SSL URL.
+services:
+  - type: web
+    name: zuka-soc
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: OTP_SECRET
+        generateValue: true
+      - key: BOOTSTRAP_ADMIN_USERNAME
+        value: admin
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: ENABLE_IN_PROCESS_REPLAY
+        value: "false"
+      - key: SEED_DEMO_DATA
+        value: "true"
+      - key: ZUKA_LLM_PROVIDER
+        value: disabled
+      - key: RAG_GENERATION_ENABLED
+        value: "false"
+      - key: FORWARDED_ALLOW_IPS
+        value: '*'

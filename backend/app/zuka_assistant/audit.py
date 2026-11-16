@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import datetime
 from typing import Any
@@ -30,7 +31,7 @@ def log_assistant_audit(
         ip_address=ip_address,
         user_agent=user_agent or "Zuka-Operations-Assistant",
         metadata_json=metadata or {},
-        created_at=datetime.utcnow(),
+        created_at=utc_now(),
     )
     db.add(audit_record)
     return audit_record
@@ -54,7 +55,7 @@ def log_analyst_action_entry(
         action_type=action_type,
         description=description,
         result=result or "SUCCESS",
-        created_at=datetime.utcnow(),
+        created_at=utc_now(),
     )
     db.add(action_record)
     return action_record

@@ -1,3 +1,4 @@
+import { logout } from "../services/auth";
 import {
   AlertTriangle,
   ChevronDown,
@@ -16,11 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import {
-  NavLink,
-  Outlet,
-  useNavigate,
-} from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import NotificationCenter from "../components/notifications/NotificationCenter";
 import ZukaAssistant from "../components/zuka_assistant/ZukaAssistant";
 import "./SocLayout.css";
@@ -132,7 +129,7 @@ const navGroups: NavigationGroup[] = [
         label: "Settings",
         path: "/settings",
         icon: Settings,
-        roles: ["ADMIN", "SOC_ANALYST"],
+        roles: ["ADMIN", "SOC_ANALYST", "VIEWER"],
       },
     ],
   },
@@ -180,7 +177,9 @@ function SocLayout() {
             document.documentElement.dataset.zukaDensity = parsed.density;
           }
           if (parsed.reducedMotion !== undefined) {
-            document.documentElement.dataset.zukaReducedMotion = String(parsed.reducedMotion);
+            document.documentElement.dataset.zukaReducedMotion = String(
+              parsed.reducedMotion,
+            );
           }
         }
       } catch {
@@ -191,7 +190,10 @@ function SocLayout() {
     window.addEventListener("zuka_preferences_updated", applyGlobalPreferences);
     window.addEventListener("storage", applyGlobalPreferences);
     return () => {
-      window.removeEventListener("zuka_preferences_updated", applyGlobalPreferences);
+      window.removeEventListener(
+        "zuka_preferences_updated",
+        applyGlobalPreferences,
+      );
       window.removeEventListener("storage", applyGlobalPreferences);
     };
   }, []);
@@ -219,12 +221,13 @@ function SocLayout() {
   const role = user?.role || "VIEWER";
   const initials = username.charAt(0).toUpperCase();
 
-  function handleLogout() {
-    localStorage.removeItem("zuka_access_token");
-    localStorage.removeItem("zuka_user");
-    navigate("/login", {
-      replace: true,
-    });
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch {
+      /* Local credentials are cleared even if the connection closes. */
+    }
+    navigate("/login", { replace: true });
   }
 
   return (
@@ -258,7 +261,7 @@ function SocLayout() {
           <nav className="soc-navigation">
             {navGroups.map((group) => {
               const visibleInGroup = group.items.filter((item) =>
-                item.roles.includes(role)
+                item.roles.includes(role),
               );
 
               if (visibleInGroup.length === 0) {
@@ -295,11 +298,6 @@ function SocLayout() {
         </div>
 
         <div className="soc-sidebar-footer">
-          <div className="soc-system-status">
-            <span className="soc-status-dot" />
-            <span>Platform Operational</span>
-          </div>
-
           <div className="soc-footer-line" />
 
           <div className="soc-footer-copy">© 2026 ZUKA SOC</div>
@@ -332,25 +330,14 @@ function SocLayout() {
               }`}
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               aria-label={
-                sidebarCollapsed
-                  ? "Expand Sidebar"
-                  : "Collapse Sidebar"
+                sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"
               }
-              title={
-                sidebarCollapsed
-                  ? "Expand Sidebar"
-                  : "Collapse Sidebar"
-              }
+              title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
               <PanelLeft size={19} />
             </button>
 
             <div className="soc-topbar-title">ZUKA SOC</div>
-
-            <div className="soc-live-badge">
-              <span className="soc-live-dot" />
-              LIVE
-            </div>
           </div>
 
           <div className="soc-topbar-right">

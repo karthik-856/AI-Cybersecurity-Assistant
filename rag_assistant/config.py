@@ -22,6 +22,7 @@ def knowledge_base_fingerprint(file_paths=None) -> str:
     digest = hashlib.sha256()
     for file_path in sorted(str(Path(path).resolve()) for path in paths):
         path = Path(file_path)
+        digest.update(b"local-text-index-v1")
         digest.update(path.name.encode("utf-8"))
         if path.is_file():
             digest.update(path.read_bytes())
@@ -39,7 +40,7 @@ TOP_K_CHUNKS = 4
 
 # Fallback string (Rule 3)
 CONTACT_EMAIL = "chitlakarthik66@gmail.com"
-FALLBACK_RESPONSE = f"I don't have that information. Please contact <{CONTACT_EMAIL}>."
+FALLBACK_RESPONSE = "I don't have that information in the project guide. Ask about alerts, incidents, investigations, or reports."
 
 # System Prompt (as required)
 SYSTEM_PROMPT = (

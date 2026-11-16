@@ -1,3 +1,4 @@
+import { getErrorMessage } from "./errors";
 import { API_BASE_URL } from "./config";
 
 export interface LoginRequest {
@@ -59,8 +60,7 @@ export interface CaptureStatus {
 }
 
 async function readResponse(response: Response) {
-  const contentType =
-    response.headers.get("content-type") || "";
+  const contentType = response.headers.get("content-type") || "";
 
   if (contentType.includes("application/json")) {
     try {
@@ -87,24 +87,16 @@ async function authenticatedFetch(
 ): Promise<Response> {
   const token = getToken();
 
-  const headers = new Headers(
-    options.headers || {},
-  );
+  const headers = new Headers(options.headers || {});
 
   headers.set("Accept", "application/json");
 
   if (options.body && !headers.has("Content-Type")) {
-    headers.set(
-      "Content-Type",
-      "application/json",
-    );
+    headers.set("Content-Type", "application/json");
   }
 
   if (token) {
-    headers.set(
-      "Authorization",
-      `Bearer ${token}`,
-    );
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const response = await fetch(url, {
@@ -115,44 +107,13 @@ async function authenticatedFetch(
   if (response.status === 401) {
     localStorage.removeItem("zuka_access_token");
     localStorage.removeItem("zuka_user");
+    sessionStorage.removeItem("zuka_chat_history");
   }
 
   return response;
 }
 
-function getErrorMessage(
-  data: any,
-  fallback: string,
-): string {
-  if (typeof data?.detail === "string") {
-    return data.detail;
-  }
-
-  if (Array.isArray(data?.detail)) {
-    return data.detail
-      .map((item: any) => {
-        if (typeof item === "string") {
-          return item;
-        }
-
-        return (
-          item?.msg ||
-          "Invalid request."
-        );
-      })
-      .join(", ");
-  }
-
-  if (typeof data?.message === "string") {
-    return data.message;
-  }
-
-  return fallback;
-}
-
-export async function login(
-  credentials: LoginRequest,
-): Promise<LoginResponse> {
+export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   const controller = new AbortController();
 
   const timeout = window.setTimeout(() => {
@@ -160,18 +121,15 @@ export async function login(
   }, 8000);
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/auth/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(credentials),
-        signal: controller.signal,
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-    );
+      body: JSON.stringify(credentials),
+      signal: controller.signal,
+    });
 
     const data = await readResponse(response);
 
@@ -192,19 +150,17 @@ export async function login(
 
     return data as LoginResponse;
   } catch (error) {
-    if (
-      error instanceof DOMException &&
-      error.name === "AbortError"
-    ) {
+    if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error(
-        "The ZUKA backend did not respond within 8 seconds. Make sure FastAPI is running on port 8000.",
+        "The server is taking longer than expected. Please try again.",
+        { cause: error },
       );
     }
 
     if (error instanceof TypeError) {
-      throw new Error(
-        "Cannot connect to the ZUKA backend. Start FastAPI on http://127.0.0.1:8000.",
-      );
+      throw new Error("Unable to connect. Please try again shortly.", {
+        cause: error,
+      });
     }
 
     throw error;
@@ -213,9 +169,7 @@ export async function login(
   }
 }
 
-export async function getNetworkEvents(
-  limit = 100,
-): Promise<NetworkEvent[]> {
+export async function getNetworkEvents(limit = 100): Promise<NetworkEvent[]> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/api/network/events?limit=${limit}`,
   );
@@ -350,8 +304,8 @@ export interface Incident {
   investigation_status?: string | null;
   investigation_conclusion?: string | null;
   affected_asset?: string | null;
-  detection_result?: Record<string, any> | null;
-  xai_explanation?: Record<string, any> | null;
+  detection_result?: Record<string, unknown> | null;
+  xai_explanation?: Record<string, unknown> | null;
 }
 
 export interface IncidentListResponse {
@@ -396,25 +350,16 @@ export async function getIncidents(params?: {
   }
 
   if (params?.assigned_to_id !== undefined) {
-    searchParams.set(
-      "assigned_to_id",
-      String(params.assigned_to_id),
-    );
+    searchParams.set("assigned_to_id", String(params.assigned_to_id));
   }
 
   if (params?.search) {
     searchParams.set("search", params.search);
   }
 
-  searchParams.set(
-    "limit",
-    String(params?.limit ?? 100),
-  );
+  searchParams.set("limit", String(params?.limit ?? 100));
 
-  searchParams.set(
-    "offset",
-    String(params?.offset ?? 0),
-  );
+  searchParams.set("offset", String(params?.offset ?? 0));
 
   const query = searchParams.toString();
 
@@ -436,9 +381,7 @@ export async function getIncidents(params?: {
   return data as IncidentListResponse;
 }
 
-export async function getIncident(
-  incidentId: string,
-): Promise<Incident> {
+export async function getIncident(incidentId: string): Promise<Incident> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/api/incidents/${encodeURIComponent(incidentId)}`,
   );
@@ -617,35 +560,20 @@ export async function getInvestigations(params?: {
   const searchParams = new URLSearchParams();
 
   if (params?.status) {
-    searchParams.set(
-      "status",
-      params.status,
-    );
+    searchParams.set("status", params.status);
   }
 
   if (params?.incident_id) {
-    searchParams.set(
-      "incident_id",
-      params.incident_id,
-    );
+    searchParams.set("incident_id", params.incident_id);
   }
 
   if (params?.search) {
-    searchParams.set(
-      "search",
-      params.search,
-    );
+    searchParams.set("search", params.search);
   }
 
-  searchParams.set(
-    "limit",
-    String(params?.limit ?? 100),
-  );
+  searchParams.set("limit", String(params?.limit ?? 100));
 
-  searchParams.set(
-    "offset",
-    String(params?.offset ?? 0),
-  );
+  searchParams.set("offset", String(params?.offset ?? 0));
 
   const query = searchParams.toString();
 
@@ -671,9 +599,7 @@ export async function getInvestigation(
   investigationId: string,
 ): Promise<Investigation> {
   const response = await authenticatedFetch(
-    `${API_BASE_URL}/api/investigations/${encodeURIComponent(
-      investigationId,
-    )}`,
+    `${API_BASE_URL}/api/investigations/${encodeURIComponent(investigationId)}`,
   );
 
   const data = await readResponse(response);
@@ -890,7 +816,8 @@ export async function getAnalystActions(params?: {
 }): Promise<AnalystActionListResponse> {
   const searchParams = new URLSearchParams();
   if (params?.incident_id) searchParams.set("incident_id", params.incident_id);
-  if (params?.investigation_id) searchParams.set("investigation_id", params.investigation_id);
+  if (params?.investigation_id)
+    searchParams.set("investigation_id", params.investigation_id);
   if (params?.action_type) searchParams.set("action_type", params.action_type);
   if (params?.limit) searchParams.set("limit", String(params.limit));
 
@@ -916,17 +843,9 @@ export async function getAnalystActions(params?: {
 // ============================================================
 
 export type AlertStatus =
-  | "OPEN"
-  | "ACKNOWLEDGED"
-  | "INVESTIGATING"
-  | "RESOLVED";
+  "OPEN" | "ACKNOWLEDGED" | "INVESTIGATING" | "RESOLVED";
 
-export type AlertSeverity =
-  | "CRITICAL"
-  | "HIGH"
-  | "MEDIUM"
-  | "LOW"
-  | "INFO";
+export type AlertSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
 
 export interface ShapFeature {
   feature: string;
@@ -1002,15 +921,9 @@ export async function getAlerts(params?: {
     searchParams.set("search", params.search);
   }
 
-  searchParams.set(
-    "limit",
-    String(params?.limit ?? 100),
-  );
+  searchParams.set("limit", String(params?.limit ?? 100));
 
-  searchParams.set(
-    "offset",
-    String(params?.offset ?? 0),
-  );
+  searchParams.set("offset", String(params?.offset ?? 0));
 
   const query = searchParams.toString();
 
@@ -1032,13 +945,9 @@ export async function getAlerts(params?: {
   return data as AlertListResponse;
 }
 
-export async function getAlert(
-  alertId: string,
-): Promise<Alert> {
+export async function getAlert(alertId: string): Promise<Alert> {
   const response = await authenticatedFetch(
-    `${API_BASE_URL}/api/alerts/${encodeURIComponent(
-      alertId,
-    )}`,
+    `${API_BASE_URL}/api/alerts/${encodeURIComponent(alertId)}`,
   );
 
   const data = await readResponse(response);
@@ -1071,9 +980,7 @@ export interface AlertStats {
 }
 
 export async function getAlertStats(): Promise<AlertStats> {
-  const response = await authenticatedFetch(
-    `${API_BASE_URL}/api/alerts/stats`,
-  );
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/alerts/stats`);
 
   const data = await readResponse(response);
 
@@ -1094,9 +1001,7 @@ export async function updateAlertStatus(
   payload: AlertStatusUpdate,
 ): Promise<Alert> {
   const response = await authenticatedFetch(
-    `${API_BASE_URL}/api/alerts/${encodeURIComponent(
-      alertId,
-    )}/status`,
+    `${API_BASE_URL}/api/alerts/${encodeURIComponent(alertId)}/status`,
     {
       method: "PATCH",
       body: JSON.stringify(payload),
@@ -1151,7 +1056,7 @@ export async function acknowledgeAndInvestigateAlert(
     );
   }
 
-  return data as any;
+  return data as Awaited<ReturnType<typeof acknowledgeAndInvestigateAlert>>;
 }
 // ============================================================
 // DATASET REPLAY
@@ -1190,19 +1095,16 @@ export async function replayNext(
   rowIndex: number,
   includeXai = true,
 ): Promise<ReplayResponse> {
-  const response = await authenticatedFetch(
-    `${API_BASE_URL}/api/replay/next`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        row_index: rowIndex,
-        include_xai: includeXai,
-      }),
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/replay/next`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      row_index: rowIndex,
+      include_xai: includeXai,
+    }),
+  });
 
   const data = await readResponse(response);
 
@@ -1235,14 +1137,11 @@ export interface PushSubscriptionPayload {
 }
 
 export async function getPushPublicKey(): Promise<PushPublicKeyResponse> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/push/public-key`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
+  const response = await fetch(`${API_BASE_URL}/api/push/public-key`, {
+    headers: {
+      Accept: "application/json",
     },
-  );
+  });
 
   const data = await readResponse(response);
 
@@ -1311,7 +1210,6 @@ export async function deletePushSubscription(
   return data as { status: string };
 }
 
-
 // ============================================================
 // DEFENSE DEPARTMENT
 // ============================================================
@@ -1359,7 +1257,9 @@ export interface ApplyDefenseResponse {
   updated_notes: string;
 }
 
-export async function getOpenDefenseInvestigations(): Promise<DefenseInvestigation[]> {
+export async function getOpenDefenseInvestigations(): Promise<
+  DefenseInvestigation[]
+> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/api/defense/open-investigations`,
     {

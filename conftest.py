@@ -16,6 +16,8 @@ os.environ.update(
     JWT_SECRET_KEY="isolated-test-signing-key-not-for-deployment",
     OTP_SECRET="isolated-test-otp-key-not-for-deployment",
     ENABLE_IN_PROCESS_REPLAY="false",
+    AUTH_RATE_LIMIT_ENABLED="false",
+    APP_ENV="test",
     SMTP_HOST="",
     SMTP_USERNAME="",
     SMTP_PASSWORD="",
@@ -57,7 +59,8 @@ def client(initialize_test_database):
 
 @pytest.fixture
 def headers():
-    from datetime import datetime, timedelta
+    from datetime import timedelta
+    from backend.app.core.time import utc_now
     from sqlalchemy import select
     from backend.app.database.session import SessionLocal
     from backend.app.models import AuthSession, User
@@ -67,7 +70,7 @@ def headers():
         for username in ("admin", "arif", "viewer"):
             user = db.scalar(select(User).where(User.username == username))
             sid = create_session_id()
-            now = datetime.utcnow()
+            now = utc_now()
             db.add(AuthSession(session_id=sid, user_id=user.id, created_at=now,
                                last_seen_at=now, expires_at=now + timedelta(hours=1)))
             result[username] = {"Authorization": "Bearer " + create_access_token(

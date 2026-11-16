@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 from datetime import datetime
 from uuid import uuid4
@@ -374,7 +375,7 @@ def update_investigation_status(
 
     if new_status == "IN_PROGRESS":
         if investigation.started_at is None:
-            investigation.started_at = datetime.utcnow()
+            investigation.started_at = utc_now()
 
     # ---------------------------------------------------------
     # ---------------------------------------------------------
@@ -396,12 +397,12 @@ def update_investigation_status(
             investigation.analyst_notes = f"Investigation concluded by {current_user.username}: {investigation.conclusion.strip()}"
 
         if investigation.started_at is None:
-            investigation.started_at = datetime.utcnow()
+            investigation.started_at = utc_now()
 
-        investigation.completed_at = datetime.utcnow()
+        investigation.completed_at = utc_now()
 
         action = AnalystAction(
-            action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+            action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
             incident_id=investigation.incident_id,
             investigation_id=investigation.investigation_id,
             analyst_id=current_user.id,
@@ -444,7 +445,7 @@ def update_investigation_notes(
         investigation.analyst_notes = notes_val.strip()
 
     action = AnalystAction(
-        action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+        action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
         incident_id=investigation.incident_id,
         investigation_id=investigation.investigation_id,
         analyst_id=current_user.id,
@@ -484,7 +485,7 @@ def update_investigation_findings(
         investigation.findings = payload.findings.strip()
 
     action = AnalystAction(
-        action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+        action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
         incident_id=investigation.incident_id,
         investigation_id=investigation.investigation_id,
         analyst_id=current_user.id,
@@ -537,7 +538,7 @@ def update_investigation_conclusion(
         incident.resolution_summary = investigation.conclusion
 
     action = AnalystAction(
-        action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+        action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
         incident_id=investigation.incident_id,
         investigation_id=investigation.investigation_id,
         analyst_id=current_user.id,
@@ -594,7 +595,7 @@ def update_investigation_workspace(
             incident.resolution_summary = investigation.conclusion
 
     action = AnalystAction(
-        action_id=f"ZUKA-ACT-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+        action_id=f"ZUKA-ACT-{utc_now().strftime('%Y%m%d%H%M%S%f')}",
         incident_id=investigation.incident_id,
         investigation_id=investigation.investigation_id,
         analyst_id=current_user.id,

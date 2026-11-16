@@ -5,8 +5,8 @@ import sys
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 import requests
-import chromadb
-from chromadb.config import Settings
+from rag_assistant.vector_index import VectorIndex
+from rag_assistant.text_encoder import encode_text
 import pypdf
 
 try:
@@ -158,37 +158,7 @@ def get_embedding(text: str, base_url: str = OLLAMA_BASE_URL, model: str = EMBED
 
 def get_embeddings_batch(texts: List[str], base_url: str = OLLAMA_BASE_URL, model: str = EMBEDDING_MODEL) -> List[List[float]]:
     """Fetch 768-dim text embedding vectors in batches from Ollama nomic-embed-text."""
-    url = f"{base_url.rstrip('/')}/api/embed"
-    all_embeddings = []
-    batch_size = 16
-
-    for i in range(0, len(texts), batch_size):
-        batch = texts[i:i + batch_size]
-        try:
-            response = requests.post(
-                url,
-                json={"model": model, "input": batch},
-                timeout=120
-            )
-            if response.status_code == 200:
-                data = response.json()
-                all_embeddings.extend(data["embeddings"])
-                continue
-        except Exception:
-            pass
-
-        # Fallback to single item legacy calls
-        for item in batch:
-            legacy_url = f"{base_url.rstrip('/')}/api/embeddings"
-            response = requests.post(
-                legacy_url,
-                json={"model": model, "prompt": item},
-                timeout=60
-            )
-            response.raise_for_status()
-            all_embeddings.append(response.json()["embedding"])
-
-    return all_embeddings
+    return [encode_text(text) for text in texts]
 
 
 def ingest_documents(
@@ -242,23 +212,9 @@ def ingest_documents(
 
     print(f"[Ingest] Generated {len(prepared_chunks)} total chunks across all documents.")
 
-    # Connect to persistent ChromaDB
-    os.makedirs(persist_dir, exist_ok=True)
-    client = chromadb.PersistentClient(path=persist_dir)
+    collection = VectorIndex(persist_dir, collection_name)
 
-    if force_reload:
-        try:
-            client.delete_collection(name=collection_name)
-            print(f"[Ingest] Deleted existing Chroma collection: '{collection_name}' for clean reload.")
-        except Exception:
-            pass
-
-    collection = client.get_or_create_collection(
-        name=collection_name,
-        metadata={"description": "ZUKA SOC Master Knowledge Base Chunks"}
-    )
-
-    print(f"[Ingest] Batch embedding {len(prepared_chunks)} chunks with model '{EMBEDDING_MODEL}' via Ollama...")
+    print(f"[Ingest] Indexing {len(prepared_chunks)} reviewed knowledge chunks locally...")
     chunk_texts = [item["text"] for item in prepared_chunks]
     embeddings = get_embeddings_batch(chunk_texts)
 
@@ -266,20 +222,20 @@ def ingest_documents(
     documents = chunk_texts
     metadatas = [item["metadata"] for item in prepared_chunks]
 
-    collection.add(
+    collection.replace(
         ids=ids,
         documents=documents,
         metadatas=metadatas,
-        embeddings=embeddings
-    )
-
-    collection.modify(metadata={
+        embeddings=embeddings,
+        clear=force_reload,
+        metadata={
         **(collection.metadata or {}),
         "description": "ZUKA SOC canonical website knowledge base",
         "source_fingerprint": knowledge_base_fingerprint(file_paths),
-    })
+        },
+    )
 
-    print(f"[Ingest] Ingestion complete! Stored {collection.count()} chunks in persistent ChromaDB.")
+    print(f"[Ingest] Ingestion complete! Stored {collection.count()} knowledge chunks.")
     return {
         "status": "success",
         "chunks_indexed": collection.count(),

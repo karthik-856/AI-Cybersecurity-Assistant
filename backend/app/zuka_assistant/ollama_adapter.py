@@ -1,4 +1,5 @@
 from __future__ import annotations
+from backend.app.core.time import utc_now
 
 import json
 import logging
@@ -479,7 +480,7 @@ def run_ollama_agent(
     2. Executes whitelisted tools against real SQL DB.
     3. Feeds real data back into Ollama to format the final grounded reply.
     """
-    now_iso = datetime.utcnow().isoformat()
+    now_iso = utc_now().isoformat()
     active_inc = current_context.incident_id if current_context else None
     active_alt = current_context.alert_id if current_context else None
 

@@ -1,3 +1,4 @@
+from backend.app.core.time import utc_now
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String
@@ -7,7 +8,7 @@ from backend.app.database.base import Base
 
 
 def utcnow() -> datetime:
-    return datetime.utcnow()
+    return utc_now()
 
 
 class AuthOtp(Base):

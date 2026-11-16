@@ -276,3 +276,5 @@ a {
   box-shadow: none !important;
   transform: none !important;
 }
+/* Keep hidden controls hidden even when their component defines display. */
+[hidden] { display: none !important; }

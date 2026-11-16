@@ -1,3 +1,4 @@
+import { useCapabilities } from "../../services/capabilities";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -22,25 +23,27 @@ import {
 import OtpInput from "../../components/auth/OtpInput";
 import "./Login.css";
 
-
 type AuthView =
-  | "login"
-  | "2fa"
-  | "forgot-email"
-  | "forgot-otp"
-  | "reset"
-  | "verify";
+  "login" | "2fa" | "forgot-email" | "forgot-otp" | "reset" | "verify";
 
 function Login() {
   const navigate = useNavigate();
+  const capabilities = useCapabilities();
   const location = useLocation();
+  const initialState = location.state as {
+    email?: string;
+    message?: string;
+    verifyEmail?: boolean;
+  } | null;
 
-  const [view, setView] = useState<AuthView>("login");
+  const [view, setView] = useState<AuthView>(() =>
+    initialState?.verifyEmail ? "verify" : "login",
+  );
 
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialState?.email || "");
   const [otp, setOtp] = useState("");
 
   const [twoFactorOtp, setTwoFactorOtp] = useState("");
@@ -55,7 +58,7 @@ function Login() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState(initialState?.message || "");
   const [recoveryNotice, setRecoveryNotice] = useState("");
 
   useEffect(() => {
@@ -65,27 +68,7 @@ function Login() {
       navigate("/dashboard", { replace: true });
       return;
     }
-
-    const state = location.state as
-      | {
-          email?: string;
-          message?: string;
-          verifyEmail?: boolean;
-        }
-      | null;
-
-    if (state?.email) {
-      setEmail(state.email);
-    }
-
-    if (state?.message) {
-      setSuccess(state.message);
-    }
-
-    if (state?.verifyEmail) {
-      setView("verify");
-    }
-  }, [location.state, navigate]);
+  }, [navigate]);
 
   function clearMessages() {
     setError("");
@@ -197,9 +180,7 @@ function Login() {
     }
   }
 
-  async function handleTwoFactorLogin(
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  async function handleTwoFactorLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (loading) {
@@ -253,9 +234,7 @@ function Login() {
       navigate(destination, { replace: true });
     } catch (err) {
       const message =
-        err instanceof Error
-          ? err.message
-          : "Two-step verification failed.";
+        err instanceof Error ? err.message : "Two-step verification failed.";
 
       setError(message);
 
@@ -269,9 +248,7 @@ function Login() {
     }
   }
 
-  async function handleForgotEmail(
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  async function handleForgotEmail(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (loading) {
@@ -302,18 +279,14 @@ function Login() {
       setView("forgot-otp");
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to start recovery.",
+        err instanceof Error ? err.message : "Unable to start recovery.",
       );
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleVerifyReset(
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  async function handleVerifyReset(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (loading) {
@@ -323,9 +296,7 @@ function Login() {
     clearMessages();
 
     if (!/^\d{6}$/.test(otp)) {
-      setError(
-        "Enter the 6-digit verification code sent to your email.",
-      );
+      setError("Enter the 6-digit verification code sent to your email.");
       return;
     }
 
@@ -337,26 +308,19 @@ function Login() {
         otp,
       });
 
-      setSuccess(
-        result.message ||
-          "Code verified. Create your new password.",
-      );
+      setSuccess(result.message || "Code verified. Create your new password.");
 
       setView("reset");
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Invalid verification code.",
+        err instanceof Error ? err.message : "Invalid verification code.",
       );
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleResetPassword(
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  async function handleResetPassword(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (loading) {
@@ -385,8 +349,7 @@ function Login() {
       });
 
       setSuccess(
-        result.message ||
-          "Password reset successfully. You can now sign in.",
+        result.message || "Password reset successfully. You can now sign in.",
       );
 
       setPassword("");
@@ -396,18 +359,14 @@ function Login() {
       setView("login");
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to reset password.",
+        err instanceof Error ? err.message : "Unable to reset password.",
       );
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleVerifyEmail(
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  async function handleVerifyEmail(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (loading) {
@@ -417,9 +376,7 @@ function Login() {
     clearMessages();
 
     if (!email.trim()) {
-      setError(
-        "Please enter the email used during registration.",
-      );
+      setError("Please enter the email used during registration.");
       return;
     }
 
@@ -437,8 +394,7 @@ function Login() {
       });
 
       setSuccess(
-        result.message ||
-          "Email verified successfully. You can now sign in.",
+        result.message || "Email verified successfully. You can now sign in.",
       );
 
       setOtp("");
@@ -446,9 +402,7 @@ function Login() {
       setView("login");
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Email verification failed.",
+        err instanceof Error ? err.message : "Email verification failed.",
       );
     } finally {
       setLoading(false);
@@ -456,8 +410,7 @@ function Login() {
   }
 
   const isTwoFactor = view === "2fa";
-  const recovery =
-    view !== "login" && view !== "2fa";
+  const recovery = view !== "login" && view !== "2fa";
 
   return (
     <main className="login-page">
@@ -465,28 +418,21 @@ function Login() {
         <section className="login-brand">
           <div className="brand-inner">
             <div className="brand-icon">
-              <ShieldCheck
-                size={68}
-                strokeWidth={1.7}
-              />
+              <ShieldCheck size={68} strokeWidth={1.7} />
             </div>
 
-            <div className="brand-logo">
-              ZUKA
-            </div>
+            <div className="brand-logo">ZUKA</div>
 
-            <div className="brand-heading">
-              SECURITY OPERATIONS CENTER
-            </div>
+            <div className="brand-heading">SECURITY OPERATIONS CENTER</div>
 
             <p className="brand-description">
-              Intelligent network threat detection,
-              investigation and security operations.
+              Intelligent network threat detection, investigation and security
+              operations.
             </p>
 
             <div className="secure-badge">
               <span className="secure-indicator" />
-              <span>SECURE SOC ENVIRONMENT</span>
+              <span>ZUKA WORKSPACE</span>
             </div>
           </div>
         </section>
@@ -500,7 +446,9 @@ function Login() {
               </div>
               <div className="login-mobile-brand-text">
                 <span className="login-mobile-logo">ZUKA</span>
-                <span className="login-mobile-subtitle">SECURITY OPERATIONS CENTER</span>
+                <span className="login-mobile-subtitle">
+                  SECURITY OPERATIONS CENTER
+                </span>
               </div>
             </div>
 
@@ -527,23 +475,17 @@ function Login() {
             </div>
 
             <h1>
-              {view === "login" &&
-                "Welcome back"}
+              {view === "login" && "Welcome back"}
 
-              {view === "2fa" &&
-                "Verify your identity"}
+              {view === "2fa" && "Verify your identity"}
 
-              {view === "verify" &&
-                "Verify your email"}
+              {view === "verify" && "Verify your email"}
 
-              {view === "forgot-email" &&
-                "Reset your password"}
+              {view === "forgot-email" && "Reset your password"}
 
-              {view === "forgot-otp" &&
-                "Enter verification code"}
+              {view === "forgot-otp" && "Enter verification code"}
 
-              {view === "reset" &&
-                "Create a new password"}
+              {view === "reset" && "Create a new password"}
             </h1>
 
             <p className="login-description">
@@ -568,9 +510,7 @@ function Login() {
 
             {error && (
               <div className="login-error">
-                <strong>
-                  Authentication notice
-                </strong>
+                <strong>Authentication notice</strong>
 
                 <span>{error}</span>
               </div>
@@ -578,46 +518,31 @@ function Login() {
 
             {success && (
               <div className="login-success">
-                <CheckCircle2
-                  size={18}
-                  strokeWidth={2}
-                />
+                <CheckCircle2 size={18} strokeWidth={2} />
 
                 <span>{success}</span>
               </div>
             )}
 
             {recoveryNotice && (
-              <div className="recovery-notice">
-                {recoveryNotice}
-              </div>
+              <div className="recovery-notice">{recoveryNotice}</div>
             )}
 
             {view === "login" && (
               <>
-                <form
-                  className="login-form"
-                  onSubmit={handleLogin}
-                >
+                <form className="login-form" onSubmit={handleLogin}>
                   <div className="field">
-                    <label htmlFor="username">
-                      Username or Email
-                    </label>
+                    <label htmlFor="username">Username or Email</label>
 
                     <div className="input-box">
-                      <UserRound
-                        size={20}
-                        strokeWidth={1.8}
-                      />
+                      <UserRound size={20} strokeWidth={1.8} />
 
                       <input
                         id="username"
                         type="text"
                         value={usernameOrEmail}
                         onChange={(e) => {
-                          setUsernameOrEmail(
-                            e.target.value,
-                          );
+                          setUsernameOrEmail(e.target.value);
                           setError("");
                         }}
                         placeholder="Enter username or email"
@@ -629,24 +554,17 @@ function Login() {
                   </div>
 
                   <div className="field">
-                    <label htmlFor="password">
-                      Password
-                    </label>
+                    <label htmlFor="password">Password</label>
 
                     <div className="input-box password-input-box">
-                      <LockKeyhole
-                        size={20}
-                        strokeWidth={1.8}
-                      />
+                      <LockKeyhole size={20} strokeWidth={1.8} />
 
                       <input
                         id="password"
                         type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => {
-                          setPassword(
-                            e.target.value,
-                          );
+                          setPassword(e.target.value);
                           setError("");
                         }}
                         placeholder="Enter password"
@@ -658,30 +576,26 @@ function Login() {
                         type="button"
                         className="password-toggle-btn"
                         onClick={() => setShowPassword(!showPassword)}
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
                         title={showPassword ? "Hide password" : "Show password"}
                         tabIndex={-1}
                       >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
                       </button>
                     </div>
                   </div>
 
                   <div className="login-options">
-                    <label className="remember">
-                      <input
-                        type="checkbox"
-                        disabled={loading}
-                      />
-
-                      <span>
-                        Remember me
-                      </span>
-                    </label>
-
                     <button
                       type="button"
                       className="forgot"
+                      hidden={!capabilities.password_recovery}
                       disabled={loading}
                       onClick={() => {
                         clearMessages();
@@ -703,7 +617,7 @@ function Login() {
                     {loading ? (
                       <>
                         <span className="spinner" />
-                        Authenticating...
+                        Signing in...
                       </>
                     ) : (
                       "Sign In"
@@ -714,6 +628,7 @@ function Login() {
                 <Link
                   to="/register"
                   className="register-link"
+                  hidden={!capabilities.registration}
                 >
                   New to ZUKA? Create a new account
                 </Link>
@@ -724,31 +639,29 @@ function Login() {
               <>
                 <div className="two-factor-panel">
                   <div className="two-factor-icon">
-                    <ShieldCheck
-                      size={28}
-                      strokeWidth={1.8}
-                    />
+                    <ShieldCheck size={28} strokeWidth={1.8} />
                   </div>
 
                   <div className="two-factor-content">
-                    <strong>
-                      Two-step verification required
-                    </strong>
+                    <strong>Two-step verification required</strong>
 
                     <p>
-                      We sent a 6-digit verification
-                      code to your registered email
-                      address.
+                      We sent a 6-digit verification code to your registered
+                      email address.
                     </p>
                   </div>
                 </div>
 
-                <form
-                  className="login-form"
-                  onSubmit={handleTwoFactorLogin}
-                >
+                <form className="login-form" onSubmit={handleTwoFactorLogin}>
                   <div className="field" style={{ textAlign: "center" }}>
-                    <label style={{ display: "block", marginBottom: "8px", color: "#38bdf8", fontWeight: 700 }}>
+                    <label
+                      style={{
+                        display: "block",
+                        marginBottom: "8px",
+                        color: "#38bdf8",
+                        fontWeight: 700,
+                      }}
+                    >
                       6-Digit Security Code
                     </label>
                     <OtpInput
@@ -760,7 +673,6 @@ function Login() {
                       disabled={loading}
                     />
                   </div>
-
 
                   <button
                     className="login-submit"
@@ -774,22 +686,19 @@ function Login() {
                       </>
                     ) : (
                       <>
-                        <ShieldCheck
-                          size={18}
-                        />
+                        <ShieldCheck size={18} />
                         Verify & Continue
                       </>
                     )}
                   </button>
 
                   <div className="two-factor-help">
-                    <span>
-                      Didn't receive the code?
-                    </span>
+                    <span>Didn't receive the code?</span>
 
                     <button
                       type="button"
                       className="forgot"
+                      hidden={!capabilities.password_recovery}
                       disabled={loading}
                       onClick={async () => {
                         clearMessages();
@@ -809,20 +718,16 @@ function Login() {
                         setLoading(true);
 
                         try {
-                          const result =
-                            await login({
-                              username_or_email:
-                                usernameOrEmail.trim(),
-                              password,
-                            });
+                          const result = await login({
+                            username_or_email: usernameOrEmail.trim(),
+                            password,
+                          });
 
                           if (
                             result.requires_two_factor &&
                             result.challenge_token
                           ) {
-                            setTwoFactorChallenge(
-                              result.challenge_token,
-                            );
+                            setTwoFactorChallenge(result.challenge_token);
 
                             setTwoFactorOtp("");
 
@@ -854,14 +759,9 @@ function Login() {
             )}
 
             {view === "verify" && (
-              <form
-                className="login-form"
-                onSubmit={handleVerifyEmail}
-              >
+              <form className="login-form" onSubmit={handleVerifyEmail}>
                 <div className="field">
-                  <label htmlFor="verify-email">
-                    Registered Email
-                  </label>
+                  <label htmlFor="verify-email">Registered Email</label>
 
                   <div className="input-box">
                     <Mail size={20} />
@@ -870,9 +770,7 @@ function Login() {
                       id="verify-email"
                       type="email"
                       value={email}
-                      onChange={(e) =>
-                        setEmail(e.target.value)
-                      }
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
                       disabled={loading}
                       required
@@ -882,7 +780,14 @@ function Login() {
                 </div>
 
                 <div className="field" style={{ textAlign: "center" }}>
-                  <label style={{ display: "block", marginBottom: "8px", color: "#38bdf8", fontWeight: 700 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "8px",
+                      color: "#38bdf8",
+                      fontWeight: 700,
+                    }}
+                  >
                     6-Digit Verification Code
                   </label>
                   <OtpInput
@@ -894,7 +799,6 @@ function Login() {
                     disabled={loading}
                   />
                 </div>
-
 
                 <button
                   className="login-submit"
@@ -914,14 +818,9 @@ function Login() {
             )}
 
             {view === "forgot-email" && (
-              <form
-                className="login-form"
-                onSubmit={handleForgotEmail}
-              >
+              <form className="login-form" onSubmit={handleForgotEmail}>
                 <div className="field">
-                  <label htmlFor="recovery-email">
-                    Account Email
-                  </label>
+                  <label htmlFor="recovery-email">Account Email</label>
 
                   <div className="input-box">
                     <Mail size={20} />
@@ -930,9 +829,7 @@ function Login() {
                       id="recovery-email"
                       type="email"
                       value={email}
-                      onChange={(e) =>
-                        setEmail(e.target.value)
-                      }
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
                       autoComplete="email"
                       disabled={loading}
@@ -960,12 +857,16 @@ function Login() {
             )}
 
             {view === "forgot-otp" && (
-              <form
-                className="login-form"
-                onSubmit={handleVerifyReset}
-              >
+              <form className="login-form" onSubmit={handleVerifyReset}>
                 <div className="field" style={{ textAlign: "center" }}>
-                  <label style={{ display: "block", marginBottom: "8px", color: "#38bdf8", fontWeight: 700 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "8px",
+                      color: "#38bdf8",
+                      fontWeight: 700,
+                    }}
+                  >
                     6-Digit Password Reset Code
                   </label>
                   <OtpInput
@@ -977,7 +878,6 @@ function Login() {
                     disabled={loading}
                   />
                 </div>
-
 
                 <button
                   className="login-submit"
@@ -997,14 +897,9 @@ function Login() {
             )}
 
             {view === "reset" && (
-              <form
-                className="login-form"
-                onSubmit={handleResetPassword}
-              >
+              <form className="login-form" onSubmit={handleResetPassword}>
                 <div className="field">
-                  <label htmlFor="new-password">
-                    New Password
-                  </label>
+                  <label htmlFor="new-password">New Password</label>
 
                   <div className="input-box password-input-box">
                     <LockKeyhole size={20} />
@@ -1013,11 +908,7 @@ function Login() {
                       id="new-password"
                       type={showNewPassword ? "text" : "password"}
                       value={newPassword}
-                      onChange={(e) =>
-                        setNewPassword(
-                          e.target.value,
-                        )
-                      }
+                      onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Minimum 8 characters"
                       autoComplete="new-password"
                       minLength={8}
@@ -1031,11 +922,19 @@ function Login() {
                       type="button"
                       className="password-toggle-btn"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      aria-label={showNewPassword ? "Hide password" : "Show password"}
-                      title={showNewPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showNewPassword ? "Hide password" : "Show password"
+                      }
+                      title={
+                        showNewPassword ? "Hide password" : "Show password"
+                      }
                       tabIndex={-1}
                     >
-                      {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showNewPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1052,11 +951,7 @@ function Login() {
                       id="confirm-new-password"
                       type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
-                      onChange={(e) =>
-                        setConfirmPassword(
-                          e.target.value,
-                        )
-                      }
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Repeat your new password"
                       autoComplete="new-password"
                       minLength={8}
@@ -1068,12 +963,22 @@ function Login() {
                     <button
                       type="button"
                       className="password-toggle-btn"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                      title={showConfirmPassword ? "Hide password" : "Show password"}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
+                      title={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
                       tabIndex={-1}
                     >
-                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1095,28 +1000,24 @@ function Login() {
               </form>
             )}
 
-            {view !== "login" &&
-              view !== "verify" &&
-              view !== "2fa" && (
-                <button
-                  type="button"
-                  className="register-link recovery-verify-link"
-                  onClick={() => {
-                    clearMessages();
-                    setView("verify");
-                    setOtp("");
-                  }}
-                  disabled={loading}
-                >
-                  Need to verify a newly created account?
-                </button>
-              )}
+            {view !== "login" && view !== "verify" && view !== "2fa" && (
+              <button
+                type="button"
+                className="register-link recovery-verify-link"
+                onClick={() => {
+                  clearMessages();
+                  setView("verify");
+                  setOtp("");
+                }}
+                disabled={loading}
+              >
+                Need to verify a newly created account?
+              </button>
+            )}
 
             <div className="login-footer">
               <span className="footer-dot" />
-              <span>
-                ZUKA SOC AUTHENTICATION SERVICE
-              </span>
+              <span>ZUKA SOC AUTHENTICATION SERVICE</span>
             </div>
           </div>
         </section>

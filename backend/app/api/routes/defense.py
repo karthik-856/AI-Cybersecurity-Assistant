@@ -180,7 +180,7 @@ def apply_defense_action(
         f"Operator: {current_user.username}\n"
         f"Rationale: {payload.rationale.strip()}\n"
         f"Details: {payload.defense_note.strip()}\n"
-        f"Status: Containment Applied & Synchronized to Investigation Department\n"
+        f"Status: Analyst response recorded; no external device was changed\n"
     )
 
     # Append to investigation analyst notes
@@ -198,7 +198,7 @@ def apply_defense_action(
         analyst_id=current_user.id,
         action_type="DEFEND_INCIDENT",
         description=(
-            f"Defense action '{payload.action_label}' applied by {current_user.username}. "
+            f"Defense action '{payload.action_label}' recorded by {current_user.username}. "
             f"Containment note synchronized to Investigation Department."
         ),
     )
@@ -210,7 +210,7 @@ def apply_defense_action(
     return {
         "status": "SUCCESS",
         "success": True,
-        "message": f"Defense action '{payload.action_label}' applied successfully. Note synchronized to Investigation Department.",
+        "message": f"Defense action '{payload.action_label}' recorded. The investigation notes have been updated.",
         "investigation_id": inv.investigation_id,
         "incident_id": payload.incident_id,
         "analyst_action_id": action.id,

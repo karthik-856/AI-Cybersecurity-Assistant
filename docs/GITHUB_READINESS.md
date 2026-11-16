@@ -1,10 +1,36 @@
 # GitHub readiness review — 16 November 2026
 
-**Decision:** ready for a private source repository and local demonstrations.
-**Not approved for a production/public-facing deployment.** Test success is not
+**Current review:** the repository is public. Production hardening and free-tier
+deployment verification are in progress; the original findings below are
+retained as historical context until the final checks complete. Test success is not
 a claim that every possible operation, deployment, or attack scenario was tested.
 
-## Verified results
+## Current hardening changes
+
+- Frontend lint now passes with zero warnings allowed; the original 78 errors
+  and seven warnings were fixed without disabling the rules. Production builds
+  pass. Browser/container CI now checks desktop and mobile routes.
+- Chroma was replaced by a local SQLite knowledge index with deterministic text
+  vectors. Reviewed knowledge answers and database operations need no external
+  model. Unknown questions return a fallback; optional generation is disabled in
+  the free deployment configuration.
+- Production authentication has persistent, atomic PostgreSQL throttling.
+  Logout revokes the server session. Push destinations are restricted and a
+  subscription cannot be reassigned to a different user.
+- Production secrets are validated, API responses are not cached, security
+  headers are applied, and the built website and API share one origin.
+- Fabricated reports and default containment/escalation claims were removed.
+  UI text distinguishes replay data and recorded defense plans from external
+  device enforcement. All roles can manage their own Settings.
+- Native CPU inference and TreeSHAP share the loaded model. An independent
+  comparison against XGBClassifier matched all 845 probabilities across the
+  65-row sample exactly after preserving early stopping.
+- The current installed Python dependency audit reports zero known advisories.
+  A container build and browser run with a 512 MiB limit are required before
+  accepting the free-server configuration. Cloud publication is also blocked
+  until the hosting/database account connections work.
+
+## Original publication results (superseded where noted above)
 
 - Backend: **171 tests passed**, zero failures/skips, in 168.62 seconds on
   Windows/Python 3.12 with an isolated PostgreSQL 18 database. There were 217
@@ -55,16 +81,16 @@ a claim that every possible operation, deployment, or attack scenario was tested
 - Added a README, isolated test safeguards, and GitHub Actions checks for backend
   tests, frontend builds, and production frontend dependency advisories.
 
-## Remaining work before production
+## Original findings and remaining verification
 
-1. **Frontend lint fails:** 78 errors and 7 warnings. Findings include effect/state
+1. **Resolved — frontend lint:** originally 78 errors and 7 warnings. Findings included effect/state
    handling, hook dependencies, render purity, loose types, empty handlers, and
    fast-refresh boundaries. These were reported rather than silenced or globally
    disabled. CI currently checks compilation/tests, not lint acceptance.
-2. **Dependency advisories remain:** npm reports seven moderate advisories in the
+2. **Resolved — development dependencies:** npm originally reported seven moderate advisories in the
    TypeScript ESLint/minimatch development toolchain. The offered automatic fix
    changes the declared toolchain incompatibly, so it was not forced.
-3. **Chroma advisories remain:** the Python audit reports five entries representing
+3. **Resolved by removal — Chroma:** the original Python audit reported five entries representing
    four unique advisories against ChromaDB 1.5.9: PYSEC-2026-311,
    PYSEC-2026-3814, PYSEC-2026-3815, and PYSEC-2026-3813. The audit lists no fixed
    versions. These concern Chroma server authorization/code execution. This
