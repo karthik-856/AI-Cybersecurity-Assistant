@@ -1,0 +1,102 @@
+% ==============================================================================
+% IEEE TRANSACTIONS / CONFERENCE ARCHITECTURE DIAGRAM (TIKZ)
+% Place this in your LaTeX document preamble:
+% \usepackage{tikz}
+% \usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
+% ==============================================================================
+
+\begin{figure*}[htbp]
+\centering
+\begin{tikzpicture}[
+    font=\sffamily\footnotesize,
+    >=Stealth,
+    node distance=0.8cm and 0.8cm,
+    layerbox/.style={
+        draw=#1!70!black, fill=#1!8, rounded corners=4pt, dashed, inner sep=8pt
+    },
+    compbox/.style={
+        draw=#1!80!black, fill=white, rounded corners=3pt, thick, align=center,
+        minimum height=1.1cm, text width=2.7cm, inner sep=4pt, drop shadow={opacity=0.08}
+    },
+    flowarrow/.style={
+        ->, thick, draw=blue!70!black
+    },
+    feedbackarrow/.style={
+        ->, thick, draw=red!70!black, dashed
+    },
+    lbl/.style={
+        font=\sffamily\scriptsize, fill=white, inner sep=1.5pt
+    }
+]
+
+% ------------------------------------------------------------------------------
+% LAYER 1: DATA INGESTION & FLOW EXTRACTION
+% ------------------------------------------------------------------------------
+\node[compbox=gray] (pcap) {\textbf{Flow Ingestion}\\\scriptsize PCAP / Live Socket Stream};
+\node[compbox=gray, right=1.0cm of pcap] (feat) {\textbf{Feature Pipeline}\\\scriptsize 14 Statistical Metrics};
+\node[compbox=gray, right=1.0cm of feat] (scale) {\textbf{Feature Scaling}\\\scriptsize Normalization \& Alignment};
+
+\draw[flowarrow] (pcap) -- node[lbl, above] {Packets} (feat);
+\draw[flowarrow] (feat) -- node[lbl, above] {Vectors} (scale);
+
+\begin{scope}[on background layer]
+    \node[layerbox=gray, fit=(pcap) (feat) (scale), label={[anchor=north west, font=\sffamily\bfseries\scriptsize, text=gray!40!black]north west:LAYER 1: TELEMETRY INGESTION \& PREPROCESSING}] (layer1) {};
+\end{scope}
+
+% ------------------------------------------------------------------------------
+% LAYER 2: AI DETECTION & EXPLAINABILITY (XAI)
+% ------------------------------------------------------------------------------
+\node[compbox=blue, below=1.2cm of pcap] (xgb) {\textbf{XGBoost Classifier}\\\scriptsize 13-Class Threat Detection};
+\node[compbox=blue, right=1.0cm of xgb] (shap) {\textbf{TreeSHAP Engine}\\\scriptsize Local Feature Attribution};
+\node[compbox=blue, right=1.0cm of shap] (sev) {\textbf{Severity Scoring}\\\scriptsize Risk Matrix (P1--P4)};
+
+\draw[flowarrow] (xgb) -- node[lbl, above] {Class, Prob} (shap);
+\draw[flowarrow] (shap) -- node[lbl, above] {Attributions} (sev);
+
+\begin{scope}[on background layer]
+    \node[layerbox=blue, fit=(xgb) (shap) (sev), label={[anchor=north west, font=\sffamily\bfseries\scriptsize, text=blue!50!black]north west:LAYER 2: AI DETECTION \& EXPLAINABILITY (XAI)}] (layer2) {};
+\end{scope}
+
+\draw[flowarrow] (scale.south) -- ++(0,-0.4) -| node[lbl, near end, right] {Flow Vector} (sev.north);
+
+% ------------------------------------------------------------------------------
+% LAYER 3: SOAR & ORCHESTRATION
+% ------------------------------------------------------------------------------
+\node[compbox=green!60!black, below=1.2cm of xgb] (cases) {\textbf{Case Management}\\\scriptsize Alert $\rightarrow$ Incident $\rightarrow$ Dossier};
+\node[compbox=green!60!black, right=1.0cm of cases] (soar) {\textbf{Containment Engine}\\\scriptsize Drop IP, VLAN Isolation};
+\node[compbox=green!60!black, right=1.0cm of soar] (db) {\textbf{Database Center}\\\scriptsize PostgreSQL \& Audit Trail};
+
+\draw[flowarrow] (cases) -- node[lbl, above] {Context} (soar);
+\draw[flowarrow] (soar) -- node[lbl, above] {Audit Log} (db);
+
+\begin{scope}[on background layer]
+    \node[layerbox=green!60!black, fit=(cases) (soar) (db), label={[anchor=north west, font=\sffamily\bfseries\scriptsize, text=green!40!black]north west:LAYER 3: INCIDENT ORCHESTRATION \& TAMPER-EVIDENT STORAGE}] (layer3) {};
+\end{scope}
+
+\draw[flowarrow] (sev.south) -- ++(0,-0.4) -| node[lbl, near end, right] {Enriched Alert} (db.north);
+
+% ------------------------------------------------------------------------------
+% LAYER 4 & 5: ASSISTANT & SOC ANALYST INTERFACE
+% ------------------------------------------------------------------------------
+\node[compbox=orange, below=1.2cm of cases] (copilot) {\textbf{AI SOC Co-Pilot}\\\scriptsize Dual-Engine: Regex + Ollama};
+\node[compbox=purple, right=1.0cm of copilot] (ui) {\textbf{React 18 Dashboard}\\\scriptsize Triage \& XAI Inspector};
+\node[compbox=purple, right=1.0cm of ui] (analyst) {\textbf{SOC Analyst}\\\scriptsize Human-in-the-Loop Authority};
+
+\draw[<->, thick, draw=orange!80!black] (copilot) -- node[lbl, above] {NL Queries} (ui);
+\draw[<->, thick, draw=purple!80!black] (ui) -- node[lbl, above] {Investigation} (analyst);
+
+\begin{scope}[on background layer]
+    \node[layerbox=orange, fit=(copilot), label={[anchor=north west, font=\sffamily\bfseries\scriptsize, text=orange!50!black]north west:LAYER 4: AI ASSISTANT}] (layer4) {};
+    \node[layerbox=purple, fit=(ui) (analyst), label={[anchor=north west, font=\sffamily\bfseries\scriptsize, text=purple!50!black]north west:LAYER 5: HUMAN-IN-THE-LOOP INTERFACE}] (layer5) {};
+\end{scope}
+
+\draw[flowarrow] (db.south) -- ++(0,-0.4) -| (analyst.north);
+\draw[flowarrow] (cases.south) -- (copilot.north);
+
+% Feedback containment loops
+\draw[feedbackarrow] (soar.west) -- ++(-0.2,0) |- node[lbl, near end, left] {Drop / Quarantine} (pcap.west);
+
+\end{tikzpicture}
+\caption{System architecture of the ZUKA AI-assisted SOC framework. The five-tier modular architecture orchestrates automated flow-level network threat classification, TreeSHAP-based explainability, tamper-evident case management, an on-premises cognitive AI assistant, and human-in-the-loop containment.}
+\label{fig:system_architecture}
+\end{figure*}

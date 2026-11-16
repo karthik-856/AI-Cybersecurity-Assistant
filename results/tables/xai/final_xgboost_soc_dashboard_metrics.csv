@@ -1,0 +1,9 @@
+Metric,Value
+Total Events,5000.0
+Benign Events,4119.0
+Attack Alerts,881.0
+Attack Rate,0.1762
+Benign Rate,0.8238
+High Severity Alerts,873.0
+Medium Severity Alerts,3.0
+Low Severity Alerts,5.0

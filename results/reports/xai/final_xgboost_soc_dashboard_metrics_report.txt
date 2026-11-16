@@ -1,0 +1,60 @@
+==========================================================================================
+FINAL XGBOOST SOC DASHBOARD METRICS REPORT
+==========================================================================================
+
+MODEL
+------------------------------------------------------------------------------------------
+Model: XGBoost
+Benign class ID: 0
+
+EVENT OVERVIEW
+------------------------------------------------------------------------------------------
+Total events: 5,000
+Benign events: 4,119
+Attack alerts: 881
+Attack rate: 17.6200%
+Benign rate: 82.3800%
+
+SEVERITY SUMMARY
+------------------------------------------------------------------------------------------
+High severity: 873
+Medium severity: 3
+Low severity: 5
+
+SOC PRIORITY RULE
+------------------------------------------------------------------------------------------
+P1 = Highest analyst attention
+P2 = High analyst attention
+P3 = Standard investigation
+P4 = Lower priority / review
+
+PRIORITY SUMMARY
+------------------------------------------------------------------------------------------
+SOC_Priority  Alert_Count  Mean_Confidence  Maximum_Confidence  Mean_Priority_Score  Priority_Order
+          P1          876         0.996713            1.000000           159.602824               1
+          P3            2         0.691958            0.694040            89.195846               3
+          P4            3         0.511977            0.523884            71.197741               4
+
+ATTACK CLASS SUMMARY
+------------------------------------------------------------------------------------------
+ Predicted_Class  Alert_Count  Mean_Confidence  Maximum_Confidence  High_Alerts  Medium_Alerts  Low_Alerts
+               4          352         0.997015            0.999940          348              2           2
+               2          283         0.999824            1.000000          283              0           0
+               9          196         0.989822            0.999782          196              0           0
+               7           18         0.999994            1.000000           18              0           0
+               5           10         0.992325            0.999829           10              0           0
+               6            8         0.997474            1.000000            8              0           0
+              10            5         0.997932            1.000000            5              0           0
+               1            3         0.993080            1.000000            3              0           0
+              11            3         0.604002            0.776334            0              1           2
+               3            1         0.996604            0.996604            1              0           0
+               8            1         0.955309            0.955309            1              0           0
+              13            1         0.500259            0.500259            0              0           1
+
+IMPORTANT INTERPRETATION
+------------------------------------------------------------------------------------------
+The confidence value is the XGBoost model confidence for the predicted class. It should not automatically be interpreted as a calibrated probability that a real-world security incident has occurred.
+
+The current dashboard uses predicted class IDs because a verified mapping between class IDs 0–13 and attack names has not yet been established in the current XAI outputs.
+
+The current data is based on the representative SHAP sample. It is therefore an XAI/SOC prototype dataset rather than a live network monitoring feed.

@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%">
+  <defs>
+    <style>
+      .title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #0f172a; }
+      .layer-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #1e293b; letter-spacing: 0.5px; }
+      .box-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .box-desc { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9.5px; fill: #475569; line-height: 1.3; }
+      .tag { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 8.5px; font-weight: 600; fill: #334155; }
+      .edge-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #2563eb; }
+      .feedback-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #dc2626; }
+    </style>
+    <!-- Arrowhead Marker (Primary Flow) -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb" />
+    </marker>
+    <!-- Arrowhead Marker (Control / Feedback) -->
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#dc2626" />
+    </marker>
+    <marker id="arrow-dark" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569" />
+    </marker>
+    <!-- Drop Shadow for clean academic look -->
+    <filter id="card-shadow" x="-3%" y="-4%" width="106%" height="112%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1000" height="600" fill="#ffffff" />
+  
+  <!-- Outer IEEE Frame Border (optional crisp border) -->
+  <rect x="10" y="10" width="980" height="580" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+
+  <!-- ========================================================================= -->
+  <!-- LAYER 1: NETWORK TELEMETRY & DATA INGESTION -->
+  <!-- ========================================================================= -->
+  <g id="layer1" transform="translate(25, 25)">
+    <!-- Layer Background Container -->
+    <rect width="950" height="88" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3" />
+    <rect x="0" y="0" width="180" height="20" rx="4" fill="#e2e8f0" />
+    <text x="8" y="14" class="layer-title">LAYER 1: DATA INGESTION &amp; FLOW EXTRACTION</text>
+
+    <!-- Box 1.1: Live Traffic & PCAP Ingestion -->
+    <g transform="translate(20, 26)" filter="url(#card-shadow)">
+      <rect width="260" height="52" rx="5" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="12" y="18" class="box-title">Network Flow &amp; Packet Ingestion</text>
+      <text x="12" y="32" class="box-desc">• Live Packet Stream &amp; Synthetic Replay</text>
+      <text x="12" y="44" class="box-desc">• PCAP Replay Worker &amp; Socket Ingestion</text>
+    </g>
+
+    <!-- Arrow 1.1 -> 1.2 -->
+    <path d="M 280 52 L 340 52" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="286" y="46" class="edge-label">Raw Packets</text>
+
+    <!-- Box 1.2: Statistical Flow Feature Extractor -->
+    <g transform="translate(345, 26)" filter="url(#card-shadow)">
+      <rect width="280" height="52" rx="5" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="12" y="18" class="box-title">Statistical Feature Pipeline</text>
+      <text x="12" y="32" class="box-desc">• 14 Network Flow Behavioral Metrics</text>
+      <text x="12" y="44" class="box-desc">• Flow Rates, Byte Ratios, Packet IAT Means</text>
+    </g>
+
+    <!-- Arrow 1.2 -> 1.3 -->
+    <path d="M 625 52 L 685 52" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="632" y="46" class="edge-label">Vectorization</text>
+
+    <!-- Box 1.3: Scaled Feature Vector -->
+    <g transform="translate(690, 26)" filter="url(#card-shadow)">
+      <rect width="240" height="52" rx="5" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+      <text x="12" y="18" class="box-title">Schema Normalization &amp; Scaling</text>
+      <text x="12" y="32" class="box-desc">• Standardized Feature Alignment</text>
+      <text x="12" y="44" class="box-desc">• Real-time Tensor / Matrix Formatter</text>
+    </g>
+  </g>
+
+  <!-- Flow Connector: Layer 1 -> Layer 2 -->
+  <path d="M 810 113 L 810 135" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="816" y="128" class="edge-label">Normalized Flow Vector</text>
+
+  <!-- ========================================================================= -->
+  <!-- LAYER 2: AI DETECTION & EXPLAINABLE AI (XAI) CORE -->
+  <!-- ========================================================================= -->
+  <g id="layer2" transform="translate(25, 137)">
+    <rect width="950" height="98" rx="6" fill="#f0f7ff" stroke="#93c5fd" stroke-width="1" stroke-dasharray="4 3" />
+    <rect x="0" y="0" width="180" height="20" rx="4" fill="#dbeafe" />
+    <text x="8" y="14" class="layer-title">LAYER 2: AI DETECTION &amp; EXPLAINABILITY (XAI)</text>
+
+    <!-- Box 2.1: Unified XGBoost Multiclass Classifier -->
+    <g transform="translate(20, 28)" filter="url(#card-shadow)">
+      <rect width="280" height="60" rx="5" fill="#ffffff" stroke="#3b82f6" stroke-width="1.3" />
+      <text x="12" y="18" class="box-title" fill="#1d4ed8">Unified XGBoost Classifier</text>
+      <text x="12" y="33" class="box-desc">• 13-Class Threat Categorization (DDoS, DoS,</text>
+      <text x="12" y="45" class="box-desc">  Port Scan, Brute Force, Mirai Botnet, Infil.)</text>
+      <text x="12" y="56" class="tag" fill="#2563eb">Accuracy: 99.87% | Latency &lt; 0.05 ms</text>
+    </g>
+
+    <!-- Arrow 2.1 -> 2.2 -->
+    <path d="M 300 58 L 345 58" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="306" y="52" class="edge-label">Class + Prob</text>
+
+    <!-- Box 2.2: Explainable AI (TreeSHAP) -->
+    <g transform="translate(350, 28)" filter="url(#card-shadow)">
+      <rect width="270" height="60" rx="5" fill="#ffffff" stroke="#6366f1" stroke-width="1.3" />
+      <text x="12" y="18" class="box-title" fill="#4338ca">Explainable AI (TreeSHAP Engine)</text>
+      <text x="12" y="33" class="box-desc">• Local Feature Attribution per Prediction</text>
+      <text x="12" y="45" class="box-desc">• Top Impact Drivers &amp; Anomaly Root Causes</text>
+      <text x="12" y="56" class="tag" fill="#4f46e5">Faithful Shapley Attribution Decomposition</text>
+    </g>
+
+    <!-- Arrow 2.2 -> 2.3 -->
+    <path d="M 620 58 L 665 58" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="626" y="52" class="edge-label">Attributions</text>
+
+    <!-- Box 2.3: Severity & Priority Scorer -->
+    <g transform="translate(670, 28)" filter="url(#card-shadow)">
+      <rect width="260" height="60" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.3" />
+      <text x="12" y="18" class="box-title" fill="#0369a1">Severity &amp; SOC Risk Triage</text>
+      <text x="12" y="33" class="box-desc">• Confidence-Gated Severity Matrix</text>
+      <text x="12" y="45" class="box-desc">• P1-P4 Escalation Level Assignment</text>
+      <text x="12" y="56" class="tag" fill="#0284c7">CRITICAL / HIGH / MEDIUM / LOW</text>
+    </g>
+  </g>
+
+  <!-- Flow Connector: Layer 2 -> Layer 3 -->
+  <path d="M 800 235 L 800 258" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="806" y="250" class="edge-label">Enriched Alert Object</text>
+
+  <!-- ========================================================================= -->
+  <!-- LAYER 3: SOC MANAGEMENT, SOAR & AUDIT STORAGE -->
+  <!-- ========================================================================= -->
+  <g id="layer3" transform="translate(25, 260)">
+    <rect width="950" height="98" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1" stroke-dasharray="4 3" />
+    <rect x="0" y="0" width="180" height="20" rx="4" fill="#dcfce7" />
+    <text x="8" y="14" class="layer-title">LAYER 3: INCIDENT ORCHESTRATION &amp; STORAGE</text>
+
+    <!-- Box 3.1: Case Management & Triage Lifecycle -->
+    <g transform="translate(20, 28)" filter="url(#card-shadow)">
+      <rect width="280" height="60" rx="5" fill="#ffffff" stroke="#16a34a" stroke-width="1.3" />
+      <text x="12" y="18" class="box-title" fill="#15803d">Case Management &amp; Dossiers</text>
+      <text x="12" y="33" class="box-desc">• Alert Center ➔ Correlated Incident Triage</text>
+      <text x="12" y="45" class="box-desc">• Forensic Investigation Dossier (INV-...)</text>
+      <text x="12" y="56" class="tag" fill="#16a34a">Lifecycle: ACK ➔ INVESTIGATE ➔ RESOLVE</text>
+    </g>
+
+    <!-- Arrow 3.1 -> 3.2 -->
+    <path d="M 300 58 L 345 58" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="306" y="52" class="edge-label">Threat Context</text>
+
+    <!-- Box 3.2: Tactical Defense & Containment Engine -->
+    <g transform="translate(350, 28)" filter="url(#card-shadow)">
+      <rect width="270" height="60" rx="5" fill="#ffffff" stroke="#059669" stroke-width="1.3" />
+      <text x="12" y="18" class="box-title" fill="#047857">Tactical Containment Engine</text>
+      <text x="12" y="33" class="box-desc">• Automated Response Recommendations</text>
+      <text x="12" y="45" class="box-desc">• Drop IP, VLAN Quarantine, Rate Limit, Reset</text>
+      <text x="12" y="56" class="tag" fill="#059669">Human-Authorized Gated Execution</text>
+    </g>
+
+    <!-- Arrow 3.2 -> 3.3 -->
+    <path d="M 620 58 L 665 58" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="626" y="52" class="edge-label">Persist State</text>
+
+    <!-- Box 3.3: Relational Store & Immutable Audit Trail -->
+    <g transform="translate(670, 28)" filter="url(#card-shadow)">
+      <rect width="260" height="60" rx="5" fill="#ffffff" stroke="#0d9488" stroke-width="1.3" />
+      <text x="12" y="18" class="box-title" fill="#0f766e">PostgreSQL &amp; Immutable Audit</text>
+      <text x="12" y="33" class="box-desc">• Relational Alerts, Incidents &amp; Telemetry</text>
+      <text x="12" y="45" class="box-desc">• Immutable Analyst Action Ledger</text>
+      <text x="12" y="56" class="tag" fill="#0d9488">Tamper-Evident Forensic Records</text>
+    </g>
+  </g>
+
+  <!-- Flow Connector: Layer 3 -> Layer 4 & Layer 5 (Dual Branch) -->
+  <path d="M 160 358 L 160 382" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="166" y="374" class="edge-label">State &amp; Context</text>
+
+  <path d="M 800 358 L 800 382" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)" />
+  <text x="806" y="374" class="edge-label">Live Telemetry Feeds</text>
+
+  <!-- ========================================================================= -->
+  <!-- LAYER 4: COGNITIVE AI SOC CO-PILOT (ZUKA ASSISTANT) -->
+  <!-- ========================================================================= -->
+  <g id="layer4" transform="translate(25, 384)">
+    <rect width="460" height="102" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1" stroke-dasharray="4 3" />
+    <rect x="0" y="0" width="190" height="20" rx="4" fill="#fef3c7" />
+    <text x="8" y="14" class="layer-title">LAYER 4: COGNITIVE AI SOC CO-PILOT</text>
+
+    <!-- Box 4.1: Dual-Engine NLP Dispatcher -->
+    <g transform="translate(15, 28)" filter="url(#card-shadow)">
+      <rect width="205" height="64" rx="5" fill="#ffffff" stroke="#d97706" stroke-width="1.3" />
+      <text x="10" y="17" class="box-title" fill="#b45309">Dual-Engine Dispatcher</text>
+      <text x="10" y="31" class="box-desc">• Fast Regex Rule Engine (&lt;5ms)</text>
+      <text x="10" y="43" class="box-desc">• Local Ollama LLM (Qwen2.5/Llama)</text>
+      <text x="10" y="56" class="tag" fill="#d97706">100% On-Premises Privacy</text>
+    </g>
+
+    <!-- Arrow 4.1 -> 4.2 -->
+    <path d="M 220 60 L 240 60" fill="none" stroke="#2563eb" stroke-width="1.4" marker-end="url(#arrow)" />
+
+    <!-- Box 4.2: Grounded RAG & Safety Controller -->
+    <g transform="translate(245, 28)" filter="url(#card-shadow)">
+      <rect width="200" height="64" rx="5" fill="#ffffff" stroke="#b45309" stroke-width="1.3" />
+      <text x="10" y="17" class="box-title" fill="#78350f">RAG &amp; Safety Guard</text>
+      <text x="10" y="31" class="box-desc">• Grounded DB Tool Invocation</text>
+      <text x="10" y="43" class="box-desc">• Cryptographic Safety Tokens</text>
+      <text x="10" y="56" class="tag" fill="#92400e">Strict Anti-Hallucination Gate</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- LAYER 5: INTERACTIVE DASHBOARD & HUMAN-IN-THE-LOOP -->
+  <!-- ========================================================================= -->
+  <g id="layer5" transform="translate(505, 384)">
+    <rect width="470" height="102" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1" stroke-dasharray="4 3" />
+    <rect x="0" y="0" width="220" height="20" rx="4" fill="#f3e8ff" />
+    <text x="8" y="14" class="layer-title">LAYER 5: HUMAN-IN-THE-LOOP INTERFACE</text>
+
+    <!-- Box 5.1: React 18 SOC Dashboard -->
+    <g transform="translate(15, 28)" filter="url(#card-shadow)">
+      <rect width="210" height="64" rx="5" fill="#ffffff" stroke="#9333ea" stroke-width="1.3" />
+      <text x="10" y="17" class="box-title" fill="#7e22ce">React 18 Operations Web UI</text>
+      <text x="10" y="31" class="box-desc">• Network Monitor &amp; Alerts View</text>
+      <text x="10" y="43" class="box-desc">• TreeSHAP Drawer &amp; Dossiers</text>
+      <text x="10" y="56" class="tag" fill="#9333ea">Context-Aware Action Cards</text>
+    </g>
+
+    <!-- Bidirectional Connection Between Dashboard & Analyst -->
+    <path d="M 225 60 L 245 60" fill="none" stroke="#475569" stroke-width="1.4" marker-end="url(#arrow-dark)" />
+
+    <!-- Box 5.2: SOC Security Analyst -->
+    <g transform="translate(250, 28)" filter="url(#card-shadow)">
+      <rect width="205" height="64" rx="5" fill="#ffffff" stroke="#7e22ce" stroke-width="1.3" />
+      <text x="10" y="17" class="box-title" fill="#6b21a8">SOC Security Analyst</text>
+      <text x="10" y="31" class="box-desc">• Human-in-the-Loop Verification</text>
+      <text x="10" y="43" class="box-desc">• Authors Verdict &amp; Closes Case</text>
+      <text x="10" y="56" class="tag" fill="#6b21a8">Final Containment Authority</text>
+    </g>
+  </g>
+
+  <!-- Horizontal Interaction between Layer 4 & Layer 5 -->
+  <path d="M 485 435 L 515 435" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arrow)" />
+  <path d="M 515 450 L 485 450" fill="none" stroke="#7e22ce" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arrow)" />
+  <text x="480" y="425" class="edge-label" font-size="8">Natural Language &amp; Triage Actions</text>
+
+  <!-- ========================================================================= -->
+  <!-- CLOSED LOOP / FEEDBACK ARROWS (Containment & Mitigation) -->
+  <!-- ========================================================================= -->
+  <!-- Feedback from Analyst & Defense Engine back to Layer 1 / Network Layer -->
+  <path d="M 600 384 L 600 370 L 485 370 L 485 320" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow-red)" />
+  <text x="495" y="350" class="feedback-label">Authorized Mitigation Directives</text>
+
+  <!-- Feedback from Defense Engine to Network Drop (Quarantine / Firewall Block) -->
+  <path d="M 350 290 L 150 290 L 150 115" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow-red)" />
+  <text x="155" y="200" class="feedback-label">Policy Enforcement (IP Block / VLAN Isolation)</text>
+
+  <!-- ========================================================================= -->
+  <!-- BOTTOM METADATA / CAPTION -->
+  <!-- ========================================================================= -->
+  <g transform="translate(25, 515)">
+    <!-- Legend Box -->
+    <rect width="950" height="55" rx="5" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+    
+    <circle cx="20" cy="28" r="4" fill="#2563eb" />
+    <text x="30" y="31" class="box-desc" font-weight="600">Feed-Forward Telemetry &amp; Detection Flow</text>
+
+    <line x1="280" y1="28" x2="310" y2="28" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4 3" />
+    <circle cx="310" cy="28" r="3" fill="#dc2626" />
+    <text x="320" y="31" class="box-desc" font-weight="600">Human-Authorized Containment &amp; Feedback Loop</text>
+
+    <rect x="585" y="21" width="12" height="12" rx="2" fill="#d97706" />
+    <text x="605" y="31" class="box-desc" font-weight="600">On-Premises LLM / Deterministic RAG Assistant</text>
+
+    <text x="825" y="31" class="box-desc" font-weight="700" fill="#0f172a">IEEE Architecture Specification</text>
+  </g>
+</svg>

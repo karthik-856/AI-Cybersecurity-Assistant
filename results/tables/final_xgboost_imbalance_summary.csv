@@ -1,0 +1,2 @@
+Model,Accuracy,Balanced Accuracy,Macro Precision,Macro Recall,Macro F1,Weighted F1,Majority Class,Majority Class Percentage,Majority Baseline Accuracy,Accuracy Improvement Over Baseline,Accuracy Balanced Accuracy Gap,Weighted F1 Macro F1 Gap,Poorly Detected Classes,Zero Prediction Classes
+XGBoost,0.9987136517880449,0.8456012789368363,0.9264215421083913,0.8456012789368363,0.8724609657505258,0.9986632862360657,0,0.8260234925606891,0.8260234925606891,0.17269015922735587,0.1531123728512086,0.12620232048553992,[13],[]

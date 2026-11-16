@@ -1,0 +1,8 @@
+Capability,Example Question,Status
+Incident Summary,What happened?,AVAILABLE
+Detection Explanation,Why was this detected?,AVAILABLE
+Confidence Analysis,How confident is the model?,AVAILABLE
+SHAP Explanation,Which features are important?,AVAILABLE
+Investigation Guidance,What should I investigate?,AVAILABLE
+Recommendation,What should I do next?,AVAILABLE
+Risk Assessment,What is the risk?,AVAILABLE

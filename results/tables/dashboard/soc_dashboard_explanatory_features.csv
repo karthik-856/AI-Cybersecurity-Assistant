@@ -1,0 +1,6 @@
+Feature,Alert_Explanation_Frequency,Explanation_Percentage
+Init_Win_bytes_forward,1,100.0
+Total Length of Fwd Packets,1,100.0
+min_seg_size_forward,1,100.0
+Packet Length Mean,1,100.0
+Flow Bytes/s,1,100.0

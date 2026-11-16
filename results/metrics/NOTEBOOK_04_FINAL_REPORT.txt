@@ -1,0 +1,17 @@
+NOTEBOOK 04 — FINAL MULTICLASS REPORT
+=====================================
+
+Confirmed XGBoost Performance
+Accuracy: 0.998714
+Balanced Accuracy: 0.845601
+Macro Precision: 0.926422
+Macro Recall: 0.845601
+Macro F1: 0.872461
+Weighted F1: 0.998663
+
+Difficult Minority Classes:
+- Bot
+- Infiltration
+- Web Attack - Brute Force
+- Web Attack - Sql Injection
+- Web Attack - XSS

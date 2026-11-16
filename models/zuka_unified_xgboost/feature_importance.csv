@@ -1,0 +1,15 @@
+feature,importance,importance_percentage
+dst_bytes,0.12566027,12.566029
+src_bytes,0.11875587,11.875587
+src_packet_size_mean,0.109273605,10.9273615
+dst_packet_size_mean,0.09613293,9.613294
+dst_packet_rate,0.09470095,9.470096
+src_byte_rate,0.07044502,7.044503
+dst_packets,0.06473962,6.473963
+src_packets,0.061455194,6.1455197
+dst_byte_rate,0.05789206,5.7892065
+dst_iat_mean_sec,0.045668174,4.5668178
+duration_sec,0.043283895,4.3283896
+flow_packet_rate,0.042853966,4.285397
+src_iat_mean_sec,0.04236963,4.2369633
+src_packet_rate,0.026768748,2.6768749

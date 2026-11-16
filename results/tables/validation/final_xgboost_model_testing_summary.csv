@@ -1,0 +1,2 @@
+Model,Test_Samples,Features,Classes,Accuracy,Balanced_Accuracy,Macro_Precision,Macro_Recall,Macro_F1,Weighted_F1,Mean_Confidence,High_Confidence_Percentage,Medium_Confidence_Percentage,Low_Confidence_Percentage,Incorrect_Predictions,Error_Rate
+XGBClassifier,478875,78,14,0.9987136517880449,0.8456012789368363,0.9264215421083913,0.8456012789368363,0.8724609657505258,0.9986632862360657,0.998619,99.75797441921169,0.1133907595927956,0.1286348211955103,616,0.001286348211955103

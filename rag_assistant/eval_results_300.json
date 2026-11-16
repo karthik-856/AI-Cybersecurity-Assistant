@@ -1,0 +1,75 @@
+{
+  "evaluated_count": 5,
+  "overall_accuracy": 40.0,
+  "hallucination_rate": 0.0,
+  "in_domain_accuracy": 40.0,
+  "ood_refusal_rate": 0,
+  "timestamp": "2026-10-26T12:09:38.470492",
+  "results": [
+    {
+      "id": "Q001",
+      "category": "in_domain",
+      "question": "What is the primary mission of the ZUKA SOC Platform?",
+      "is_out_of_domain": false,
+      "reply": "The primary mission of the ZUKA SOC Platform is to detect, diagnose, investigate, and triage network attacks directed against smart devices and Internet of Things (IoT) infrastructure.\n\nSources:\n- Platform Overview & Document Metadata\n- 1. System Identity & Mission Overview\n- ZUKA SOC Platform: Master Knowledge Base & Assistant Operational Reference",
+      "engine": "Zuka Knowledge Engine",
+      "verdict": "PASS_ACCURATE",
+      "accurate": true,
+      "hallucination": false,
+      "reason": "Matched key facts (4/4).",
+      "latency_sec": 61.2
+    },
+    {
+      "id": "Q002",
+      "category": "in_domain",
+      "question": "Why do smart devices require dedicated SOC operations instead of traditional antivirus or EDR agents?",
+      "is_out_of_domain": false,
+      "reply": "Smart devices require dedicated SOC operations because they feature resource-constrained hardware unable to run traditional host-based antivirus or Endpoint Detection and Response (EDR) agents.\n\nSources:\n- 1. System Identity & Mission Overview\n- 6. Standard Operating Procedures (SOPs) & Unified SOC Workflow\n- 5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+      "engine": "Zuka Knowledge Engine",
+      "verdict": "FAIL_INACCURATE",
+      "accurate": false,
+      "hallucination": false,
+      "reason": "Missed key facts (1/4 matched).",
+      "latency_sec": 54.13
+    },
+    {
+      "id": "Q003",
+      "category": "in_domain",
+      "question": "What default credentials do smart devices frequently ship with?",
+      "is_out_of_domain": false,
+      "reply": "Smart devices frequently ship with default credentials like `admin/admin`.\n\nSources:\n- 1. System Identity & Mission Overview\n- 5. Machine Learning, IoT Detection & Explainable AI (XAI)\n- 9. Assistant System Prompt & Operating Boundaries",
+      "engine": "Zuka Knowledge Engine",
+      "verdict": "FAIL_INACCURATE",
+      "accurate": false,
+      "hallucination": false,
+      "reason": "Missed key facts (1/3 matched).",
+      "latency_sec": 44.94
+    },
+    {
+      "id": "Q004",
+      "category": "in_domain",
+      "question": "What is the consequence of unpatched firmware in smart devices?",
+      "is_out_of_domain": false,
+      "reply": "Unpatched firmware in smart devices leaves known vulnerabilities active indefinitely.\n\nSources:\n- 5. Machine Learning, IoT Detection & Explainable AI (XAI)\n- 1. System Identity & Mission Overview\n- 8. Comprehensive Frequently Asked Questions (FAQs)",
+      "engine": "Zuka Knowledge Engine",
+      "verdict": "PASS_ACCURATE",
+      "accurate": true,
+      "hallucination": false,
+      "reason": "Matched key facts (2/3).",
+      "latency_sec": 61.13
+    },
+    {
+      "id": "Q005",
+      "category": "in_domain",
+      "question": "How are compromised IoT devices weaponized by attackers?",
+      "is_out_of_domain": false,
+      "reply": "Compromised IoT devices are weaponized by attackers through Mirai-style recruitment, malware download, and periodic C2 beaconing heartbeats, classified as a CRITICAL attack type.\n\nSources:\n- 1. System Identity & Mission Overview\n- 5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+      "engine": "Zuka Knowledge Engine",
+      "verdict": "FAIL_INACCURATE",
+      "accurate": false,
+      "hallucination": false,
+      "reason": "Missed key facts (1/3 matched).",
+      "latency_sec": 31.23
+    }
+  ]
+}

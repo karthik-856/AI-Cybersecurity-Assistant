@@ -1,0 +1,15 @@
+Class,Top_Feature,Top_Feature_SHAP
+0,Bwd Packet Length Std,0.8292156457901001
+1,Destination Port,2.4719455242156982
+2,Fwd Packet Length Max,1.568833589553833
+3,Subflow Bwd Bytes,2.5893938541412354
+4,Destination Port,1.1566661596298218
+5,Destination Port,0.9660508036613464
+6,Destination Port,1.5218110084533691
+7,Destination Port,0.8322732448577881
+8,Bwd Packet Length Mean,0.9681651592254639
+9,Total Length of Fwd Packets,1.4171016216278076
+10,Destination Port,1.977857232093811
+11,Fwd IAT Min,0.9268260598182678
+12,Init_Win_bytes_backward,0.7855488657951355
+13,Flow IAT Min,1.3935238122940063

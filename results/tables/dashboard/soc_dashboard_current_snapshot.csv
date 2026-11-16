@@ -1,0 +1,2 @@
+Generated_At,Total_Events,Attack_Events,Benign_Events,Attack_Rate,High_Severity,Medium_Severity,Low_Severity,P1_Alerts,P2_Alerts,P3_Alerts,Mean_Attack_Confidence,Security_Status
+2026-09-01 07:52:04.175280,10,1,9,0.1,1,0,0,1,0,0,0.9997797608375548,CRITICAL — P1 ALERTS REQUIRE ANALYST REVIEW

@@ -1,0 +1,9 @@
+Metric,Value
+Total Events,10.0
+Attack Events,1.0
+Benign Events,9.0
+Attack Percentage,10.0
+High Severity Alerts,1.0
+Medium Severity Alerts,0.0
+Low Severity Alerts,0.0
+P1 Alerts,1.0

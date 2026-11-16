@@ -1,0 +1,31 @@
+==========================================================================================
+AI-CYBERSECURITY-ASSISTANT — SOC ANALYST WORKFLOW
+==========================================================================================
+
+CURRENT DETECTION WORKFLOW
+------------------------------------------------------------------------------------------
+1. Network-flow data is processed into the 78 model features.
+2. XGBoost predicts the network-flow class.
+3. Prediction confidence is calculated.
+4. SHAP identifies the features contributing to the prediction.
+5. The alert engine assigns severity and SOC priority.
+6. A human-readable explanation is generated.
+7. The recommendation engine creates an investigation recommendation.
+8. The alert is placed into the SOC analyst queue.
+9. The analyst reviews the evidence and related telemetry.
+
+CURRENT DASHBOARD STATISTICS
+------------------------------------------------------------------------------------------
+Attack alerts      : 881
+High severity      : 873
+Medium severity    : 3
+Low severity       : 5
+Mean confidence    : 0.994371
+
+FUTURE LIVE OPERATION
+------------------------------------------------------------------------------------------
+The final deployment should automatically receive network traffic or flow records, extract the required 78 features, run the XGBoost detector, generate SHAP explanations, create alerts, and present them to the SOC analyst without requiring manual feature-value entry.
+
+HUMAN-IN-THE-LOOP PRINCIPLE
+------------------------------------------------------------------------------------------
+The system provides detection, evidence, explanation, and recommendations. The SOC analyst remains responsible for validation, correlation with other telemetry, and operational response decisions.

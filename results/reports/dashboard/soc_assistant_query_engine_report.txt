@@ -1,0 +1,53 @@
+==========================================================================================
+SOC ASSISTANT QUERY ENGINE REPORT
+==========================================================================================
+
+Generated: 2026-09-01T07:49:40.514102
+Alerts available: 1
+
+SUPPORTED ANALYST QUESTIONS
+------------------------------------------------------------------------------------------
+1. What happened?
+2. Why was this detected?
+3. How confident is the model?
+4. Which features are important?
+5. What should I investigate?
+6. What should I do next?
+7. What is the risk/severity/priority?
+
+CONTROL BOUNDARY
+------------------------------------------------------------------------------------------
+The SOC Assistant provides explanations and recommendations to the analyst.
+It does not autonomously perform containment, blocking, isolation, or destructive actions.
+Human analyst approval remains required.
+
+==========================================================================================
+QUESTION: What happened?
+
+The model detected network traffic belonging to attack class 9. The prediction confidence is 99.98%, with severity HIGH and SOC priority P1.
+
+==========================================================================================
+QUESTION: Why was this detected?
+
+The detection is supported by the model's SHAP explanation. The principal explanatory features are: Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s. These are model-evidence features and should be validated against the surrounding network telemetry.
+
+==========================================================================================
+QUESTION: How confident is the model?
+
+I can help with this alert using the available XGBoost and SHAP evidence. Ask about what happened, why it was detected, confidence, important features, investigation steps, risk, or recommended action.
+
+==========================================================================================
+QUESTION: Which features are important?
+
+The main SHAP explanatory features are: Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s. These features indicate which input characteristics contributed most strongly to the model explanation.
+
+==========================================================================================
+QUESTION: What should I investigate?
+
+1. Review the source and destination network-flow context. 2. Correlate the event with surrounding network and security telemetry. 3. Check whether similar events occurred from the same source. 4. Review the SHAP explanatory features for consistency with the detection. 5. Investigate the predicted attack class 9 in the relevant incident context. 6. Because this is a high-confidence high-severity alert, prioritize analyst investigation.
+
+==========================================================================================
+QUESTION: What should I do next?
+
+Immediately investigate and correlate the alert with other security telemetry. Review the affected flow context and determine whether escalation or containment is justified.
+

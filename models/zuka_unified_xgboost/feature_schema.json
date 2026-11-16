@@ -1,0 +1,35 @@
+{
+  "feature_count": 14,
+  "features": [
+    "duration_sec",
+    "src_packets",
+    "dst_packets",
+    "src_bytes",
+    "dst_bytes",
+    "flow_packet_rate",
+    "src_packet_rate",
+    "dst_packet_rate",
+    "src_byte_rate",
+    "dst_byte_rate",
+    "src_packet_size_mean",
+    "dst_packet_size_mean",
+    "src_iat_mean_sec",
+    "dst_iat_mean_sec"
+  ],
+  "target": "zuka_attack_class",
+  "excluded_columns": [
+    "dataset_name",
+    "dataset_split",
+    "source_file",
+    "original_attack_category",
+    "label",
+    "synthetic",
+    "source_ip",
+    "destination_ip",
+    "source_port",
+    "destination_port",
+    "protocol",
+    "unified_row_id",
+    "ml_split"
+  ]
+}

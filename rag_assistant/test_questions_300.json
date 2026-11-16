@@ -1,0 +1,3351 @@
+[
+  {
+    "id": "Q001",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What is the primary mission of the ZUKA SOC Platform?",
+    "expected_answer": "To detect, diagnose, investigate, and triage network attacks directed against smart devices and IoT infrastructure.",
+    "key_facts": [
+      "smart devices",
+      "iot",
+      "detect",
+      "triage"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q002",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "Why do smart devices require dedicated SOC operations instead of traditional antivirus or EDR agents?",
+    "expected_answer": "Microcontroller CPU and RAM constraints cannot support traditional antivirus or host-based EDR agents.",
+    "key_facts": [
+      "resource constraints",
+      "cpu",
+      "edr",
+      "insecure defaults"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q003",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What default credentials do smart devices frequently ship with?",
+    "expected_answer": "admin/admin with unencrypted management daemons like Telnet port 23 and UPnP.",
+    "key_facts": [
+      "admin/admin",
+      "telnet",
+      "23"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q004",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What is the consequence of unpatched firmware in smart devices?",
+    "expected_answer": "Vendors rarely push automated security updates, leaving known vulnerabilities active indefinitely.",
+    "key_facts": [
+      "updates",
+      "vulnerabilities",
+      "indefinitely"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q005",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "How are compromised IoT devices weaponized by attackers?",
+    "expected_answer": "Compromised devices are rapidly recruited into Mirai-style botnets to conduct volumetric DDoS attacks.",
+    "key_facts": [
+      "mirai",
+      "botnets",
+      "ddos"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q006",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What role does Zuka the assistant act as in the SOC?",
+    "expected_answer": "An autonomous Tier-1/Tier-2 SOC co-pilot.",
+    "key_facts": [
+      "tier-1",
+      "tier-2",
+      "co-pilot"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q007",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What is Zuka's policy regarding hallucinations and database queries?",
+    "expected_answer": "Zuka adheres strictly to a Zero-Hallucination Policy where all IDs, counts, and metrics are derived directly from verified database queries.",
+    "key_facts": [
+      "zero-hallucination",
+      "verified database queries"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q008",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "How does Zuka enforce its strict defensive boundary?",
+    "expected_answer": "By refusing any request to generate exploit payloads or facilitate attacks.",
+    "key_facts": [
+      "refus",
+      "exploit",
+      "defensive"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q009",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What ports or unencrypted management daemons are common insecure defaults on smart hardware?",
+    "expected_answer": "Telnet port 23 and UPnP.",
+    "key_facts": [
+      "telnet",
+      "23",
+      "upnp"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q010",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "Can Zuka generate exploit payloads if requested by an analyst?",
+    "expected_answer": "No. Zuka operates under a strict defensive boundary and refuses any request to generate exploit payloads.",
+    "key_facts": [
+      "refus",
+      "exploit"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q011",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What frontend technologies and framework are used in the ZUKA platform?",
+    "expected_answer": "React 18, TypeScript, Vite, and Lucide Icons.",
+    "key_facts": [
+      "react 18",
+      "typescript",
+      "vite"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q012",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What icon library is used in the frontend UI?",
+    "expected_answer": "Lucide Icons.",
+    "key_facts": [
+      "lucide"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q013",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "Which Python version and web framework power the backend API?",
+    "expected_answer": "FastAPI on Python 3.13 with Uvicorn.",
+    "key_facts": [
+      "fastapi",
+      "python 3.13",
+      "uvicorn"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q014",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What ASGI server runs the FastAPI backend?",
+    "expected_answer": "Uvicorn.",
+    "key_facts": [
+      "uvicorn"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q015",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What database, ORM, and migration tools are used for persistence?",
+    "expected_answer": "PostgreSQL, SQLAlchemy 2.0, and Alembic.",
+    "key_facts": [
+      "postgresql",
+      "sqlalchemy 2.0",
+      "alembic"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q016",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What machine learning algorithm powers network threat classification in ZUKA?",
+    "expected_answer": "Unified XGBoost Multiclass Decision Trees.",
+    "key_facts": [
+      "xgboost",
+      "multiclass",
+      "decision tree"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q017",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "Across how many traffic categories is the ML model trained?",
+    "expected_answer": "13 traffic categories.",
+    "key_facts": [
+      "13"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q018",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "How many network flows were used to train the XGBoost model?",
+    "expected_answer": "2,561,658 network flows.",
+    "key_facts": [
+      "2,561,658"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q019",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What tool provides explainable AI in the ZUKA platform?",
+    "expected_answer": "TreeSHAP (shap.TreeExplainer).",
+    "key_facts": [
+      "treeshap",
+      "shap"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q020",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What is the operational responsibility of TreeSHAP in the platform?",
+    "expected_answer": "Computes Shapley feature importance attributions per packet flow to explain algorithmic decisions.",
+    "key_facts": [
+      "shapley",
+      "feature importance",
+      "attributions"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q021",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What local AI assistant engine and regex engine are utilized?",
+    "expected_answer": "Ollama (qwen2.5:3b) paired with a sub-5ms regex engine.",
+    "key_facts": [
+      "ollama",
+      "qwen2.5:3b",
+      "sub-5ms"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q022",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What authorization mechanism is used by the backend API?",
+    "expected_answer": "JWT authentication and RBAC authorization.",
+    "key_facts": [
+      "jwt",
+      "rbac"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q023",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What operations are permitted for the ADMIN role?",
+    "expected_answer": "Full access: all operational modules, system telemetry, database center, user account approval, deactivation, and safety-confirmed deletion.",
+    "key_facts": [
+      "full access",
+      "approval",
+      "database"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q024",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What is the critical safety safeguard preventing admin lockout?",
+    "expected_answer": "Administrators cannot delete or deactivate their own active administrator account.",
+    "key_facts": [
+      "cannot delete",
+      "own",
+      "administrator"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q025",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What modules can a SOC_ANALYST access in ZUKA?",
+    "expected_answer": "Dashboard, Network Monitor, Alert Center, Incident Management, Forensic Investigations, and PDF Reports.",
+    "key_facts": [
+      "dashboard",
+      "network monitor",
+      "alert center",
+      "incident management"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q026",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What operational constraints apply to the SOC_ANALYST role?",
+    "expected_answer": "Cannot approve new users, delete user accounts, or modify core database schema definitions.",
+    "key_facts": [
+      "cannot approve",
+      "delete user",
+      "schema"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q027",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What permissions are granted to the VIEWER role?",
+    "expected_answer": "Read-only access: operational overview on Dashboard and live packet inspection in Network Monitor.",
+    "key_facts": [
+      "read-only",
+      "dashboard",
+      "network monitor"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q028",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What actions is the VIEWER role prohibited from performing?",
+    "expected_answer": "Cannot acknowledge alerts, open investigations, edit incident statuses, add notes, or export reports.",
+    "key_facts": [
+      "cannot acknowledge",
+      "open investigations",
+      "edit"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q029",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What is the default account status for newly registered users?",
+    "expected_answer": "is_active = False (Pending Approval).",
+    "key_facts": [
+      "is_active",
+      "false",
+      "pending approval"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q030",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "How can an administrator authorize a newly registered analyst?",
+    "expected_answer": "Via the User Management panel (/users) or via the assistant command 'approve user <ID>'.",
+    "key_facts": [
+      "/users",
+      "approve user"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q031",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What does the Dashboard module (/dashboard) display?",
+    "expected_answer": "Central situational awareness console displaying live threat indicators, 24h attack distributions, protocol breakdowns, active incident queues, and system operational health.",
+    "key_facts": [
+      "threat indicators",
+      "24h attack",
+      "protocol"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q032",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What protocols are broken down on the Dashboard?",
+    "expected_answer": "TCP, UDP, and ICMP.",
+    "key_facts": [
+      "tcp",
+      "udp",
+      "icmp"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q033",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What telemetry does the Network Monitor (/network-monitor) visualize?",
+    "expected_answer": "Live bidirectional packet streams, bandwidth consumption curves, port scans, and packet burst frequencies.",
+    "key_facts": [
+      "bidirectional packet",
+      "bandwidth",
+      "port scans"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q034",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What is the operational function of the Alert Center (/alerts)?",
+    "expected_answer": "Ingestion engine for automated ML threat detections, confidence scores, severity ratings, port mappings, and Explainable AI (TreeSHAP) drawer.",
+    "key_facts": [
+      "alert center",
+      "confidence",
+      "treeshap"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q035",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What must analysts click in the Alert Center before an investigation can be unlocked?",
+    "expected_answer": "Analysts must click 'Acknowledge' (or acknowledge alert <ID>).",
+    "key_facts": [
+      "acknowledge"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q036",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What is the full lifecycle case progression in Incident Management (/incidents)?",
+    "expected_answer": "OPEN -> ACKNOWLEDGED -> INVESTIGATING -> RESOLVED -> CLOSED.",
+    "key_facts": [
+      "open",
+      "acknowledged",
+      "investigating",
+      "resolved",
+      "closed"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q037",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What priority ratings are supported in Incident Management?",
+    "expected_answer": "P1 to P4.",
+    "key_facts": [
+      "p1",
+      "p4"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q038",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What escalation tiers exist in Incident Management?",
+    "expected_answer": "Level 0 to Level 3.",
+    "key_facts": [
+      "level 0",
+      "level 3"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q039",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What does the Defense Department (/defense) filter exclusively for?",
+    "expected_answer": "Open investigations.",
+    "key_facts": [
+      "open investigations"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q040",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "List the tactical containment countermeasures supported in the Defense Department.",
+    "expected_answer": "VLAN quarantine, IP block, credential rotation, rate limiting, and firmware lockdown.",
+    "key_facts": [
+      "vlan quarantine",
+      "ip block",
+      "credential rotation",
+      "rate limiting",
+      "firmware lockdown"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q041",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "Where are applied defense directives logged and appended?",
+    "expected_answer": "Appended to the investigation dossier (INV-...) and logged in the immutable analyst_actions ledger.",
+    "key_facts": [
+      "investigation dossier",
+      "analyst_actions"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q042",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What prefixes do digital forensic case dossiers use in the Investigation Department?",
+    "expected_answer": "INV- prefix (e.g. INV-...).",
+    "key_facts": [
+      "inv-"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q043",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What manual action by the analyst unlocks incident resolution in the Investigation Department?",
+    "expected_answer": "Writing the final conclusion and marking the investigation COMPLETED.",
+    "key_facts": [
+      "conclusion",
+      "completed"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q044",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What report types can be generated in the Reports & PDF Export module (/reports)?",
+    "expected_answer": "Incident Report, Alert Report, Executive Summary, and Detection XAI.",
+    "key_facts": [
+      "incident report",
+      "alert report",
+      "executive",
+      "detection xai"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q045",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "How does the PDF export module ensure clean white paper printing?",
+    "expected_answer": "Features isolated CSS print styling that eliminates website dark headers and sidebars.",
+    "key_facts": [
+      "css print",
+      "white paper"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q046",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What is displayed in the Database Center (/databases)?",
+    "expected_answer": "Live PostgreSQL table record counts, schema layouts, and the permanent immutable Analyst Action Ledger.",
+    "key_facts": [
+      "postgresql",
+      "schema",
+      "analyst action ledger"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q047",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What security controls are managed under Settings & Security (/settings)?",
+    "expected_answer": "Profile management, password updates, active browser session revocation, and TOTP 2FA authentication controls.",
+    "key_facts": [
+      "profile",
+      "session revocation",
+      "totp",
+      "2fa"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q048",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What validation multiclass accuracy does the XGBoost model achieve?",
+    "expected_answer": "Approximately ~93.0% multiclass accuracy.",
+    "key_facts": [
+      "93.0%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q049",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the validation F1 score on DDoS traffic?",
+    "expected_answer": "99.2% F1 score.",
+    "key_facts": [
+      "99.2%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q050",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the validation F1 score on DoS traffic?",
+    "expected_answer": "92.6% F1 score.",
+    "key_facts": [
+      "92.6%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q051",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the validation F1 score on Benign traffic?",
+    "expected_answer": "96.3% F1 score.",
+    "key_facts": [
+      "96.3%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q052",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What severity is typically assigned to BENIGN traffic?",
+    "expected_answer": "INFO severity.",
+    "key_facts": [
+      "info"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q053",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What network behavior characterizes the DOS attack class?",
+    "expected_answer": "Single-source packet flooding exhausting microcontroller memory or network buffers.",
+    "key_facts": [
+      "single-source",
+      "flooding",
+      "memory"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q054",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What network behavior characterizes DDOS?",
+    "expected_answer": "Distributed coordinated volumetric flood overwhelming gateways and hubs.",
+    "key_facts": [
+      "distributed",
+      "volumetric flood",
+      "gateways"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q055",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What typical severity is assigned to PORT_SCAN attacks?",
+    "expected_answer": "MEDIUM severity.",
+    "key_facts": [
+      "medium"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q056",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What ports are typically targeted during BRUTE_FORCE attacks?",
+    "expected_answer": "Telnet (port 23) or SSH (port 22).",
+    "key_facts": [
+      "telnet",
+      "23",
+      "ssh",
+      "22"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q057",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What network signature characterizes BOTNET activity?",
+    "expected_answer": "Mirai-style recruitment, malware download, and periodic C2 beaconing heartbeats.",
+    "key_facts": [
+      "mirai",
+      "c2",
+      "beaconing"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q058",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the typical severity of BACKDOOR and BOTNET classes?",
+    "expected_answer": "CRITICAL severity.",
+    "key_facts": [
+      "critical"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q059",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What behavior defines FUZZING attacks?",
+    "expected_answer": "Malformed high-entropy payloads designed to crash embedded network parsers.",
+    "key_facts": [
+      "malformed",
+      "high-entropy",
+      "parsers"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q060",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What defines INFILTRATION attacks?",
+    "expected_answer": "Lateral movement from compromised peripheral devices deeper into internal LAN.",
+    "key_facts": [
+      "lateral movement",
+      "lan"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q061",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What chip architectures are targeted by the MALWARE attack class?",
+    "expected_answer": "Embedded ARM and MIPS IoT architectures.",
+    "key_facts": [
+      "arm",
+      "mips"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q062",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "List at least 5 of the 14 network flow features evaluated by the model.",
+    "expected_answer": "duration_sec, src_packets, dst_packets, src_bytes, flow_packet_rate, src_iat_mean_sec.",
+    "key_facts": [
+      "duration_sec",
+      "src_packets",
+      "dst_bytes",
+      "flow_packet_rate"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q063",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "How does TreeSHAP explain model inference to analysts?",
+    "expected_answer": "TreeSHAP calculates exact additive Shapley values for each of the 14 features on every prediction.",
+    "key_facts": [
+      "shapley",
+      "14 features",
+      "additive"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q064",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "How does TreeSHAP help eliminate false alarms on video streaming?",
+    "expected_answer": "By showing analysts whether an alert was triggered by abnormal flow_packet_rate or low src_iat_mean_sec.",
+    "key_facts": [
+      "flow_packet_rate",
+      "src_iat_mean_sec",
+      "false alarms"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q065",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What is the mandatory rule when acknowledging an alert under SOP-01?",
+    "expected_answer": "Acknowledging the alert sets both alert and correlated incident to ACKNOWLEDGED.",
+    "key_facts": [
+      "alert",
+      "incident",
+      "acknowledged"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q066",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What assistant command can be used to acknowledge an alert in SOP-01?",
+    "expected_answer": "acknowledge alert <id>",
+    "key_facts": [
+      "acknowledge alert"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q067",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What prerequisite must be verified before starting an investigation in SOP-02?",
+    "expected_answer": "Verify the correlated incident is in ACKNOWLEDGED status.",
+    "key_facts": [
+      "acknowledged status"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q068",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What assistant command initiates an investigation under SOP-02?",
+    "expected_answer": "investigate incident <id>",
+    "key_facts": [
+      "investigate incident"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q069",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What status does an incident transition to when investigation starts in SOP-02?",
+    "expected_answer": "INVESTIGATING status, with dossier in IN_PROGRESS.",
+    "key_facts": [
+      "investigating",
+      "in_progress"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q070",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What telemetry is reviewed in SOP-03 inside Defense Department?",
+    "expected_answer": "Attacker IP, target IP, ports, protocol, AI confidence, and automated threat diagnosis.",
+    "key_facts": [
+      "attacker ip",
+      "target ip",
+      "ports",
+      "protocol",
+      "confidence"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q071",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What button applies the containment strategy in SOP-03?",
+    "expected_answer": "'Apply Defense & Append Note to Investigation'.",
+    "key_facts": [
+      "apply defense",
+      "append note"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q072",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "Who authors the final conclusion in SOP-04?",
+    "expected_answer": "The SOC analyst manually authors the final evidence-based Analyst Conclusion.",
+    "key_facts": [
+      "analyst",
+      "conclusion"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q073",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What status does the investigation transition to in SOP-04 after completing?",
+    "expected_answer": "COMPLETED without any blocking popup errors.",
+    "key_facts": [
+      "completed"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q074",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "In SOP-05, where does the incident resolution summary adopt its content from?",
+    "expected_answer": "It automatically adopts the analyst's manual conclusion from the completed investigation.",
+    "key_facts": [
+      "adopts",
+      "conclusion",
+      "investigation"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q075",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What timestamp is recorded when an incident is resolved in SOP-05?",
+    "expected_answer": "resolved_at timestamp is stamped.",
+    "key_facts": [
+      "resolved_at"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q076",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What assistant command can close an incident in SOP-06?",
+    "expected_answer": "close incident <id>",
+    "key_facts": [
+      "close incident"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q077",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What happens to the incident once status updates to CLOSED in SOP-06?",
+    "expected_answer": "The incident is archived permanently.",
+    "key_facts": [
+      "archived permanently",
+      "closed"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q078",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "How are reports printed according to SOP-07?",
+    "expected_answer": "Click 'Print' in Reports (/reports), using isolated print CSS to print directly to clean white paper sheets without dark headers or sidebars.",
+    "key_facts": [
+      "print",
+      "css",
+      "white paper"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q079",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Explain Zuka's Dual-Engine Architecture.",
+    "expected_answer": "Queries pass through a sub-5ms deterministic rule-based parser. If no pattern matches, the query safely falls back to local Ollama (qwen2.5:3b) using grounded database tool calling.",
+    "key_facts": [
+      "rule-based parser",
+      "sub-5ms",
+      "ollama"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q080",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "How long is the confirmation token valid for destructive actions like user deletion?",
+    "expected_answer": "60 seconds.",
+    "key_facts": [
+      "60-second",
+      "confirmation token"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q081",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What does the command 'show alert <id>' do?",
+    "expected_answer": "Inspects detailed alert flow, ports, confidence, and status.",
+    "key_facts": [
+      "inspects",
+      "alert flow",
+      "ports",
+      "confidence"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q082",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "How many recent threat detections are displayed by 'list alerts'?",
+    "expected_answer": "Displays a table of the 8 most recent threat detections.",
+    "key_facts": [
+      "8",
+      "recent threat detections"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q083",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command filters alerts where severity is CRITICAL?",
+    "expected_answer": "list critical alerts",
+    "key_facts": [
+      "list critical alerts"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q084",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command marks an alert as FALSE_POSITIVE?",
+    "expected_answer": "dismiss alert <id>",
+    "key_facts": [
+      "dismiss alert"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q085",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command promotes an alert into a formal security incident?",
+    "expected_answer": "escalate alert <id>",
+    "key_facts": [
+      "escalate alert"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q086",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What does the command 'show incident <id>' display?",
+    "expected_answer": "Displays incident triage record, severity, owner, and notes.",
+    "key_facts": [
+      "triage record",
+      "severity",
+      "owner",
+      "notes"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q087",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command lists all active security cases in an ActionTable?",
+    "expected_answer": "list incidents",
+    "key_facts": [
+      "list incidents"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q088",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command filters incidents currently in OPEN status?",
+    "expected_answer": "list open incidents",
+    "key_facts": [
+      "list open incidents"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q089",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What is required when running the command 'resolve incident <id>'?",
+    "expected_answer": "It requires a resolution summary.",
+    "key_facts": [
+      "requires summary"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q090",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which admin command authorizes a pending analyst account?",
+    "expected_answer": "approve user <id>",
+    "key_facts": [
+      "approve user"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q091",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command immediately suspends a user's login access?",
+    "expected_answer": "deactivate user <id>",
+    "key_facts": [
+      "deactivate user"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q092",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What does 'system status' check?",
+    "expected_answer": "Checks live PostgreSQL health, table counts, and telemetry.",
+    "key_facts": [
+      "postgresql",
+      "health",
+      "table counts"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q093",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What does 'dashboard stats' return?",
+    "expected_answer": "Summary of active KPI metrics overview.",
+    "key_facts": [
+      "kpi metrics",
+      "overview"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q094",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What command displays categorized interactive command cards?",
+    "expected_answer": "help",
+    "key_facts": [
+      "help"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q095",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Does ZUKA send our telemetry or packet data to external cloud APIs?",
+    "expected_answer": "No. ZUKA is engineered for 100% on-premises local privacy. The backend, database, XGBoost inference, and Ollama LLM execute strictly on localhost. No data is sent to third-party clouds.",
+    "key_facts": [
+      "no",
+      "localhost",
+      "privacy"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q096",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Why can newly registered users not log in immediately according to FAQ Q4?",
+    "expected_answer": "All newly registered accounts default to is_active = False. An administrator must approve the account via the User Management panel (/users) or via the assistant command 'approve user <ID>'.",
+    "key_facts": [
+      "is_active",
+      "false",
+      "administrator",
+      "approv"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q097",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What is the confidence threshold for a CRITICAL alert?",
+    "expected_answer": ">=90% confidence or severe volumetric attack.",
+    "key_facts": [
+      ">=90%",
+      "critical"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q098",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What is the confidence threshold for a HIGH severity alert?",
+    "expected_answer": "75-89% prediction confidence.",
+    "key_facts": [
+      "75-89%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q099",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What is the confidence threshold for a MEDIUM severity alert?",
+    "expected_answer": "55-74% prediction confidence.",
+    "key_facts": [
+      "55-74%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q100",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What is the confidence threshold for a LOW severity alert?",
+    "expected_answer": "<55% prediction confidence.",
+    "key_facts": [
+      "<55%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q101",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What does Explainable AI (TreeSHAP) show analysts in an alert?",
+    "expected_answer": "It computes the exact mathematical contribution of each network flow feature toward the model's classification, demonstrating why traffic was flagged.",
+    "key_facts": [
+      "mathematical contribution",
+      "feature",
+      "classification"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q102",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "How do analysts distinguish legitimate high-definition video streaming from a DoS flood?",
+    "expected_answer": "Video streaming has high payload bytes (dst_bytes), balanced TCP ACKs, and steady pacing. DoS floods have abnormal packet rates with minimal payload bytes and tiny inter-arrival times.",
+    "key_facts": [
+      "dst_bytes",
+      "packet rate",
+      "inter-arrival"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q103",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Why is the 'Start Investigation' button locked on an incident according to FAQ Q8?",
+    "expected_answer": "The linked alert has not been acknowledged yet. An alert must be in ACKNOWLEDGED status before an investigation dossier can be created.",
+    "key_facts": [
+      "acknowledged status",
+      "locked"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q104",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What occurs when an investigation is started according to FAQ Q9?",
+    "expected_answer": "The system creates an investigation dossier (INV-...), stamps started_at, assigns the current analyst, and updates incident status to INVESTIGATING.",
+    "key_facts": [
+      "dossier",
+      "inv-",
+      "started_at",
+      "investigating"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q105",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What is required before an incident can be marked RESOLVED in FAQ Q10?",
+    "expected_answer": "The incident's investigation dossier must be completed with forensic notes and a final conclusion, and the analyst must provide a resolution summary.",
+    "key_facts": [
+      "completed",
+      "conclusion",
+      "summary"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q106",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "How do Escalation Levels work in ZUKA according to FAQ Q11?",
+    "expected_answer": "Levels range from Level 0 (normal triage) to Level 3 (critical management escalation) for confirmed breaches, root-level compromises, or active botnets.",
+    "key_facts": [
+      "level 0",
+      "level 3",
+      "escalat"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q107",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "How are user passwords protected in ZUKA?",
+    "expected_answer": "Passwords are cryptographically hashed using passlib with bcrypt or Argon2 hashing algorithms with unique salts, and never stored in plaintext.",
+    "key_facts": [
+      "passlib",
+      "bcrypt",
+      "argon2",
+      "salt"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q108",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "How do session revocations and 2FA work according to FAQ Q13?",
+    "expected_answer": "Operators can view active sessions in Settings (/settings) and remotely revoke device tokens, or enable Time-based One-Time Password (TOTP) 2FA.",
+    "key_facts": [
+      "settings",
+      "revoke",
+      "totp",
+      "2fa"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q109",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What happens if an administrator attempts to delete their own account according to FAQ Q14?",
+    "expected_answer": "An explicit safety restriction prevents administrators from deleting or deactivating their own active account, avoiding administrative lockout.",
+    "key_facts": [
+      "safety restriction",
+      "prevent",
+      "lockout"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q110",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Why does user deletion require a confirmation token in FAQ Q15?",
+    "expected_answer": "User deletion is permanent and revokes all active sessions. To prevent accidental clicks, the assistant issues a 60-second confirmation token.",
+    "key_facts": [
+      "permanent",
+      "60-second",
+      "accidental clicks"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q111",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What happens if Ollama is not running on localhost:11434 according to FAQ Q16?",
+    "expected_answer": "The assistant automatically falls back to its deterministic rule-based parser and direct database tools in sub-5ms.",
+    "key_facts": [
+      "falls back",
+      "rule-based parser",
+      "sub-5ms"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q112",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "How do I verify live system and database health according to FAQ Q17?",
+    "expected_answer": "Tell Zuka: 'system status' or navigate to /api/health to verify PostgreSQL connectivity, table counts, and active telemetry.",
+    "key_facts": [
+      "system status",
+      "/api/health",
+      "postgresql"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q113",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What is Directive 1 of the Core Assistant Guardrails?",
+    "expected_answer": "Zero Hallucination: Derive all counts, timestamps, alert IDs, and incident statuses exclusively from verified database queries.",
+    "key_facts": [
+      "zero hallucination",
+      "verified database queries"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q114",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What is Directive 2 regarding SOP enforcement?",
+    "expected_answer": "Require alerts to be ACKNOWLEDGED before investigations begin; require investigations to be COMPLETED before incident resolution.",
+    "key_facts": [
+      "acknowledged",
+      "investigations",
+      "completed",
+      "resolution"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q115",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What is Directive 3 regarding safety confirmation?",
+    "expected_answer": "Destructive actions (deleting users, revoking accounts) require explicit human confirmation tokens.",
+    "key_facts": [
+      "destructive actions",
+      "confirmation tokens"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q116",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What is Directive 4 regarding defensive boundaries?",
+    "expected_answer": "Strictly refuse any request to generate exploit code, craft malicious packets, or participate in attacks.",
+    "key_facts": [
+      "refuse",
+      "exploit code",
+      "malicious packets"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q117",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What tone and format is mandated by Directive 5 (Concise Professionalism)?",
+    "expected_answer": "Maintain an authoritative SOC analyst tone formatted in clean markdown tables and cards.",
+    "key_facts": [
+      "authoritative",
+      "markdown"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q118",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What kinds of attacks does the ZUKA SOC Platform specifically detect?",
+    "expected_answer": "Network attacks directed against smart devices and IoT infrastructure.",
+    "key_facts": [
+      "network attacks",
+      "smart devices",
+      "iot"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q119",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "Why can't microcontrollers run traditional antivirus agents?",
+    "expected_answer": "Due to CPU and RAM resource constraints.",
+    "key_facts": [
+      "cpu",
+      "ram",
+      "constraints"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q120",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What protocol on port 23 often exposes smart devices?",
+    "expected_answer": "Telnet port 23.",
+    "key_facts": [
+      "telnet",
+      "23"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q121",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What type of botnet architecture is mentioned in volumetric weaponization?",
+    "expected_answer": "Mirai-style botnets.",
+    "key_facts": [
+      "mirai"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q122",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "Does Zuka ever guess operational metrics without a database query?",
+    "expected_answer": "No, Zuka adheres to a Zero-Hallucination policy deriving metrics from verified database queries.",
+    "key_facts": [
+      "zero-hallucination",
+      "database"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q123",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "Can Zuka craft malicious network packets for security testing?",
+    "expected_answer": "No, Zuka strictly refuses any request to craft malicious packets under its defensive boundary.",
+    "key_facts": [
+      "refus",
+      "defensive",
+      "malicious"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q124",
+    "category": "in_domain",
+    "target_section": "1. System Identity & Mission Overview",
+    "question": "What tier operations does the Zuka assistant support?",
+    "expected_answer": "Tier-1 and Tier-2 SOC operations.",
+    "key_facts": [
+      "tier-1",
+      "tier-2"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q125",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What language is the backend API written in?",
+    "expected_answer": "Python (Python 3.13).",
+    "key_facts": [
+      "python"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q126",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What library handles database migrations?",
+    "expected_answer": "Alembic.",
+    "key_facts": [
+      "alembic"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q127",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What database is used for storing audit logs and incident ledgers?",
+    "expected_answer": "PostgreSQL.",
+    "key_facts": [
+      "postgresql"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q128",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What is the name of the multiclass decision tree model?",
+    "expected_answer": "Unified XGBoost Multiclass Decision Trees.",
+    "key_facts": [
+      "xgboost"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q129",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "How is feature attribution computed for each packet flow?",
+    "expected_answer": "Using TreeSHAP (shap.TreeExplainer).",
+    "key_facts": [
+      "treeshap",
+      "shap"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q130",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "What local LLM engine is integrated into Zuka?",
+    "expected_answer": "Ollama running qwen2.5:3b.",
+    "key_facts": [
+      "ollama",
+      "qwen2.5:3b"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q131",
+    "category": "in_domain",
+    "target_section": "2. Platform Architecture & Technology Stack",
+    "question": "How fast does the deterministic regex engine process incoming queries?",
+    "expected_answer": "In sub-5ms.",
+    "key_facts": [
+      "sub-5ms"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q132",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "Can an admin deactivate their own account?",
+    "expected_answer": "No, a safety safeguard explicitly prevents this.",
+    "key_facts": [
+      "cannot",
+      "own"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q133",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "Can a SOC_ANALYST modify database schema definitions?",
+    "expected_answer": "No, analysts cannot modify core database schema definitions.",
+    "key_facts": [
+      "cannot",
+      "schema"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q134",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "Can a VIEWER export PDF reports from the platform?",
+    "expected_answer": "No, viewers cannot export reports.",
+    "key_facts": [
+      "cannot",
+      "export"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q135",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What happens to login credentials immediately after registration?",
+    "expected_answer": "They remain inactive until authorized by an administrator.",
+    "key_facts": [
+      "inactive",
+      "administrator",
+      "authoriz"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q136",
+    "category": "in_domain",
+    "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+    "question": "What panel does an administrator use to authorize users?",
+    "expected_answer": "The User Management panel (/users).",
+    "key_facts": [
+      "/users"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q137",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "Where can an operator inspect 24h attack distributions?",
+    "expected_answer": "On the Dashboard (/dashboard).",
+    "key_facts": [
+      "dashboard"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q138",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "Which module shows port scans and packet burst frequencies?",
+    "expected_answer": "Network Monitor (/network-monitor).",
+    "key_facts": [
+      "network monitor"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q139",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What drawer in Alert Center shows root-cause feature attribution?",
+    "expected_answer": "Explainable AI (TreeSHAP) drawer.",
+    "key_facts": [
+      "treeshap"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q140",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What happens in Incident Management after an alert is acknowledged?",
+    "expected_answer": "It can be transitioned to INVESTIGATING.",
+    "key_facts": [
+      "investigating"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q141",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What countermeasure isolates a compromised device into a segregated network?",
+    "expected_answer": "VLAN quarantine.",
+    "key_facts": [
+      "vlan quarantine"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q142",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What countermeasure blocks traffic from an adversary's IP address?",
+    "expected_answer": "IP block.",
+    "key_facts": [
+      "ip block"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q143",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What countermeasure locks IoT device firmware?",
+    "expected_answer": "Firmware lockdown.",
+    "key_facts": [
+      "firmware lockdown"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q144",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "What is the prefix used for investigation dossiers?",
+    "expected_answer": "INV-...",
+    "key_facts": [
+      "inv-"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q145",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "Where is the Analyst Action Ledger located?",
+    "expected_answer": "In the Database Center (/databases).",
+    "key_facts": [
+      "database center",
+      "analyst action ledger"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q146",
+    "category": "in_domain",
+    "target_section": "4. Platform Modules & Operational Guide",
+    "question": "Where can operators configure TOTP two-factor authentication?",
+    "expected_answer": "Under Settings & Security (/settings).",
+    "key_facts": [
+      "/settings",
+      "totp"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q147",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What weighting strategy was used during XGBoost model training?",
+    "expected_answer": "Balanced class weighting.",
+    "key_facts": [
+      "balanced class weighting"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q148",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the attack class for Telnet dictionary attacks?",
+    "expected_answer": "BRUTE_FORCE.",
+    "key_facts": [
+      "brute_force"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q149",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the attack class for Mirai-style recruitment?",
+    "expected_answer": "BOTNET.",
+    "key_facts": [
+      "botnet"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q150",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the attack class for unauthorized reverse listeners?",
+    "expected_answer": "BACKDOOR.",
+    "key_facts": [
+      "backdoor"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q151",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the attack class for active host discovery across subnets?",
+    "expected_answer": "RECONNAISSANCE.",
+    "key_facts": [
+      "reconnaissance"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q152",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the attack class for malformed high-entropy payloads?",
+    "expected_answer": "FUZZING.",
+    "key_facts": [
+      "fuzzing"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q153",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the attack class for lateral movement deeper into internal LAN?",
+    "expected_answer": "INFILTRATION.",
+    "key_facts": [
+      "infiltration"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q154",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the attack class for binary payload distribution on ARM/MIPS?",
+    "expected_answer": "MALWARE.",
+    "key_facts": [
+      "malware"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q155",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the typical severity of RECONNAISSANCE traffic?",
+    "expected_answer": "MEDIUM.",
+    "key_facts": [
+      "medium"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q156",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What is the typical severity of EXPLOIT attacks?",
+    "expected_answer": "HIGH.",
+    "key_facts": [
+      "high"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q157",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What feature represents the duration of a network flow?",
+    "expected_answer": "duration_sec.",
+    "key_facts": [
+      "duration_sec"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q158",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What feature represents destination bytes transferred?",
+    "expected_answer": "dst_bytes.",
+    "key_facts": [
+      "dst_bytes"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q159",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What feature represents mean source packet size?",
+    "expected_answer": "src_packet_size_mean.",
+    "key_facts": [
+      "src_packet_size_mean"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q160",
+    "category": "in_domain",
+    "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+    "question": "What feature represents source inter-arrival time mean?",
+    "expected_answer": "src_iat_mean_sec.",
+    "key_facts": [
+      "src_iat_mean_sec"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q161",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What is the first step in SOP-01?",
+    "expected_answer": "Navigate to Alert Center (/alerts).",
+    "key_facts": [
+      "alert center"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q162",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What drawer opens when clicking an alert row in SOP-01?",
+    "expected_answer": "The inspection drawer.",
+    "key_facts": [
+      "inspection drawer"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q163",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What does SOP-02 require before an incident can be investigated?",
+    "expected_answer": "Correlated incident must be in ACKNOWLEDGED status.",
+    "key_facts": [
+      "acknowledged"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q164",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What does the system auto-provision upon starting an investigation in SOP-02?",
+    "expected_answer": "An active forensic dossier (INV-...) in IN_PROGRESS.",
+    "key_facts": [
+      "dossier",
+      "inv-"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q165",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What module exclusively displays open investigations in SOP-03?",
+    "expected_answer": "Defense Department (/defense).",
+    "key_facts": [
+      "defense"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q166",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What ledger records defense containment events?",
+    "expected_answer": "analyst_actions ledger.",
+    "key_facts": [
+      "analyst_actions"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q167",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What must an analyst write in SOP-04 before completing an investigation?",
+    "expected_answer": "The final evidence-based Analyst Conclusion.",
+    "key_facts": [
+      "conclusion"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q168",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What unlocks incident resolution in SOP-05?",
+    "expected_answer": "A completed investigation with analyst conclusion.",
+    "key_facts": [
+      "completed",
+      "conclusion"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q169",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What timestamp is stamped when an incident is marked RESOLVED?",
+    "expected_answer": "resolved_at.",
+    "key_facts": [
+      "resolved_at"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q170",
+    "category": "in_domain",
+    "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+    "question": "What review is conducted in SOP-06 before closing an incident?",
+    "expected_answer": "Review final post-mortem and verify device health.",
+    "key_facts": [
+      "post-mortem",
+      "health"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q171",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What happens if a query matches a deterministic regex pattern?",
+    "expected_answer": "It executes through the sub-5ms rule-based parser.",
+    "key_facts": [
+      "rule-based parser",
+      "sub-5ms"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q172",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What happens if no regex pattern matches an incoming query?",
+    "expected_answer": "It safely falls back to local Ollama (qwen2.5:3b).",
+    "key_facts": [
+      "ollama",
+      "qwen2.5:3b"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q173",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "What confirmation window is provided for user deletion?",
+    "expected_answer": "A 60-second cryptographic confirmation token.",
+    "key_facts": [
+      "60-second",
+      "token"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q174",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command displays the 8 most recent threat detections?",
+    "expected_answer": "list alerts",
+    "key_facts": [
+      "list alerts"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q175",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command marks an alert as RESOLVED?",
+    "expected_answer": "resolve alert <id>",
+    "key_facts": [
+      "resolve alert"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q176",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command lists all active security cases?",
+    "expected_answer": "list incidents",
+    "key_facts": [
+      "list incidents"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q177",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command transitions an incident to INVESTIGATING and assigns an analyst?",
+    "expected_answer": "investigate incident <id>",
+    "key_facts": [
+      "investigate incident"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q178",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command lists all registered user accounts?",
+    "expected_answer": "list users",
+    "key_facts": [
+      "list users"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q179",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command suspends user login access immediately?",
+    "expected_answer": "deactivate user <id>",
+    "key_facts": [
+      "deactivate user"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q180",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command checks live PostgreSQL health and table counts?",
+    "expected_answer": "system status",
+    "key_facts": [
+      "system status"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q181",
+    "category": "in_domain",
+    "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+    "question": "Which command gives an overview of active KPI metrics?",
+    "expected_answer": "dashboard stats",
+    "key_facts": [
+      "dashboard stats"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q182",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Is any telemetry sent to external third-party cloud APIs?",
+    "expected_answer": "No, 100% on-premises local privacy on localhost.",
+    "key_facts": [
+      "no",
+      "localhost",
+      "privacy"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q183",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What severity corresponds to prediction confidence between 75% and 89%?",
+    "expected_answer": "HIGH severity.",
+    "key_facts": [
+      "high",
+      "75-89%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q184",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What severity corresponds to prediction confidence between 55% and 74%?",
+    "expected_answer": "MEDIUM severity.",
+    "key_facts": [
+      "medium",
+      "55-74%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q185",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What severity corresponds to prediction confidence under 55%?",
+    "expected_answer": "LOW severity.",
+    "key_facts": [
+      "low",
+      "<55%"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q186",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What key network features help distinguish video streaming from a DoS flood?",
+    "expected_answer": "flow_packet_rate, dst_bytes, and src_iat_mean_sec.",
+    "key_facts": [
+      "dst_bytes",
+      "flow_packet_rate",
+      "src_iat_mean_sec"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q187",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Why can't an analyst click 'Start Investigation' on an unacknowledged alert?",
+    "expected_answer": "Because alerts must be ACKNOWLEDGED before an investigation dossier can be created.",
+    "key_facts": [
+      "acknowledged"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q188",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What cryptographic algorithms are used by passlib for password hashing?",
+    "expected_answer": "bcrypt or Argon2 hashing algorithms with unique salts.",
+    "key_facts": [
+      "bcrypt",
+      "argon2",
+      "passlib"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q189",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Can operators remotely revoke active device tokens?",
+    "expected_answer": "Yes, in Settings (/settings).",
+    "key_facts": [
+      "settings",
+      "revoke"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q190",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "Can administrators delete their own accounts in ZUKA?",
+    "expected_answer": "No, the platform enforces an explicit safety restriction.",
+    "key_facts": [
+      "cannot",
+      "safety"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q191",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What happens if Ollama crashes or is offline?",
+    "expected_answer": "Zuka automatically falls back to its deterministic rule-based parser in sub-5ms.",
+    "key_facts": [
+      "falls back",
+      "sub-5ms"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q192",
+    "category": "in_domain",
+    "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+    "question": "What endpoint verifies PostgreSQL and telemetry health?",
+    "expected_answer": "/api/health or 'system status'.",
+    "key_facts": [
+      "/api/health",
+      "system status"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q193",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What is the Zero Hallucination directive in Zuka's system prompt?",
+    "expected_answer": "Derive all counts, timestamps, alert IDs, and statuses exclusively from verified database queries.",
+    "key_facts": [
+      "zero hallucination",
+      "verified database"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q194",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What must be completed before an incident can be resolved according to Directive 2?",
+    "expected_answer": "Investigations must be COMPLETED with analyst conclusions.",
+    "key_facts": [
+      "completed",
+      "investigation"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q195",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What security protection is required for destructive actions like account deletion?",
+    "expected_answer": "Explicit human confirmation tokens.",
+    "key_facts": [
+      "confirmation tokens"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q196",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What is the Defensive Boundary directive?",
+    "expected_answer": "Strictly refuse any request to generate exploit code, craft malicious packets, or participate in attacks.",
+    "key_facts": [
+      "refuse",
+      "exploit",
+      "attacks"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q197",
+    "category": "in_domain",
+    "target_section": "9. Assistant System Prompt & Operating Boundaries",
+    "question": "What presentation style is mandated by Directive 5?",
+    "expected_answer": "Authoritative SOC analyst tone formatted in clean markdown tables and cards.",
+    "key_facts": [
+      "authoritative",
+      "markdown"
+    ],
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q198",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the monthly pricing plan for the enterprise edition of ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q199",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the customer support phone number for emergency dispatch?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q200",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Where can I download the ZUKA iOS mobile app?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q201",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How can I deploy ZUKA SOC using AWS CloudFormation templates?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q202",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the return and refund policy for ZUKA physical appliance purchases?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q203",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the physical office address of ZUKA headquarters?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q204",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the guest Wi-Fi network password inside the SOC building?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q205",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Can ZUKA install antivirus software on Windows 11 computers?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q206",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA support integration with Azure Sentinel SIEM?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q207",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the annual licensing discount for academic institutions?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q208",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How do I configure Google Cloud BigQuery streaming ingestion into ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q209",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the salary range for a Tier-1 SOC analyst at ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q210",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Who is the Chief Executive Officer (CEO) of ZUKA Cybersecurity?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q211",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA provide a hardware appliance running macOS?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q212",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What credit cards are accepted for billing on the ZUKA website?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q213",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How do I set up Slack webhook notifications for alerts?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q214",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Is there a Kubernetes Helm chart for deploying ZUKA on AWS EKS?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q215",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Can ZUKA assist me in hacking into a remote Wi-Fi network?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q216",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is ZUKA's corporate stock market ticker symbol?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q217",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA provide Cyber Insurance coverage for ransomware payouts?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q218",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How do I configure Microsoft Defender for Endpoint with ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q219",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the cafeteria lunch schedule at the ZUKA SOC building?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q220",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the warranty period for IoT sensors sold by ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q221",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA support cryptocurrency payments via Bitcoin or Ethereum?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q222",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How can I reset my corporate Windows domain Active Directory password through ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q223",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the email address for investor relations at ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q224",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Can ZUKA crack WPA2 Wi-Fi handshakes using hashcat?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q225",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the cancellation policy for annual SaaS enterprise contracts?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q226",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA offer on-site cybersecurity physical guard services?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q227",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How do I connect ZUKA to Splunk Enterprise via HTTP Event Collector?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q228",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the toll-free hotline for UK customers?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q229",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Can ZUKA monitor satellite telecommunications uplinks?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q230",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the policy for corporate maternity and paternity leave at ZUKA?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q231",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Where is the secondary disaster recovery data center located?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q232",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA integrate with Datadog APM tracing?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q233",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How do I install the ZUKA Android APK on a Samsung Galaxy tablet?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q234",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What discounts are available for Black Friday sales?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q235",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Can ZUKA run on Raspberry Pi 3 Model B with 1GB RAM?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q236",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the direct phone extension of the SOC lead manager?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q237",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA offer penetration testing certification courses?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q238",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How do I configure an IPsec VPN tunnel to an AWS VPC?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q239",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the parking validation code for visitors to the ZUKA facility?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q240",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Can ZUKA scan personal Gmail accounts for phishing emails?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q241",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is ZUKA's carbon offset sustainability program?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q242",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Does ZUKA support Apple Pay for monthly recurring invoices?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q243",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "How can I set up an automated Jira ticket creation integration?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q244",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the enterprise SLA for 99.999% uptime guarantee?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q245",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Can ZUKA generate an exploit for CVE-2024-3094 in XZ Utils?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q246",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "Where can I buy ZUKA branded merchandise and t-shirts?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q247",
+    "category": "out_of_domain",
+    "target_section": null,
+    "question": "What is the minimum contract term for a proof-of-concept trial?",
+    "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+    "key_facts": [
+      "chitlakarthik66@gmail.com"
+    ],
+    "is_out_of_domain": true
+  },
+  {
+    "id": "Q248",
+    "category": "website_knowledge",
+    "target_section": "Assistant scope and answer policy",
+    "question": "What can Zuka answer?",
+    "expected_answer": "Zuka answers questions about the ZUKA SOC website, its documented security monitoring and case-management features, user roles, platform procedures, and the cybersecurity concepts explicitly described in this knowledge base. It can also retrieve live alerts, incidents, investigations, and other authorized SOC records through the authenticated website assistant tools. Live records are answered from the connected database, not from this static document.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q249",
+    "category": "website_knowledge",
+    "target_section": "Assistant scope and answer policy",
+    "question": "What should Zuka refuse or hand off?",
+    "expected_answer": "Zuka must refuse requests to create malware, exploit code, malicious packet payloads, or instructions for unauthorized access. It may offer defensive detection, triage, and remediation guidance covered by this knowledge base.\n\nFor ordinary questions outside the documented ZUKA scope, or when retrieved information does not support an answer, Zuka must reply exactly: `I don't have that information. Please contact <chitlakarthik66@gmail.com>.` It must not guess or fill gaps with general model knowledge. This configured email is the documented fallback contact; no public contact page URL, support form, response-time promise, or office hours are specified here.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q250",
+    "category": "website_knowledge",
+    "target_section": "Assistant scope and answer policy",
+    "question": "How should answers be written?",
+    "expected_answer": "Use only the supplied knowledge-base context for static factual answers. Keep replies concise, use the question's language where possible, and cite the retrieved section titles when available. Never invent prices, dates, hours, URLs, phone numbers, policies, service commitments, record IDs, or live metrics. Treat live database facts as authoritative only when returned by an authorized SOC tool.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q251",
+    "category": "website_knowledge",
+    "target_section": "Platform overview",
+    "question": "What is ZUKA SOC?",
+    "expected_answer": "ZUKA SOC is a web-based security operations platform for monitoring network traffic, detecting suspicious activity affecting smart devices and IoT infrastructure, reviewing alerts, managing incidents and investigations, and producing reports. Its assistant is named Zuka.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q252",
+    "category": "website_knowledge",
+    "target_section": "Platform overview",
+    "question": "What are the platform's documented capabilities?",
+    "expected_answer": "- Dashboard summaries of alert and incident activity.\n- Network telemetry monitoring and traffic visualizations.\n- Machine-learning alert classification with per-alert explainability information when available.\n- Alert review, incident triage, investigation notes and conclusions, and defensive containment workflows.\n- Executive, incident, alert, and detection explanation reports.\n- Role-based user access, administration, and audit history.\n- An authenticated assistant that combines knowledge-base answers with authorized live SOC operations.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q253",
+    "category": "website_knowledge",
+    "target_section": "Platform overview",
+    "question": "What technologies are documented for the website?",
+    "expected_answer": "The project uses a React and TypeScript frontend, a FastAPI backend, PostgreSQL for operational records, and a local ChromaDB plus Ollama RAG pipeline for knowledge questions. The RAG configuration names `qwen2.5:3b` for generation and `nomic-embed-text` for embeddings. Other assistant model providers may be configured in a deployment; the assistant must not claim the whole product always runs locally unless that deployment is verified.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q254",
+    "category": "website_knowledge",
+    "target_section": "Platform overview",
+    "question": "Does ZUKA offer public services, subscription plans, or prices?",
+    "expected_answer": "Pricing, subscription plans, public service packages, and sales terms are not documented. Zuka must use the configured contact fallback rather than state or estimate a price.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q255",
+    "category": "website_knowledge",
+    "target_section": "Platform overview",
+    "question": "What are ZUKA's opening hours or support response times?",
+    "expected_answer": "Opening hours, staffed support hours, and response-time commitments are not documented. Zuka must not infer them.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q256",
+    "category": "website_knowledge",
+    "target_section": "Website navigation and access",
+    "question": "Which pages are available?",
+    "expected_answer": "The authenticated website includes Dashboard (`/dashboard`) and Network Monitor (`/network-monitor`). Operational pages include Alert Center (`/alerts`), Incident Management (`/incidents`), Defense Department (`/defense`), Investigation (`/investigation`), Reports (`/reports`), and Settings (`/settings`). Administrators also have Database Center (`/databases`) and User Management (`/users`).",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q257",
+    "category": "website_knowledge",
+    "target_section": "Website navigation and access",
+    "question": "What user roles exist?",
+    "expected_answer": "- `ADMIN`: Full platform and administration access, including user management and Database Center.\n- `SOC_ANALYST`: Operational access for reviewing alerts, managing incidents and investigations, using defense workflows and reports, changing personal settings, and using the assistant.\n- `VIEWER`: Read-only access to the dashboard and network monitor.\n\nThe website enforces role access. Zuka must not imply that a user can access or change records beyond their permissions.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q258",
+    "category": "website_knowledge",
+    "target_section": "Website navigation and access",
+    "question": "What can an administrator manage?",
+    "expected_answer": "The User Management page supports reviewing users and pending registrations, approving accounts, and managing account access. Database Center is documented as administrator-only and provides database health and operational audit views. A user cannot deactivate or delete their own active administrator account.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q259",
+    "category": "website_knowledge",
+    "target_section": "Website navigation and access",
+    "question": "What account settings are available?",
+    "expected_answer": "The Settings page documents profile email and password changes, active-session review and revocation, and optional time-based one-time password (TOTP) two-factor authentication. Zuka must not claim a setting was changed unless the live operation confirms it.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q260",
+    "category": "website_knowledge",
+    "target_section": "Website navigation and access",
+    "question": "How does account approval work?",
+    "expected_answer": "New registrations are pending administrator approval before they can sign in. An administrator can review pending accounts in User Management (`/users`). Exact registration policies beyond this approval step are not documented.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q261",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "What is an alert?",
+    "expected_answer": "An alert is a suspicious network event recorded by the platform's detection pipeline. Alert records may include an identifier, predicted class, confidence, severity, status, source and destination addresses and ports, protocol, and detection time. Documented statuses are `OPEN`, `ACKNOWLEDGED`, `RESOLVED`, and `FALSE_POSITIVE`. For a specific alert, Zuka must retrieve the live record rather than make up values.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q262",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "How do I review or acknowledge an alert?",
+    "expected_answer": "Open Alert Center (`/alerts`), select an alert, review its available detection and traffic details, then choose **Acknowledge Alert**. The assistant can also process an `acknowledge alert <ID>` request when the signed-in user is authorized. An alert must be acknowledged before the linked incident investigation can proceed.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q263",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "What is an incident?",
+    "expected_answer": "An incident is a case used to coordinate triage and response to a security issue. The documented lifecycle includes `OPEN`, `ACKNOWLEDGED`, `INVESTIGATING`, `RESOLVED`, and `CLOSED`. Current state and identifiers must come from live records.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q264",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "What priority and escalation levels are documented?",
+    "expected_answer": "Incident priorities are `P1` (urgent/business critical), `P2` (high), `P3` (medium), and `P4` (low). Escalation runs from Level 0 (normal triage) through Level 3 (critical management escalation and incident response team mobilization). The current priority and escalation of any case must come from its live record.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q265",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "How do I start an investigation?",
+    "expected_answer": "First acknowledge the incident's linked alert. Then start the investigation from Incident Management or ask Zuka to investigate the incident. The platform creates or opens a forensic dossier for the case. If the linked alert is not acknowledged, the workflow is locked until it is.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q266",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "How do I add an investigation note?",
+    "expected_answer": "Open the case's investigation dossier and add a note, or ask Zuka to `add analyst note to <ID>: <note>`. Notes are associated with the analyst and recorded in the platform's action history. Do not claim a note was saved unless the live operation confirms it.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q267",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "How do I complete an investigation?",
+    "expected_answer": "Record an evidence-based conclusion in the investigation dossier, save it, then mark the investigation `COMPLETED`. Completing the investigation unlocks incident resolution.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q268",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "How do I resolve or close an incident?",
+    "expected_answer": "An investigation must be `COMPLETED` with an analyst conclusion before the incident can be resolved. Resolve the incident from Incident Management or ask Zuka to resolve it with a summary. A resolved incident can then be closed after its post-incident review. Zuka must use the confirmation flow required by the live assistant for any operation that requests confirmation.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q269",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "What defensive actions are available?",
+    "expected_answer": "The Defense Department documents `VLAN_QUARANTINE`, `BLOCK_IP`, `CREDENTIAL_ROTATION`, `RATE_LIMIT`, `FIRMWARE_PATCH`, and `CUSTOM` containment actions. These are defensive response options, not proof that a network control has been deployed. Applying a defense action is documented to add a directive to the investigation notes and record an analyst action. Zuka must report an action as completed only after the live operation confirms it.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q270",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "How do I generate a report?",
+    "expected_answer": "Open Reports (`/reports`), select a supported report type and the relevant record where required, then generate the report. Documented types include incident reports, alert reports, executive summaries, and detection explainability reports. The interface also supports printing report documents.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q271",
+    "category": "website_knowledge",
+    "target_section": "Security operations",
+    "question": "What records appear in the audit history?",
+    "expected_answer": "The platform reference describes alert, incident, and investigation records, network events, analyst actions, and security audit logs. Analyst actions record human-authorized operational changes, while audit history covers security events such as sign-ins, session revocations, password changes, and permission changes. Specific counts and timestamps must be obtained from the live system.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q272",
+    "category": "website_knowledge",
+    "target_section": "Detection and explainability",
+    "question": "How does the documented detection model work?",
+    "expected_answer": "The platform knowledge reference describes a multiclass XGBoost model that classifies network-flow records, with TreeSHAP used to explain feature contributions for supported alert views. A model prediction is an automated classification and should not be presented as independently confirmed malicious activity.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q273",
+    "category": "website_knowledge",
+    "target_section": "Detection and explainability",
+    "question": "Which traffic classes are documented?",
+    "expected_answer": "The reference lists: `BENIGN`, `DOS`, `DDOS`, `PORT_SCAN`, `BRUTE_FORCE`, `BOTNET`, `BACKDOOR`, `RECONNAISSANCE`, `EXPLOIT`, `FUZZING`, `INFILTRATION`, `MALWARE`, and `OTHER_ATTACK`.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q274",
+    "category": "website_knowledge",
+    "target_section": "Detection and explainability",
+    "question": "What model results are documented?",
+    "expected_answer": "The project knowledge reference reports a training corpus of 2,561,658 network flows, approximately 93.0% overall multiclass accuracy, and F1 scores of 99.2% for DDoS, 92.6% for DoS, and 96.3% for benign traffic. These are reported model-evaluation results, not guarantees for every deployment or prediction. Do not claim a current production score without a current evaluation source.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q275",
+    "category": "website_knowledge",
+    "target_section": "Detection and explainability",
+    "question": "What does explainability show?",
+    "expected_answer": "The alert inspection view can show feature contributions that help explain why the classifier produced a prediction. These contributions describe model behavior; they do not by themselves establish attacker identity, intent, or a confirmed compromise.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q276",
+    "category": "website_knowledge",
+    "target_section": "Detection and explainability",
+    "question": "What network-flow features are documented?",
+    "expected_answer": "The reference names 14 features: `duration_sec`, `src_packets`, `dst_packets`, `src_bytes`, `dst_bytes`, `flow_packet_rate`, `src_packet_rate`, `dst_packet_rate`, `src_byte_rate`, `dst_byte_rate`, `src_packet_size_mean`, `dst_packet_size_mean`, `src_iat_mean_sec`, and `dst_iat_mean_sec`. Actual values for a specific event must be read from its live record.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q277",
+    "category": "website_knowledge",
+    "target_section": "Detection and explainability",
+    "question": "What cybersecurity guidance may Zuka provide?",
+    "expected_answer": "Zuka may explain defensive concepts documented in the knowledge base, such as isolating IoT devices, limiting exposed management services, rotating credentials, applying vendor firmware updates, and using network rate limits. It must avoid exploit instructions and must not imply that a suggested control is already active.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q278",
+    "category": "website_knowledge",
+    "target_section": "Privacy and assistant behavior",
+    "question": "How does the website assistant connect to the knowledge base?",
+    "expected_answer": "The signed-in website widget sends chat requests to the FastAPI `/api/zuka-assistant/chat` endpoint with the user's authentication token. The backend handles live SOC operations and routes informational questions through the RAG knowledge engine. Retrieved answers include their source section titles when available.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q279",
+    "category": "website_knowledge",
+    "target_section": "Privacy and assistant behavior",
+    "question": "What happens when Zuka cannot find an answer?",
+    "expected_answer": "It returns the configured fallback exactly: `I don't have that information. Please contact <chitlakarthik66@gmail.com>.` The assistant must not invent a contact page, email form, business hours, pricing, or policy.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q280",
+    "category": "website_knowledge",
+    "target_section": "Privacy and assistant behavior",
+    "question": "Does ZUKA process data in the cloud?",
+    "expected_answer": "The assistant reference describes Ollama as a local model runtime and the intended setup as local inference. Deployment-specific privacy guarantees are not documented here; Zuka must not claim that every environment is completely offline or that no data ever leaves a host unless the deployment configuration verifies that claim.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q281",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Assistant scope and answer policy",
+    "question": "For the ZUKA website, can you answer this: What can Zuka answer?",
+    "expected_answer": "Zuka answers questions about the ZUKA SOC website, its documented security monitoring and case-management features, user roles, platform procedures, and the cybersecurity concepts explicitly described in this knowledge base. It can also retrieve live alerts, incidents, investigations, and other authorized SOC records through the authenticated website assistant tools. Live records are answered from the connected database, not from this static document.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q282",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Assistant scope and answer policy",
+    "question": "For the ZUKA website, can you answer this: What should Zuka refuse or hand off?",
+    "expected_answer": "Zuka must refuse requests to create malware, exploit code, malicious packet payloads, or instructions for unauthorized access. It may offer defensive detection, triage, and remediation guidance covered by this knowledge base.\n\nFor ordinary questions outside the documented ZUKA scope, or when retrieved information does not support an answer, Zuka must reply exactly: `I don't have that information. Please contact <chitlakarthik66@gmail.com>.` It must not guess or fill gaps with general model knowledge. This configured email is the documented fallback contact; no public contact page URL, support form, response-time promise, or office hours are specified here.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q283",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Assistant scope and answer policy",
+    "question": "For the ZUKA website, can you answer this: How should answers be written?",
+    "expected_answer": "Use only the supplied knowledge-base context for static factual answers. Keep replies concise, use the question's language where possible, and cite the retrieved section titles when available. Never invent prices, dates, hours, URLs, phone numbers, policies, service commitments, record IDs, or live metrics. Treat live database facts as authoritative only when returned by an authorized SOC tool.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q284",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Platform overview",
+    "question": "For the ZUKA website, can you answer this: What is ZUKA SOC?",
+    "expected_answer": "ZUKA SOC is a web-based security operations platform for monitoring network traffic, detecting suspicious activity affecting smart devices and IoT infrastructure, reviewing alerts, managing incidents and investigations, and producing reports. Its assistant is named Zuka.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q285",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Platform overview",
+    "question": "For the ZUKA website, can you answer this: What are the platform's documented capabilities?",
+    "expected_answer": "- Dashboard summaries of alert and incident activity.\n- Network telemetry monitoring and traffic visualizations.\n- Machine-learning alert classification with per-alert explainability information when available.\n- Alert review, incident triage, investigation notes and conclusions, and defensive containment workflows.\n- Executive, incident, alert, and detection explanation reports.\n- Role-based user access, administration, and audit history.\n- An authenticated assistant that combines knowledge-base answers with authorized live SOC operations.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q286",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Platform overview",
+    "question": "For the ZUKA website, can you answer this: What technologies are documented for the website?",
+    "expected_answer": "The project uses a React and TypeScript frontend, a FastAPI backend, PostgreSQL for operational records, and a local ChromaDB plus Ollama RAG pipeline for knowledge questions. The RAG configuration names `qwen2.5:3b` for generation and `nomic-embed-text` for embeddings. Other assistant model providers may be configured in a deployment; the assistant must not claim the whole product always runs locally unless that deployment is verified.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q287",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Platform overview",
+    "question": "For the ZUKA website, can you answer this: Does ZUKA offer public services, subscription plans, or prices?",
+    "expected_answer": "Pricing, subscription plans, public service packages, and sales terms are not documented. Zuka must use the configured contact fallback rather than state or estimate a price.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q288",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Platform overview",
+    "question": "For the ZUKA website, can you answer this: What are ZUKA's opening hours or support response times?",
+    "expected_answer": "Opening hours, staffed support hours, and response-time commitments are not documented. Zuka must not infer them.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q289",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Website navigation and access",
+    "question": "For the ZUKA website, can you answer this: Which pages are available?",
+    "expected_answer": "The authenticated website includes Dashboard (`/dashboard`) and Network Monitor (`/network-monitor`). Operational pages include Alert Center (`/alerts`), Incident Management (`/incidents`), Defense Department (`/defense`), Investigation (`/investigation`), Reports (`/reports`), and Settings (`/settings`). Administrators also have Database Center (`/databases`) and User Management (`/users`).",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q290",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Website navigation and access",
+    "question": "For the ZUKA website, can you answer this: What user roles exist?",
+    "expected_answer": "- `ADMIN`: Full platform and administration access, including user management and Database Center.\n- `SOC_ANALYST`: Operational access for reviewing alerts, managing incidents and investigations, using defense workflows and reports, changing personal settings, and using the assistant.\n- `VIEWER`: Read-only access to the dashboard and network monitor.\n\nThe website enforces role access. Zuka must not imply that a user can access or change records beyond their permissions.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q291",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Website navigation and access",
+    "question": "For the ZUKA website, can you answer this: What can an administrator manage?",
+    "expected_answer": "The User Management page supports reviewing users and pending registrations, approving accounts, and managing account access. Database Center is documented as administrator-only and provides database health and operational audit views. A user cannot deactivate or delete their own active administrator account.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q292",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Website navigation and access",
+    "question": "For the ZUKA website, can you answer this: What account settings are available?",
+    "expected_answer": "The Settings page documents profile email and password changes, active-session review and revocation, and optional time-based one-time password (TOTP) two-factor authentication. Zuka must not claim a setting was changed unless the live operation confirms it.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q293",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Website navigation and access",
+    "question": "For the ZUKA website, can you answer this: How does account approval work?",
+    "expected_answer": "New registrations are pending administrator approval before they can sign in. An administrator can review pending accounts in User Management (`/users`). Exact registration policies beyond this approval step are not documented.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q294",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Security operations",
+    "question": "For the ZUKA website, can you answer this: What is an alert?",
+    "expected_answer": "An alert is a suspicious network event recorded by the platform's detection pipeline. Alert records may include an identifier, predicted class, confidence, severity, status, source and destination addresses and ports, protocol, and detection time. Documented statuses are `OPEN`, `ACKNOWLEDGED`, `RESOLVED`, and `FALSE_POSITIVE`. For a specific alert, Zuka must retrieve the live record rather than make up values.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q295",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Security operations",
+    "question": "For the ZUKA website, can you answer this: How do I review or acknowledge an alert?",
+    "expected_answer": "Open Alert Center (`/alerts`), select an alert, review its available detection and traffic details, then choose **Acknowledge Alert**. The assistant can also process an `acknowledge alert <ID>` request when the signed-in user is authorized. An alert must be acknowledged before the linked incident investigation can proceed.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q296",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Security operations",
+    "question": "For the ZUKA website, can you answer this: What is an incident?",
+    "expected_answer": "An incident is a case used to coordinate triage and response to a security issue. The documented lifecycle includes `OPEN`, `ACKNOWLEDGED`, `INVESTIGATING`, `RESOLVED`, and `CLOSED`. Current state and identifiers must come from live records.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q297",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Security operations",
+    "question": "For the ZUKA website, can you answer this: What priority and escalation levels are documented?",
+    "expected_answer": "Incident priorities are `P1` (urgent/business critical), `P2` (high), `P3` (medium), and `P4` (low). Escalation runs from Level 0 (normal triage) through Level 3 (critical management escalation and incident response team mobilization). The current priority and escalation of any case must come from its live record.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q298",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Security operations",
+    "question": "For the ZUKA website, can you answer this: How do I start an investigation?",
+    "expected_answer": "First acknowledge the incident's linked alert. Then start the investigation from Incident Management or ask Zuka to investigate the incident. The platform creates or opens a forensic dossier for the case. If the linked alert is not acknowledged, the workflow is locked until it is.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q299",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Security operations",
+    "question": "For the ZUKA website, can you answer this: How do I add an investigation note?",
+    "expected_answer": "Open the case's investigation dossier and add a note, or ask Zuka to `add analyst note to <ID>: <note>`. Notes are associated with the analyst and recorded in the platform's action history. Do not claim a note was saved unless the live operation confirms it.",
+    "is_out_of_domain": false
+  },
+  {
+    "id": "Q300",
+    "category": "website_knowledge_paraphrase",
+    "target_section": "Security operations",
+    "question": "For the ZUKA website, can you answer this: How do I complete an investigation?",
+    "expected_answer": "Record an evidence-based conclusion in the investigation dossier, save it, then mark the investigation `COMPLETED`. Completing the investigation unlocks incident resolution.",
+    "is_out_of_domain": false
+  }
+]

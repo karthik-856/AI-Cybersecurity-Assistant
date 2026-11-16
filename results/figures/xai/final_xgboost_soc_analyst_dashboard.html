@@ -1,0 +1,1570 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+
+<title>AI Cybersecurity Assistant — SOC Dashboard</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background: #f5f5f5;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.kpi-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.kpi {
+    background: white;
+    border-radius: 8px;
+    padding: 18px;
+    min-width: 150px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+}
+
+.kpi-title {
+    font-size: 13px;
+    color: #666;
+}
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.panel {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.alert-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.alert-table th {
+    background: #eeeeee;
+    padding: 8px;
+    text-align: left;
+}
+
+.alert-table td {
+    padding: 8px;
+    border-bottom: 1px solid #dddddd;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>AI-Cybersecurity-Assistant — SOC Dashboard</h1>
+
+<div class="subtitle">
+XGBoost Detection + SHAP Explainability + SOC Recommendation Engine
+</div>
+
+<div class="kpi-container">
+
+<div class="kpi">
+<div class="kpi-title">Attack Alerts</div>
+<div class="kpi-value">881</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-title">High Severity</div>
+<div class="kpi-value">873</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-title">Medium Severity</div>
+<div class="kpi-value">3</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-title">Low Severity</div>
+<div class="kpi-value">5</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-title">Mean Confidence</div>
+<div class="kpi-value">99.44%</div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>Prioritized Alert Queue</h2>
+
+<table border="1" class="dataframe alert-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Alert_Queue_Position</th>
+      <th>Sample_ID</th>
+      <th>Alert_Title</th>
+      <th>Predicted_Class</th>
+      <th>Attack_Class_Label</th>
+      <th>SOC_Priority</th>
+      <th>Severity</th>
+      <th>Confidence</th>
+      <th>Top_Feature_1</th>
+      <th>Top_Feature_2</th>
+      <th>Top_Feature_3</th>
+      <th>SOC_Response_Category</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>244</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>219</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>255</td>
+      <td>XGBoost Detection — Attack Class 10</td>
+      <td>10</td>
+      <td>Attack Class 10</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Max</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2881</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Total Length of Fwd Packets</td>
+      <td>Bwd Packet Length Mean</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>2378</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Total Length of Fwd Packets</td>
+      <td>Bwd Packet Length Mean</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>4803</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>359</td>
+      <td>XGBoost Detection — Attack Class 10</td>
+      <td>10</td>
+      <td>Attack Class 10</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Max</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>4567</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Total Length of Fwd Packets</td>
+      <td>Bwd Packet Length Mean</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>575</td>
+      <td>XGBoost Detection — Attack Class 1</td>
+      <td>1</td>
+      <td>Attack Class 1</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Bwd IAT Min</td>
+      <td>Flow IAT Std</td>
+      <td>Destination Port</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>3250</td>
+      <td>XGBoost Detection — Attack Class 10</td>
+      <td>10</td>
+      <td>Attack Class 10</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Max</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>500</td>
+      <td>XGBoost Detection — Attack Class 10</td>
+      <td>10</td>
+      <td>Attack Class 10</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Max</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>3322</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>4072</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Total Length of Fwd Packets</td>
+      <td>Bwd Packet Length Mean</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>1423</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>609</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>4176</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>4256</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>1093</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Total Length of Fwd Packets</td>
+      <td>Bwd Packet Length Mean</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>21</td>
+      <td>XGBoost Detection — Attack Class 2</td>
+      <td>2</td>
+      <td>Attack Class 2</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Total Length of Bwd Packets</td>
+      <td>Bwd IAT Max</td>
+      <td>Flow IAT Min</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>3329</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>1809</td>
+      <td>XGBoost Detection — Attack Class 6</td>
+      <td>6</td>
+      <td>Attack Class 6</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Flow IAT Std</td>
+      <td>SYN Flag Count</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>3970</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td>4019</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td>1885</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td>4721</td>
+      <td>XGBoost Detection — Attack Class 6</td>
+      <td>6</td>
+      <td>Attack Class 6</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Flow IAT Std</td>
+      <td>SYN Flag Count</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td>2250</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td>2038</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>4964</td>
+      <td>XGBoost Detection — Attack Class 6</td>
+      <td>6</td>
+      <td>Attack Class 6</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Flow IAT Std</td>
+      <td>SYN Flag Count</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>29</td>
+      <td>2577</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td>3048</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>31</td>
+      <td>198</td>
+      <td>XGBoost Detection — Attack Class 6</td>
+      <td>6</td>
+      <td>Attack Class 6</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Flow IAT Std</td>
+      <td>SYN Flag Count</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>3685</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>33</td>
+      <td>3717</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>34</td>
+      <td>2309</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>1.000000</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>35</td>
+      <td>1097</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999987</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>36</td>
+      <td>1381</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999987</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>37</td>
+      <td>1987</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999987</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>38</td>
+      <td>330</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999987</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>39</td>
+      <td>2494</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999986</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>40</td>
+      <td>107</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999986</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>41</td>
+      <td>951</td>
+      <td>XGBoost Detection — Attack Class 7</td>
+      <td>7</td>
+      <td>Attack Class 7</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999976</td>
+      <td>Destination Port</td>
+      <td>Fwd Packet Length Mean</td>
+      <td>Total Backward Packets</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>42</td>
+      <td>1239</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>43</td>
+      <td>4605</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>44</td>
+      <td>1774</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td>2382</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>46</td>
+      <td>3470</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>47</td>
+      <td>181</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>3311</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>49</td>
+      <td>793</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>4095</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>51</td>
+      <td>1612</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>52</td>
+      <td>3704</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>53</td>
+      <td>1498</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>54</td>
+      <td>1529</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>55</td>
+      <td>3953</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>56</td>
+      <td>4439</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>57</td>
+      <td>399</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>58</td>
+      <td>2528</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>59</td>
+      <td>3137</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>60</td>
+      <td>4714</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>61</td>
+      <td>2217</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>62</td>
+      <td>3189</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>63</td>
+      <td>2798</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>2486</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>65</td>
+      <td>2561</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>66</td>
+      <td>4764</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>67</td>
+      <td>2489</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>68</td>
+      <td>2585</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>69</td>
+      <td>3684</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>70</td>
+      <td>4395</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>71</td>
+      <td>253</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>72</td>
+      <td>807</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>73</td>
+      <td>3935</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>74</td>
+      <td>2446</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>75</td>
+      <td>2891</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>76</td>
+      <td>3264</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999940</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>77</td>
+      <td>3757</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>78</td>
+      <td>3448</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>79</td>
+      <td>17</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>80</td>
+      <td>4835</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>81</td>
+      <td>880</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>82</td>
+      <td>2156</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>83</td>
+      <td>1037</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>84</td>
+      <td>2131</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>85</td>
+      <td>2409</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>86</td>
+      <td>4326</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>87</td>
+      <td>4874</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>88</td>
+      <td>2384</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>89</td>
+      <td>4797</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>90</td>
+      <td>3088</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999939</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>91</td>
+      <td>3348</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>92</td>
+      <td>4527</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>93</td>
+      <td>4569</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>94</td>
+      <td>3715</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>95</td>
+      <td>1599</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>96</td>
+      <td>4363</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>97</td>
+      <td>1329</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>98</td>
+      <td>2750</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>99</td>
+      <td>150</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+    <tr>
+      <td>100</td>
+      <td>2769</td>
+      <td>XGBoost Detection — Attack Class 4</td>
+      <td>4</td>
+      <td>Attack Class 4</td>
+      <td>P1</td>
+      <td>HIGH</td>
+      <td>0.999938</td>
+      <td>Bwd Packet Length Std</td>
+      <td>Init_Win_bytes_backward</td>
+      <td>FIN Flag Count</td>
+      <td>INVESTIGATE_AND_CORRELATE</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<div class="panel">
+
+<h2>SOC Workflow</h2>
+
+<p>
+Network Flow → Automatic Feature Extraction → XGBoost Detection
+→ SHAP Explanation → Severity → Priority → Recommendation
+→ SOC Dashboard → SOC Analyst
+</p>
+
+</div>
+
+<div class="panel">
+
+<h2>Important System Status</h2>
+
+<p>
+This dashboard currently uses the processed evaluation/XAI dataset.
+The final live system will require automatic network-flow capture
+and extraction of the same 78 features used by the trained XGBoost model.
+</p>
+
+</div>
+
+</body>
+</html>

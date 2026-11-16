@@ -1,0 +1,2 @@
+Model,Input_Features,CNN_Input_Shape,Output_Classes,Architecture,Batch_Size,Epochs,Optimizer,Learning_Rate,Loss,Class_Weighting,Early_Stopping,LR_Reduction,Random_Seed
+1D-CNN,78,"(78, 1)",14,Conv1D(64) -> Pool -> Conv1D(128) -> Pool -> Conv1D(256) -> GAP -> Dense(128) -> Dense(64) -> Softmax(14),1024,15,Adam,0.001,Sparse Categorical Crossentropy,True,True,True,42

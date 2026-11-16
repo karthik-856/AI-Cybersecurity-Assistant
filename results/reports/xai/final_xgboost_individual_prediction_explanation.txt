@@ -1,0 +1,24 @@
+==========================================================================================
+FINAL XGBOOST INDIVIDUAL PREDICTION EXPLANATION
+==========================================================================================
+
+True Class       : 0
+Predicted Class  : 0
+Confidence       : 0.999978
+
+TOP CONTRIBUTING FEATURES
+------------------------------------------------------------------------------------------
+1. Destination Port | Value=58546.0 | SHAP=0.886156 | increased contribution
+2. Average Packet Size | Value=37.0 | SHAP=0.774877 | increased contribution
+3. Init_Win_bytes_backward | Value=-1.0 | SHAP=0.492333 | increased contribution
+4. Bwd Packet Length Std | Value=0.0 | SHAP=0.368858 | increased contribution
+5. Init_Win_bytes_forward | Value=12.0 | SHAP=0.336335 | increased contribution
+6. Total Length of Fwd Packets | Value=37.0 | SHAP=0.257820 | increased contribution
+7. Fwd Packet Length Max | Value=37.0 | SHAP=0.244062 | increased contribution
+8. Fwd Packet Length Std | Value=26.1629509 | SHAP=0.195882 | increased contribution
+9. Bwd Packet Length Mean | Value=0.0 | SHAP=0.180387 | increased contribution
+10. Packet Length Std | Value=21.36195996 | SHAP=-0.108020 | decreased contribution
+
+==========================================================================================
+END OF EXPLANATION
+==========================================================================================

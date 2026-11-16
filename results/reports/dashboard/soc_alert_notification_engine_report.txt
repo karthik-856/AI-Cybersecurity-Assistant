@@ -1,0 +1,26 @@
+==========================================================================================
+SOC ALERT NOTIFICATION ENGINE REPORT
+==========================================================================================
+
+Generated: 2026-09-01T07:46:09.229526
+Source records: 10
+Attack notifications: 1
+
+NOTIFICATION ARCHITECTURE
+------------------------------------------------------------------------------------------
+Automatic detection -> Alert Engine -> SOC Notification Queue -> SOC Analyst
+
+IMPORTANT:
+This notebook creates analyst-ready notification records. No external email, SMS, Slack, Teams, or SIEM notification has been claimed as delivered.
+An external notification connector can be integrated in a later deployment stage.
+
+NOTIFICATION QUEUE
+------------------------------------------------------------------------------------------
+
+Notification ID: SOC-NOTIFY-20260901074609-0001
+Attack Class: 9
+Confidence: 0.999780
+Severity: HIGH
+SOC Priority: P1
+Routing: IMMEDIATE_ANALYST_REVIEW
+Analyst Message: XGBoost detected attack class 9 with 99.98% confidence. Severity: HIGH. SOC priority: P1. Important explanatory features: Init_Win_bytes_forward, Total Length of Fwd Packets, and min_seg_size_forward. Review the associated network-flow context and correlate with other security telemetry before response.

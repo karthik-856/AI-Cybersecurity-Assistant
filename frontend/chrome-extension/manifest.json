@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "ZUKA Site Sound Sync",
+  "version": "1.0.0",
+  "description": "Sync the ZUKA sound alert toggle with Chrome's site Sound setting.",
+  "permissions": ["contentSettings"],
+  "host_permissions": ["http://localhost:5173/*", "http://127.0.0.1:5173/*"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:5173/*", "http://127.0.0.1:5173/*"],
+      "js": ["content-bridge.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

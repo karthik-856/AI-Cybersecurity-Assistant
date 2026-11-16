@@ -1,0 +1,2 @@
+Model,Model File,Accuracy,Balanced Accuracy,Macro Precision,Macro Recall,Macro F1,Weighted Precision,Weighted Recall,Weighted F1,Error Rate,Test Samples,Number of Classes
+XGBoost,xgb_model.joblib,0.9987136517880449,0.8456012789368363,0.9264215421083913,0.8456012789368363,0.8724609657505258,0.9986578555574127,0.9987136517880449,0.9986632862360657,0.0012863482119550573,478875,14

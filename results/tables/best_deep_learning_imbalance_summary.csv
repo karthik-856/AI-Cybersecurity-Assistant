@@ -1,0 +1,11 @@
+Metric,Value
+Accuracy,0.7798799269120334
+Balanced Accuracy,0.0776423087626605
+Macro Precision,0.058666725268777455
+Macro Recall,0.0776423087626605
+Macro F1-Score,0.06275200285655182
+Weighted F1-Score,0.7256104984874667
+Majority Class,0.0
+Majority Class Percentage,0.8260234925606891
+Majority Baseline Accuracy,0.8260234925606891
+Accuracy Above Majority Baseline,-0.04614356564865563

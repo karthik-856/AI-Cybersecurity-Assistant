@@ -1,0 +1,20 @@
+==========================================================================================
+AUTOMATIC XGBOOST SOC XAI REPORT
+==========================================================================================
+
+Total events analyzed : 10
+Attack alerts         : 1
+Benign events         : 9
+
+------------------------------------------------------------------------------------------
+Alert ID       : SOC-20260901073944-0002
+Attack class   : 9
+Confidence     : 0.9998
+Severity       : HIGH
+SOC priority   : P1
+Top feature 1  : Init_Win_bytes_forward
+Top feature 2  : Total Length of Fwd Packets
+Top feature 3  : min_seg_size_forward
+Explanation    : XGBoost detected attack class 9 with 99.98% confidence. The strongest contributing network-flow features were: Init_Win_bytes_forward, Total Length of Fwd Packets, and min_seg_size_forward.
+Recommendation : Investigate and correlate this alert with source/destination activity, related flows, authentication events, and other available security telemetry.
+

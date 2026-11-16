@@ -1,0 +1,654 @@
+/* ============================================================================
+   ZUKA OPERATIONS ASSISTANT - STYLING
+   High-contrast, professional SOC Dark Theme
+   ============================================================================ */
+
+.zuka-widget-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483000;
+  isolation: isolate;
+  pointer-events: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Floating Launch Button */
+.zuka-fab-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.zuka-fab-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.6);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.zuka-fab-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4ade80;
+  box-shadow: 0 0 10px #4ade80;
+  animation: zuka-glow 2s infinite;
+}
+
+@keyframes zuka-glow {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+/* Chat Panel Drawer */
+.zuka-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 440px;
+  height: 640px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 48px);
+  background-color: #0b1120;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: zuka-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+@keyframes zuka-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.zuka-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background-color: #0f172a;
+  border-bottom: 1px solid #1e293b;
+}
+
+.zuka-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zuka-avatar-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  border-radius: 8px;
+  color: #60a5fa;
+}
+
+.zuka-header-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.zuka-title-main {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: 0.5px;
+}
+
+.zuka-title-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.zuka-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zuka-icon-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.zuka-icon-btn:hover {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.zuka-icon-btn.zuka-clear-btn:hover {
+  background-color: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+}
+
+/* Context Badge Bar */
+.zuka-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background-color: #111e38;
+  border-bottom: 1px solid #1e293b;
+  font-size: 12px;
+}
+
+.zuka-context-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #93c5fd;
+  font-weight: 500;
+}
+
+.zuka-clear-context-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.zuka-clear-context-btn:hover {
+  color: #f87171;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Message Feed */
+.zuka-messages-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: #0b1120;
+}
+
+.zuka-messages-feed::-webkit-scrollbar {
+  width: 6px;
+}
+
+.zuka-messages-feed::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+/* Messages */
+.zuka-message {
+  display: flex;
+  flex-direction: column;
+  max-width: 88%;
+}
+
+.zuka-message.user {
+  align-self: flex-end;
+}
+
+.zuka-message.assistant {
+  align-self: flex-start;
+}
+
+.zuka-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.zuka-message.user .zuka-bubble {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-bottom-right-radius: 2px;
+}
+
+.zuka-message.assistant .zuka-bubble {
+  background-color: #17223b;
+  color: #e2e8f0;
+  border: 1px solid #233554;
+  border-bottom-left-radius: 2px;
+}
+
+.zuka-message-time {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 4px;
+  padding: 0 4px;
+}
+
+.zuka-message.user .zuka-message-time {
+  text-align: right;
+}
+
+/* Rich Cards */
+.zuka-card {
+  margin-top: 10px;
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: #cbd5e1;
+}
+
+.zuka-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #1e293b;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.zuka-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin-bottom: 10px;
+}
+
+.zuka-grid-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.zuka-grid-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+}
+
+.zuka-grid-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+/* Badges */
+.zuka-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.zuka-badge.critical { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+.zuka-badge.high { background-color: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid #f97316; }
+.zuka-badge.medium { background-color: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; }
+.zuka-badge.low { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+
+.zuka-badge.open { background-color: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+.zuka-badge.acknowledged { background-color: rgba(234, 179, 8, 0.15); color: #fde047; }
+.zuka-badge.investigating { background-color: rgba(56, 189, 248, 0.15); color: #7dd3fc; }
+.zuka-badge.resolved { background-color: rgba(34, 197, 94, 0.15); color: #86efac; }
+.zuka-badge.closed { background-color: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
+
+/* Confirmation Card */
+.zuka-card.confirmation {
+  border-color: #ca8a04;
+  background-color: #171c14;
+}
+
+.zuka-conf-title {
+  color: #facc15;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.zuka-conf-summary {
+  font-size: 12px;
+  color: #e2e8f0;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border-left: 3px solid #facc15;
+}
+
+.zuka-diff-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 11.5px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.zuka-diff-label {
+  color: #94a3b8;
+}
+
+.zuka-diff-val {
+  font-family: monospace;
+  font-weight: 600;
+  color: #fef08a;
+}
+
+.zuka-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.zuka-btn-confirm {
+  flex: 1;
+  padding: 7px 12px;
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.zuka-btn-confirm:hover {
+  background-color: #15803d;
+}
+
+.zuka-btn-cancel {
+  padding: 7px 12px;
+  background-color: #334155;
+  color: #cbd5e1;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.zuka-btn-cancel:hover {
+  background-color: #475569;
+}
+
+/* Error Card */
+.zuka-card.error {
+  border-color: #ef4444;
+  background-color: #1f1315;
+  color: #fca5a5;
+}
+
+/* Success Card */
+.zuka-card.success {
+  border-color: #22c55e;
+  background-color: #0f2316;
+  color: #86efac;
+}
+
+/* Quick Action Chips inside Cards */
+.zuka-quick-btn {
+  padding: 5px 10px;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.zuka-quick-btn:hover {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+/* Typing Indicator */
+.zuka-typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: #17223b;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.zuka-typing-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #60a5fa;
+  border-radius: 50%;
+  animation: zuka-typing 1.4s infinite ease-in-out;
+}
+
+.zuka-typing-dot:nth-child(1) { animation-delay: 0s; }
+.zuka-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.zuka-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes zuka-typing {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Website operation starter prompts */
+.zuka-suggestions-panel {
+  padding: 7px 16px 9px;
+  background-color: #0f172a;
+  border-top: 1px solid #1e293b;
+}
+
+.zuka-suggestions-title {
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.zuka-suggestions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 75px;
+  overflow-y: auto;
+}
+
+.zuka-suggestions-row::-webkit-scrollbar {
+  width: 4px;
+}
+
+.zuka-suggestions-row::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.zuka-suggestion-chip {
+  white-space: normal;
+  padding: 5px 9px;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  border-radius: 9999px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.zuka-suggestion-chip:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+/* Input Area */
+.zuka-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #0b1120;
+  border-top: 1px solid #1e293b;
+}
+
+.zuka-input-field {
+  flex: 1;
+  background-color: #111e38;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: #f8fafc;
+  font-size: 13px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: none;
+  height: 40px;
+  line-height: 20px;
+}
+
+.zuka-input-field:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.zuka-input-field::placeholder {
+  color: #64748b;
+}
+
+.zuka-send-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.zuka-send-button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.zuka-send-button:disabled {
+  background-color: #1e293b;
+  color: #475569;
+  cursor: not-allowed;
+}
+
+/* Safe Markdown Rendering & Details Toggle */
+.zuka-safe-markdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: inherit;
+}
+
+.zuka-md-bold {
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.zuka-md-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11.5px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: #38bdf8;
+}
+
+.zuka-md-italic {
+  font-style: italic;
+  color: #94a3b8;
+}
+
+.zuka-md-list {
+  margin: 4px 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zuka-md-li {
+  list-style-type: disc;
+}
+
+.zuka-md-h2, .zuka-md-h3, .zuka-md-h4 {
+  margin: 4px 0 2px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.zuka-md-p {
+  margin: 0;
+}
+
+.zuka-details-toggle {
+  align-self: flex-start;
+  margin-top: 4px;
+  background: transparent;
+  border: 1px dashed rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.zuka-details-toggle:hover {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: #38bdf8;
+}

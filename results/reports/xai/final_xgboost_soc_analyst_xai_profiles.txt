@@ -1,0 +1,163 @@
+==========================================================================================
+FINAL XGBOOST — SOC ANALYST XAI PROFILES
+==========================================================================================
+
+Purpose:
+Provide feature-level explanations that can later be displayed to a SOC analyst when the AI assistant detects a cybersecurity event.
+
+
+ATTACK CLASS 0
+----------------------------------------------------------------------
+SHAP samples: 4123
+Sample recall: 0.9990
+
+Top explanatory features:
+1. Average Packet Size (importance=0.7478)
+2. Init_Win_bytes_backward (importance=0.5436)
+3. Bwd Packet Length Std (importance=0.4578)
+4. Destination Port (importance=0.4552)
+5. Bwd Packet Length Mean (importance=0.3647)
+
+ATTACK CLASS 1
+----------------------------------------------------------------------
+SHAP samples: 3
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Destination Port (importance=3.5312)
+2. Bwd Packet Length Max (importance=2.5875)
+3. Bwd IAT Min (importance=2.3758)
+4. Flow IAT Std (importance=2.1244)
+5. Fwd IAT Max (importance=1.8968)
+
+ATTACK CLASS 2
+----------------------------------------------------------------------
+SHAP samples: 283
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Fwd Packet Length Max (importance=1.9422)
+2. Total Length of Fwd Packets (importance=1.1982)
+3. Total Length of Bwd Packets (importance=1.1601)
+4. Bwd Packet Length Mean (importance=0.8853)
+5. Destination Port (importance=0.6943)
+
+ATTACK CLASS 3
+----------------------------------------------------------------------
+SHAP samples: 1
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Total Backward Packets (importance=34.2041)
+2. Total Length of Bwd Packets (importance=17.3404)
+3. Bwd IAT Max (importance=8.7607)
+4. Bwd Header Length (importance=7.5314)
+5. Total Length of Fwd Packets (importance=6.6125)
+
+ATTACK CLASS 4
+----------------------------------------------------------------------
+SHAP samples: 351
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Bwd Packet Length Std (importance=1.9218)
+2. Init_Win_bytes_backward (importance=1.0081)
+3. Destination Port (importance=0.6196)
+4. Idle Max (importance=0.4692)
+5. Init_Win_bytes_forward (importance=0.4299)
+
+ATTACK CLASS 5
+----------------------------------------------------------------------
+SHAP samples: 10
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Active Mean (importance=7.2028)
+2. Flow IAT Mean (importance=2.2715)
+3. Active Min (importance=1.3549)
+4. Destination Port (importance=1.3377)
+5. Flow Packets/s (importance=0.7594)
+
+ATTACK CLASS 6
+----------------------------------------------------------------------
+SHAP samples: 8
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Flow IAT Std (importance=4.5756)
+2. SYN Flag Count (importance=3.7660)
+3. Flow IAT Min (importance=1.9001)
+4. Active Std (importance=1.7244)
+5. Bwd IAT Mean (importance=1.6837)
+
+ATTACK CLASS 7
+----------------------------------------------------------------------
+SHAP samples: 18
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Destination Port (importance=17.8189)
+2. Fwd Packet Length Mean (importance=2.7939)
+3. Total Backward Packets (importance=2.2910)
+4. Flow Bytes/s (importance=1.3427)
+5. min_seg_size_forward (importance=0.8835)
+
+ATTACK CLASS 8
+----------------------------------------------------------------------
+SHAP samples: 1
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Bwd Packet Length Mean (importance=2.5594)
+2. act_data_pkt_fwd (importance=1.7289)
+3. Active Min (importance=1.4301)
+4. Fwd Packet Length Mean (importance=1.1290)
+5. Subflow Fwd Bytes (importance=0.9939)
+
+ATTACK CLASS 9
+----------------------------------------------------------------------
+SHAP samples: 193
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Total Length of Fwd Packets (importance=1.7079)
+2. Subflow Fwd Bytes (importance=0.9566)
+3. Init_Win_bytes_forward (importance=0.8303)
+4. Flow Bytes/s (importance=0.8041)
+5. Packet Length Mean (importance=0.5534)
+
+ATTACK CLASS 10
+----------------------------------------------------------------------
+SHAP samples: 5
+Sample recall: 1.0000
+
+Top explanatory features:
+1. Destination Port (importance=18.8424)
+2. Fwd Packet Length Max (importance=10.1052)
+3. Init_Win_bytes_backward (importance=1.4075)
+4. Total Length of Bwd Packets (importance=0.8089)
+5. Init_Win_bytes_forward (importance=0.7657)
+
+ATTACK CLASS 11
+----------------------------------------------------------------------
+SHAP samples: 2
+Sample recall: 0.5000
+
+Top explanatory features:
+1. Init_Win_bytes_backward (importance=11.0417)
+2. Flow IAT Min (importance=4.3419)
+3. Fwd IAT Min (importance=3.3238)
+4. Fwd IAT Total (importance=2.3417)
+5. Fwd IAT Max (importance=2.1352)
+
+ATTACK CLASS 13
+----------------------------------------------------------------------
+SHAP samples: 2
+Sample recall: 0.0000
+
+Top explanatory features:
+1. Flow IAT Min (importance=9.1060)
+2. Init_Win_bytes_backward (importance=8.2102)
+3. Fwd IAT Total (importance=5.3153)
+4. Fwd IAT Min (importance=4.6724)
+5. Flow Duration (importance=3.3509)

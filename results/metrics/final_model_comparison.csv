@@ -1,0 +1,2 @@
+Rank,Model,Accuracy,Balanced Accuracy,Macro Precision,Macro Recall,Macro F1,Weighted Precision,Weighted Recall,Weighted F1
+1,XGBoost,0.998714,0.845601,0.926422,0.845601,0.872461,0.998658,0.998714,0.998663

@@ -1,0 +1,9 @@
+Parameter,Value
+Final Model,XGBoost
+Model Family,Multiclass ML
+Number of Classes,14
+Number of Features,78
+Training Samples,1723950
+Testing Samples,478875
+XAI Sample Size,5000
+Random Seed,42

@@ -1,0 +1,2 @@
+Model,Testing_Accuracy,Testing_Balanced_Accuracy,Testing_Macro_Precision,Testing_Macro_Recall,Testing_Macro_F1,Testing_Weighted_F1,Number_of_Classes,Minority_Class_Count,Very_Low_Support_Class_Count,Recall_Below_50_Class_Count,F1_Below_50_Class_Count
+XGBoost,0.9987136517880449,0.8456012789368363,0.9264215421083913,0.8456012789368363,0.8724609657505258,0.9986632862360657,14,6,2,1,1

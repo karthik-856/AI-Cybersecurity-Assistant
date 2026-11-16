@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZUKA AI Operations & Customer Assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar / Info Panel -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-shield">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <h2>ZUKA SOC</h2>
+          <span class="badge-sub">Operations Assistant</span>
+        </div>
+      </div>
+
+      <div class="system-status-card">
+        <div class="status-row">
+          <span class="status-indicator active"></span>
+          <span class="status-label">Engine: Local Ollama</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Chat Model:</span>
+          <span id="active-model" class="metric-val">qwen2.5:3b</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Embeddings:</span>
+          <span class="metric-val">nomic-embed-text</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Vector Store:</span>
+          <span class="metric-val">ChromaDB (Local)</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Indexed Chunks:</span>
+          <span id="indexed-chunks" class="metric-val">Loading...</span>
+        </div>
+      </div>
+
+      <div class="rules-card">
+        <h3>Grounded Guardrails</h3>
+        <ul>
+          <li>Zero Hallucination Policy</li>
+          <li>Strict Localhost Privacy</li>
+          <li>Top-4 Chunks Retrieved</li>
+          <li>Verified Sources Displayed</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Support / Fallback Contact:</p>
+        <a href="mailto:chitlakarthik66@gmail.com" class="support-email">chitlakarthik66@gmail.com</a>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window -->
+    <main class="chat-container">
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <div class="header-left">
+          <div class="status-dot"></div>
+          <div>
+            <h1>ZUKA AI Operations Co-Pilot</h1>
+            <p>Authoritative assistance for IoT Security, RBAC, SOPs & Threat Telemetry</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="clear-chat-btn" class="btn-secondary" title="Clear Chat History">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Clear
+          </button>
+        </div>
+      </header>
+
+      <!-- Message History List -->
+      <div id="messages-list" class="messages-list">
+        <!-- Welcome Message -->
+        <div class="message assistant-message">
+          <div class="avatar assistant-avatar">Z</div>
+          <div class="message-content">
+            <div class="message-bubble">
+              <p>Welcome to <strong>ZUKA SOC Cyber Platform</strong> operations assistant. I am your grounded AI co-pilot. I answer inquiries strictly using our authoritative knowledge base and Standard Operating Procedures.</p>
+              
+              <div class="suggestions-container">
+                <p class="suggestions-title">Try asking about:</p>
+                <div class="suggestion-pills">
+                  <button class="pill" data-prompt="What machine learning architecture is used for IoT threat detection?">ML Architecture</button>
+                  <button class="pill" data-prompt="How does an analyst acknowledge an alert according to SOP-01?">SOP-01 Alert Ack</button>
+                  <button class="pill" data-prompt="Why can newly registered users not log in immediately?">Registration Security</button>
+                  <button class="pill" data-prompt="What countermeasures can be applied in the Defense Department?">Defense Countermeasures</button>
+                  <button class="pill" data-prompt="What is the monthly subscription price for ZUKA?">Pricing (Fallback Test)</button>
+                </div>
+              </div>
+            </div>
+            <div class="message-meta">
+              <span class="source-tag">Source: 1. System Identity & Mission Overview</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <footer class="chat-input-area">
+        <form id="chat-form" class="chat-form">
+          <div class="input-wrapper">
+            <textarea
+              id="user-input"
+              rows="1"
+              placeholder="Ask a question about ZUKA platform architecture, SOPs, commands, or RBAC..."
+              required
+            ></textarea>
+            <button type="submit" id="send-btn" class="send-btn" title="Send Message">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </form>
+        <div class="input-footnote">
+          <span>Temperature: 0.1 | Context: 4096 | Answers strictly grounded in local knowledge base.</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

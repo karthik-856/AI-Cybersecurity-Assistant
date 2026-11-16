@@ -1,0 +1,33 @@
+================================================================================
+ZUKA — CYBERSECURITY ASSISTANT REPORT
+================================================================================
+
+Alerts analyzed : 1
+Human approval  : REQUIRED
+Automated containment : DISABLED
+
+================================================================================
+ANALYST ALERT SUMMARIES
+================================================================================
+
+--------------------------------------------------------------------------------
+Alert 1
+--------------------------------------------------------------------------------
+Notification ID : SOC-NOTIFY-20260901074609-0001
+Predicted Class : 9
+Confidence      : 99.98%
+Severity        : HIGH
+SOC Priority    : P1
+Risk            : CRITICAL_REVIEW
+
+Assistant Assessment:
+ZUKA classified this network event as attack class 9 with 99.98% confidence. The assigned severity is HIGH and SOC priority is P1. Confidence interpretation: HIGH_CONFIDENCE. The classification should be validated against surrounding network and security telemetry.
+
+XAI Evidence:
+The model classified this network flow as attack class 9 with 99.98% confidence. The principal SHAP explanatory features are: Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s. These features represent model evidence associated with the prediction and should be validated against surrounding network and security telemetry.
+
+Recommendation:
+Immediately investigate and correlate the alert with other security telemetry. Review the affected flow context and determine whether escalation or containment is justified. Human analyst approval is required.
+
+Human Approval Required: YES
+Automated Containment: DISABLED

@@ -1,0 +1,33 @@
+==========================================================================================
+FINAL XGBOOST MULTI-SAMPLE SHAP ANALYSIS
+==========================================================================================
+
+Samples analyzed       : 210
+Features analyzed      : 78
+Classes analyzed       : 14
+
+Correct explanations   : 207
+Misclassified samples  : 3
+
+MOST FREQUENT EXPLANATORY FEATURES
+------------------------------------------------------------------------------------------
+Init_Win_bytes_forward : 158 occurrences
+Init_Win_bytes_backward : 145 occurrences
+Destination Port : 144 occurrences
+Total Length of Fwd Packets : 115 occurrences
+min_seg_size_forward : 90 occurrences
+Bwd Packet Length Std : 81 occurrences
+Fwd Packet Length Max : 78 occurrences
+Bwd Packet Length Mean : 74 occurrences
+Total Length of Bwd Packets : 70 occurrences
+Packet Length Mean : 67 occurrences
+Fwd Packet Length Mean : 63 occurrences
+Flow Bytes/s : 63 occurrences
+Fwd Header Length : 59 occurrences
+Average Packet Size : 56 occurrences
+Fwd IAT Std : 52 occurrences
+Bwd Packet Length Min : 50 occurrences
+Flow IAT Min : 45 occurrences
+Subflow Fwd Bytes : 44 occurrences
+act_data_pkt_fwd : 41 occurrences
+Flow IAT Mean : 41 occurrences

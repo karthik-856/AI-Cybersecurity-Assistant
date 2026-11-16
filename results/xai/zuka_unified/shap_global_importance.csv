@@ -1,0 +1,15 @@
+feature,mean_abs_shap,rank
+src_packet_size_mean,1.6803311,1
+src_bytes,1.4184178,2
+duration_sec,1.1476707,3
+src_iat_mean_sec,0.74019206,4
+dst_packet_size_mean,0.7327165,5
+dst_packet_rate,0.5788406,6
+src_byte_rate,0.56907934,7
+dst_bytes,0.54603744,8
+dst_iat_mean_sec,0.5050387,9
+dst_byte_rate,0.47997242,10
+src_packets,0.440329,11
+src_packet_rate,0.44025978,12
+dst_packets,0.4020928,13
+flow_packet_rate,0.34033266,14

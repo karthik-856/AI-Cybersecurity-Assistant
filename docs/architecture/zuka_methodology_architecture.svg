@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 750" width="100%" height="100%">
+  <defs>
+    <style>
+      .title { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 24px; font-weight: bold; fill: #0f172a; }
+      .subtitle { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: normal; fill: #475569; }
+      .box-title { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: bold; fill: #0f172a; }
+      .box-sub1 { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 12.5px; font-weight: 500; fill: #1d4ed8; }
+      .box-sub2 { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 11.5px; font-weight: normal; fill: #64748b; }
+      .arrow-lbl { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: normal; fill: #475569; }
+      .loop-lbl { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 13px; font-weight: bold; fill: #0f172a; }
+    </style>
+    <!-- Arrowhead Marker (Thin dark slate) -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
+    </marker>
+  </defs>
+
+  <!-- Pure White Background -->
+  <rect width="1600" height="750" fill="#ffffff" />
+
+  <!-- Title & Subtitle -->
+  <text x="800" y="65" class="title" text-anchor="middle">ZUKA SOC: AI-Assisted Security Operations Architecture</text>
+  <text x="800" y="98" class="subtitle" text-anchor="middle">End-to-End Threat Detection, Explainability (TreeSHAP), and Human-in-the-Loop Containment</text>
+
+  <!-- ========================================================================= -->
+  <!-- 6 SEQUENTIAL STAGES (Left to Right, Simple Rectangular Boxes, Equal Size) -->
+  <!-- Box dimensions: 200 x 140, Y: 230, Equal Gaps: 48 -->
+  <!-- ========================================================================= -->
+
+  <!-- STAGE 1: Traffic Ingestion -->
+  <g transform="translate(60, 230)">
+    <rect width="200" height="140" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.8" />
+    <line x1="0" y1="0" x2="200" y2="0" stroke="#64748b" stroke-width="5" />
+    <text x="100" y="45" class="box-title" text-anchor="middle">Traffic Ingestion</text>
+    <text x="100" y="75" class="box-sub1" text-anchor="middle" fill="#475569">PCAP &amp; Live Flows</text>
+    <text x="100" y="105" class="box-sub2" text-anchor="middle">Stateful Stream Buffer</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 260 300 L 308 300" fill="none" stroke="#0f172a" stroke-width="1.6" marker-end="url(#arrow)" />
+  <text x="284" y="288" class="arrow-lbl" text-anchor="middle">raw packets</text>
+
+  <!-- STAGE 2: Feature Pipeline -->
+  <g transform="translate(308, 230)">
+    <rect width="200" height="140" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.8" />
+    <line x1="0" y1="0" x2="200" y2="0" stroke="#3b82f6" stroke-width="5" />
+    <text x="100" y="45" class="box-title" text-anchor="middle">Feature Pipeline</text>
+    <text x="100" y="75" class="box-sub1" text-anchor="middle">14 Behavioral Metrics</text>
+    <text x="100" y="105" class="box-sub2" text-anchor="middle">Flow Rates, Bytes, IAT</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <path d="M 508 300 L 556 300" fill="none" stroke="#0f172a" stroke-width="1.6" marker-end="url(#arrow)" />
+  <text x="532" y="288" class="arrow-lbl" text-anchor="middle">flow vectors</text>
+
+  <!-- STAGE 3: XGBoost Classifier -->
+  <g transform="translate(556, 230)">
+    <rect width="200" height="140" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8" />
+    <line x1="0" y1="0" x2="200" y2="0" stroke="#2563eb" stroke-width="5" />
+    <text x="100" y="45" class="box-title" text-anchor="middle">XGBoost Classifier</text>
+    <text x="100" y="75" class="box-sub1" text-anchor="middle">13-Class Threat Model</text>
+    <text x="100" y="105" class="box-sub2" text-anchor="middle">99.87% Accuracy (&lt;0.05ms)</text>
+  </g>
+
+  <!-- Arrow 3 -> 4 -->
+  <path d="M 756 300 L 804 300" fill="none" stroke="#0f172a" stroke-width="1.6" marker-end="url(#arrow)" />
+  <text x="780" y="288" class="arrow-lbl" text-anchor="middle">class &amp; prob</text>
+
+  <!-- STAGE 4: TreeSHAP Engine -->
+  <g transform="translate(804, 230)">
+    <rect width="200" height="140" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.8" />
+    <line x1="0" y1="0" x2="200" y2="0" stroke="#3b82f6" stroke-width="5" />
+    <text x="100" y="45" class="box-title" text-anchor="middle">TreeSHAP Engine</text>
+    <text x="100" y="75" class="box-sub1" text-anchor="middle">Local Explainability</text>
+    <text x="100" y="105" class="box-sub2" text-anchor="middle">Feature Attribution Values</text>
+  </g>
+
+  <!-- Arrow 4 -> 5 -->
+  <path d="M 1004 300 L 1052 300" fill="none" stroke="#0f172a" stroke-width="1.6" marker-end="url(#arrow)" />
+  <text x="1028" y="288" class="arrow-lbl" text-anchor="middle">SHAP values</text>
+
+  <!-- STAGE 5: Alert & Triage -->
+  <g transform="translate(1052, 230)">
+    <rect width="200" height="140" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.8" />
+    <line x1="0" y1="0" x2="200" y2="0" stroke="#3b82f6" stroke-width="5" />
+    <text x="100" y="45" class="box-title" text-anchor="middle">Alert &amp; Triage</text>
+    <text x="100" y="75" class="box-sub1" text-anchor="middle">Severity &amp; Risk Scoring</text>
+    <text x="100" y="105" class="box-sub2" text-anchor="middle">P1-P4 Case Dossiers</text>
+  </g>
+
+  <!-- Arrow 5 -> 6 -->
+  <path d="M 1252 300 L 1300 300" fill="none" stroke="#0f172a" stroke-width="1.6" marker-end="url(#arrow)" />
+  <text x="1276" y="288" class="arrow-lbl" text-anchor="middle">dossier</text>
+
+  <!-- STAGE 6: SOC Analyst & Co-Pilot -->
+  <g transform="translate(1300, 230)">
+    <rect width="240" height="140" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.8" />
+    <line x1="0" y1="0" x2="240" y2="0" stroke="#64748b" stroke-width="5" />
+    <text x="120" y="45" class="box-title" text-anchor="middle">SOC Analyst &amp; Co-Pilot</text>
+    <text x="120" y="75" class="box-sub1" text-anchor="middle" fill="#475569">Human-in-the-Loop</text>
+    <text x="120" y="105" class="box-sub2" text-anchor="middle">Verification &amp; Mitigation</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- UNCONSTRAINED CLEAR FEEDBACK LOOP (Bottom Region Clearance) -->
+  <!-- From bottom of Box 6 (x=1420), down to y=560, left across to x=160, up to Box 1 -->
+  <!-- ZERO OVERLAPPING OR CROSSING LINES -->
+  <!-- ========================================================================= -->
+  <line x1="1420" y1="370" x2="1420" y2="560" stroke="#0f172a" stroke-width="1.8" />
+  <line x1="1420" y1="560" x2="160" y2="560" stroke="#0f172a" stroke-width="1.8" />
+  <path d="M 160 560 L 160 375" fill="none" stroke="#0f172a" stroke-width="1.8" marker-end="url(#arrow)" />
+
+  <text x="790" y="545" class="loop-lbl" text-anchor="middle">
+    Defensive Containment Feedback Loop (Firewall IP Drop / VLAN Quarantine)
+  </text>
+
+</svg>

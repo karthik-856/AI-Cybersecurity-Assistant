@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1030" viewBox="0 0 1680 1030">
+<rect width="100%" height="100%" fill="#F5F7F8"/>
+<rect x="24" y="24" width="1632" height="982" rx="18" fill="#FFFFFF" stroke="#E0E6E9"/>
+<rect x="24" y="24" width="1632" height="8" rx="4" fill="#276B83"/>
+<text x="58" y="77" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="#276B83" letter-spacing="2">PROJECT ROADMAP  /  PHASE I</text>
+<text x="58" y="122" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="31" font-weight="700" fill="#172B3A" >AI Cybersecurity Assistant</text>
+<text x="58" y="153" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13" font-weight="500" fill="#657681" letter-spacing="1">REVIEW-2 DELIVERY  ·  JULY–OCTOBER 2026  ·  COMPLETED WORK</text>
+<circle cx="1480" cy="91" r="20" fill="#E6F3EF"/>
+<path d="M1470 91l7 7 14-16" fill="none" stroke="#347B68" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1510" y="88" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="19" font-weight="700" fill="#1D5147" >17 / 17</text>
+<text x="1510" y="109" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="10" font-weight="600" fill="#657681" letter-spacing=".8">ACTIVITIES COMPLETE</text>
+<line x1="58" y1="178" x2="1622" y2="178" stroke="#E6EBEE"/>
+<text x="58" y="212" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#73828C" letter-spacing="1.1">WORKSTREAM  /  ACTIVITY</text>
+<text x="680" y="212" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#73828C" letter-spacing="1.1">PROJECT WINDOW  ·  APPROXIMATE MONTH-LEVEL SCHEDULE</text>
+<text x="1525" y="212" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#73828C" letter-spacing="1.1">STATUS</text>
+
+<line x1="680.0" y1="230" x2="680.0" y2="949" stroke="#E6EBEE" stroke-dasharray="3 5"/>
+<text x="688.0" y="251" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#526773" letter-spacing=".7">JULY</text>
+<line x1="774.6" y1="230" x2="774.6" y2="949" stroke="#E6EBEE" stroke-dasharray="3 5"/>
+<text x="782.6153846153846" y="251" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#526773" letter-spacing=".7">AUGUST</text>
+<line x1="1019.0" y1="230" x2="1019.0" y2="949" stroke="#E6EBEE" stroke-dasharray="3 5"/>
+<text x="1027.0384615384614" y="251" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#526773" letter-spacing=".7">SEPTEMBER</text>
+<line x1="1255.6" y1="230" x2="1255.6" y2="949" stroke="#E6EBEE" stroke-dasharray="3 5"/>
+<text x="1263.5769230769229" y="251" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#526773" letter-spacing=".7">OCTOBER</text>
+<line x1="1500.0" y1="230" x2="1500.0" y2="949" stroke="#E6EBEE" stroke-dasharray="3 5"/>
+<rect x="48.0" y="261.0" width="1584.0" height="27.0" rx="5" fill="#F5F7F8" />
+<rect x="59.0" y="269.0" width="4.0" height="12.0" rx="2" fill="#276B83" />
+<text x="73" y="279" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#276B83" letter-spacing="1">01  FOUNDATION &amp; DATA</text>
+<line x1="58" y1="317" x2="1622" y2="317" stroke="#F0F3F4"/>
+<text x="72" y="311" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Requirements &amp; problem analysis</text>
+<rect x="680.0" y="298.0" width="55.2" height="17.0" rx="8" fill="#276B83" opacity=".18"/>
+<rect x="680.0" y="298.0" width="30.0" height="17.0" rx="8" fill="#276B83" />
+<circle cx="1532" cy="306" r="8" fill="#E6F3EF"/>
+<path d="M1528 306l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="310" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="349" x2="1622" y2="349" stroke="#F0F3F4"/>
+<text x="72" y="343" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Literature survey &amp; research gap</text>
+<rect x="680.0" y="330.0" width="276.0" height="17.0" rx="8" fill="#276B83" opacity=".18"/>
+<rect x="680.0" y="330.0" width="30.0" height="17.0" rx="8" fill="#276B83" />
+<circle cx="1532" cy="338" r="8" fill="#E6F3EF"/>
+<path d="M1528 338l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="342" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="381" x2="1622" y2="381" stroke="#F0F3F4"/>
+<text x="72" y="375" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Dataset collection &amp; exploration</text>
+<rect x="774.6" y="362.0" width="220.8" height="17.0" rx="8" fill="#276B83" opacity=".18"/>
+<rect x="774.6" y="362.0" width="30.0" height="17.0" rx="8" fill="#276B83" />
+<circle cx="1532" cy="370" r="8" fill="#E6F3EF"/>
+<path d="M1528 370l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="374" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="413" x2="1622" y2="413" stroke="#F0F3F4"/>
+<text x="72" y="407" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Feature engineering &amp; preprocessing</text>
+<rect x="774.6" y="394.0" width="331.2" height="17.0" rx="8" fill="#276B83" opacity=".18"/>
+<rect x="774.6" y="394.0" width="30.0" height="17.0" rx="8" fill="#276B83" />
+<circle cx="1532" cy="402" r="8" fill="#E6F3EF"/>
+<path d="M1528 402l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="406" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<rect x="48.0" y="425.0" width="1584.0" height="27.0" rx="5" fill="#F5F7F8" />
+<rect x="59.0" y="433.0" width="4.0" height="12.0" rx="2" fill="#4A6B9A" />
+<text x="73" y="443" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#4A6B9A" letter-spacing="1">02  AI DETECTION &amp; EXPLAINABILITY</text>
+<line x1="58" y1="481" x2="1622" y2="481" stroke="#F0F3F4"/>
+<text x="72" y="475" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Model training &amp; benchmarking</text>
+<rect x="774.6" y="462.0" width="441.5" height="17.0" rx="8" fill="#4A6B9A" opacity=".18"/>
+<rect x="774.6" y="462.0" width="30.0" height="17.0" rx="8" fill="#4A6B9A" />
+<circle cx="1532" cy="470" r="8" fill="#E6F3EF"/>
+<path d="M1528 470l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="474" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="513" x2="1622" y2="513" stroke="#F0F3F4"/>
+<text x="72" y="507" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >TreeSHAP explainability</text>
+<rect x="1019.0" y="494.0" width="220.8" height="17.0" rx="8" fill="#4A6B9A" opacity=".18"/>
+<rect x="1019.0" y="494.0" width="30.0" height="17.0" rx="8" fill="#4A6B9A" />
+<circle cx="1532" cy="502" r="8" fill="#E6F3EF"/>
+<path d="M1528 502l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="506" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="545" x2="1622" y2="545" stroke="#F0F3F4"/>
+<text x="72" y="539" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >ZUKA RAG copilot</text>
+<rect x="1255.6" y="526.0" width="244.4" height="17.0" rx="8" fill="#4A6B9A" opacity=".18"/>
+<rect x="1255.6" y="526.0" width="30.0" height="17.0" rx="8" fill="#4A6B9A" />
+<circle cx="1532" cy="534" r="8" fill="#E6F3EF"/>
+<path d="M1528 534l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="538" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<rect x="48.0" y="557.0" width="1584.0" height="27.0" rx="5" fill="#F5F7F8" />
+<rect x="59.0" y="565.0" width="4.0" height="12.0" rx="2" fill="#347B68" />
+<text x="73" y="575" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#347B68" letter-spacing="1">03  SOC PLATFORM &amp; OPERATIONS</text>
+<line x1="58" y1="613" x2="1622" y2="613" stroke="#F0F3F4"/>
+<text x="72" y="607" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Database &amp; FastAPI backend</text>
+<rect x="1019.0" y="594.0" width="331.2" height="17.0" rx="8" fill="#347B68" opacity=".18"/>
+<rect x="1019.0" y="594.0" width="30.0" height="17.0" rx="8" fill="#347B68" />
+<circle cx="1532" cy="602" r="8" fill="#E6F3EF"/>
+<path d="M1528 602l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="606" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="645" x2="1622" y2="645" stroke="#F0F3F4"/>
+<text x="72" y="639" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Alerts &amp; telemetry stream</text>
+<rect x="1019.0" y="626.0" width="220.8" height="17.0" rx="8" fill="#347B68" opacity=".18"/>
+<rect x="1019.0" y="626.0" width="30.0" height="17.0" rx="8" fill="#347B68" />
+<circle cx="1532" cy="634" r="8" fill="#E6F3EF"/>
+<path d="M1528 634l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="638" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="677" x2="1622" y2="677" stroke="#F0F3F4"/>
+<text x="72" y="671" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Incident &amp; forensic workflows</text>
+<rect x="1019.0" y="658.0" width="441.5" height="17.0" rx="8" fill="#347B68" opacity=".18"/>
+<rect x="1019.0" y="658.0" width="30.0" height="17.0" rx="8" fill="#347B68" />
+<circle cx="1532" cy="666" r="8" fill="#E6F3EF"/>
+<path d="M1528 666l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="670" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="709" x2="1622" y2="709" stroke="#F0F3F4"/>
+<text x="72" y="703" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Tactical defense engine (SOAR)</text>
+<rect x="1255.6" y="690.0" width="244.4" height="17.0" rx="8" fill="#347B68" opacity=".18"/>
+<rect x="1255.6" y="690.0" width="30.0" height="17.0" rx="8" fill="#347B68" />
+<circle cx="1532" cy="698" r="8" fill="#E6F3EF"/>
+<path d="M1528 698l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="702" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="741" x2="1622" y2="741" stroke="#F0F3F4"/>
+<text x="72" y="735" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >React operations dashboard</text>
+<rect x="1255.6" y="722.0" width="244.4" height="17.0" rx="8" fill="#347B68" opacity=".18"/>
+<rect x="1255.6" y="722.0" width="30.0" height="17.0" rx="8" fill="#347B68" />
+<circle cx="1532" cy="730" r="8" fill="#E6F3EF"/>
+<path d="M1528 730l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="734" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<rect x="48.0" y="753.0" width="1584.0" height="27.0" rx="5" fill="#F5F7F8" />
+<rect x="59.0" y="761.0" width="4.0" height="12.0" rx="2" fill="#9A7040" />
+<text x="73" y="771" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="#9A7040" letter-spacing="1">04  SECURITY &amp; DELIVERY</text>
+<line x1="58" y1="809" x2="1622" y2="809" stroke="#F0F3F4"/>
+<text x="72" y="803" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Role-based access &amp; security</text>
+<rect x="1129.4" y="790.0" width="331.2" height="17.0" rx="8" fill="#9A7040" opacity=".18"/>
+<rect x="1129.4" y="790.0" width="30.0" height="17.0" rx="8" fill="#9A7040" />
+<circle cx="1532" cy="798" r="8" fill="#E6F3EF"/>
+<path d="M1528 798l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="802" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="841" x2="1622" y2="841" stroke="#F0F3F4"/>
+<text x="72" y="835" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Audit ledger &amp; compliance logs</text>
+<rect x="1255.6" y="822.0" width="244.4" height="17.0" rx="8" fill="#9A7040" opacity=".18"/>
+<rect x="1255.6" y="822.0" width="30.0" height="17.0" rx="8" fill="#9A7040" />
+<circle cx="1532" cy="830" r="8" fill="#E6F3EF"/>
+<path d="M1528 830l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="834" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="873" x2="1622" y2="873" stroke="#F0F3F4"/>
+<text x="72" y="867" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >End-to-end testing</text>
+<rect x="1255.6" y="854.0" width="244.4" height="17.0" rx="8" fill="#9A7040" opacity=".18"/>
+<rect x="1255.6" y="854.0" width="30.0" height="17.0" rx="8" fill="#9A7040" />
+<circle cx="1532" cy="862" r="8" fill="#E6F3EF"/>
+<path d="M1528 862l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="866" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="905" x2="1622" y2="905" stroke="#F0F3F4"/>
+<text x="72" y="899" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Performance optimization</text>
+<rect x="1255.6" y="886.0" width="244.4" height="17.0" rx="8" fill="#9A7040" opacity=".18"/>
+<rect x="1255.6" y="886.0" width="30.0" height="17.0" rx="8" fill="#9A7040" />
+<circle cx="1532" cy="894" r="8" fill="#E6F3EF"/>
+<path d="M1528 894l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="898" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="937" x2="1622" y2="937" stroke="#F0F3F4"/>
+<text x="72" y="931" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="500" fill="#2D3F4A" >Phase-I Review-2 documentation</text>
+<rect x="1255.6" y="918.0" width="244.4" height="17.0" rx="8" fill="#9A7040" opacity=".18"/>
+<rect x="1255.6" y="918.0" width="30.0" height="17.0" rx="8" fill="#9A7040" />
+<circle cx="1532" cy="926" r="8" fill="#E6F3EF"/>
+<path d="M1528 926l3 3 5-6" fill="none" stroke="#347B68" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1546" y="930" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="600" fill="#347B68" >Done</text>
+<line x1="58" y1="957" x2="1622" y2="957" stroke="#E6EBEE"/>
+<text x="58" y="981" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="500" fill="#6E7D87" >SOURCE  ·  Review-2 Master Slide Content, Slide 14</text>
+<text x="1622" y="981" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="500" fill="#6E7D87" text-anchor="end">Exact dates were not specified; bar lengths and start dates are approximate.</text>
+</svg>

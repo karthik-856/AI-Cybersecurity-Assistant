@@ -1,0 +1,12 @@
+Model,File,Format,Location,Size_MB
+CatBoostClassifier,CatBoostClassifier.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/CatBoostClassifier.pkl,0.0
+LGBMClassifier,LGBMClassifier.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/LGBMClassifier.pkl,0.0
+Pipeline,Pipeline.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/Pipeline.pkl,0.0
+XGBClassifier,XGBClassifier.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/XGBClassifier.pkl,0.0
+catboost_model,catboost_model.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/catboost_model.pkl,0.754
+decision_tree_model,decision_tree_model.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/decision_tree_model.pkl,1.186
+dummy_model,dummy_model.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/dummy_model.pkl,0.002
+lightgbm_model,lightgbm_model.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/lightgbm_model.pkl,2.808
+logistic_model,logistic_model.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/logistic_model.pkl,0.013
+random_forest_model,random_forest_model.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/random_forest_model.pkl,130.066
+xgb_model,xgb_model.pkl,PKL,/content/drive/MyDrive/AI-Cybersecurity-Assistant/models/multiclass/xgb_model.pkl,2.448

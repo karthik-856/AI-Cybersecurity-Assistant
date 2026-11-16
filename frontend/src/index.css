@@ -1,0 +1,278 @@
+:root {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  color: #dce8ef;
+  background: #06111d;
+
+  --soc-bg-base: #06111d;
+  --soc-bg-surface: #081623;
+  --soc-bg-card: rgba(8, 22, 35, 0.85);
+  --soc-border: rgba(26, 48, 67, 0.85);
+  --soc-border-subtle: rgba(26, 48, 67, 0.5);
+  --soc-accent-emerald: #19d39d;
+  --soc-accent-cyan: #38bdf8;
+  --soc-accent-rose: #f43f5e;
+  --soc-accent-amber: #fbbf24;
+  --soc-accent-purple: #c084fc;
+  --soc-text-primary: #f1f5f9;
+  --soc-text-secondary: #94a9bc;
+  --soc-text-muted: #64748b;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #06111d;
+}
+
+body {
+  width: 100%;
+  min-width: 320px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #06111d;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(25, 211, 157, 0.3);
+  color: #f0f7fa;
+}
+
+/* =====================================================
+   GLOBAL RESPONSIVE UTILITIES & TABLE WRAPPERS
+   ===================================================== */
+
+.table-responsive,
+[class*="-table-wrap"],
+[class*="-table-container"],
+[class*="table-scroll"],
+[class*="-record-table-wrap"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* High contrast glassmorphic card base */
+.glass-panel {
+  border: 1px solid rgba(26, 48, 67, 0.85);
+  border-radius: 12px;
+  background: rgba(8, 22, 35, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+/* =====================================================
+   UNIVERSAL CYBER-SOC CAPSULE PAGINATION
+   Alerts, Incidents, Databases, Reports, Investigation, Network
+   ===================================================== */
+
+.alerts-pagination,
+.incident-pagination,
+.db-pagination-bar,
+.db-pagination-controls,
+.reports-pagination,
+.investigation-pagination,
+.network-pagination {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  padding: 10px 18px !important;
+  margin-top: 14px !important;
+  background: linear-gradient(180deg, rgba(8, 21, 33, 0.95) 0%, rgba(6, 17, 27, 0.98) 100%) !important;
+  border: 1px solid rgba(26, 58, 82, 0.85) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(56, 189, 248, 0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  flex-wrap: wrap !important;
+}
+
+/* Counter / Info Pill */
+.alerts-pagination > span:first-child,
+.incident-pagination-info,
+.pagination-info,
+.page-counter,
+.investigation-pagination > span:first-child,
+.network-pagination > span:first-child,
+.reports-pagination > span:last-child {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 5px 14px !important;
+  border-radius: 20px !important;
+  background: rgba(13, 31, 48, 0.65) !important;
+  border: 1px solid rgba(30, 64, 92, 0.6) !important;
+  color: #8da5b5 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.04em !important;
+}
+
+.alerts-pagination > span:first-child strong,
+.incident-pagination-info strong,
+.page-counter strong,
+.investigation-pagination > span:first-child strong,
+.network-pagination > span:first-child strong,
+.reports-pagination > span:last-child strong {
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+}
+
+/* Control Wrappers */
+.alerts-pagination-controls,
+.incident-pagination-controls,
+.db-page-numbers,
+.reports-page-numbers,
+.investigation-pagination-controls,
+.network-page-buttons {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+/* Base Button Styles for Prev, Next, and Page Numbers */
+.alerts-pagination-controls button,
+.incident-page-button,
+.page-nav-btn,
+.db-page-num-btn,
+.reports-pagination button,
+.investigation-pagination-controls button,
+.network-page-buttons button {
+  min-width: 32px !important;
+  height: 32px !important;
+  padding: 0 8px !important;
+  border-radius: 16px !important;
+  background: rgba(11, 26, 40, 0.75) !important;
+  border: 1px solid rgba(25, 54, 76, 0.75) !important;
+  color: #8da5b5 !important;
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  outline: none !important;
+}
+
+/* Prev / Next Specific Capsule Styling */
+.alerts-pagination-controls button.prev-next,
+.incident-page-button.prev-next,
+.page-nav-btn.prev-next,
+.reports-pagination > button:not(.reports-page-numbers button),
+.investigation-pagination-controls button:first-child,
+.investigation-pagination-controls button:last-child,
+.network-page-buttons button:first-child,
+.network-page-buttons button:last-child {
+  min-width: auto !important;
+  padding: 0 14px !important;
+  border-radius: 20px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* Hover State */
+.alerts-pagination-controls button:hover:not(:disabled),
+.incident-page-button:hover:not(:disabled),
+.page-nav-btn:hover:not(:disabled),
+.db-page-num-btn:hover:not(:disabled),
+.reports-pagination button:hover:not(:disabled),
+.investigation-pagination-controls button:hover:not(:disabled),
+.network-page-buttons button:hover:not(:disabled) {
+  border-color: #27d7a5 !important;
+  color: #27d7a5 !important;
+  background: rgba(39, 215, 165, 0.12) !important;
+  box-shadow: 0 0 10px rgba(39, 215, 165, 0.25) !important;
+}
+
+/* Prev/Next Hover */
+.alerts-pagination-controls button.prev-next:hover:not(:disabled),
+.incident-page-button.prev-next:hover:not(:disabled),
+.page-nav-btn.prev-next:hover:not(:disabled),
+.reports-pagination > button:not(.reports-page-numbers button):hover:not(:disabled),
+.investigation-pagination-controls button:first-child:hover:not(:disabled),
+.investigation-pagination-controls button:last-child:hover:not(:disabled),
+.network-page-buttons button:first-child:hover:not(:disabled),
+.network-page-buttons button:last-child:hover:not(:disabled) {
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
+}
+
+/* ACTIVE GLOWING CYBER-SOC INDICATOR */
+.alerts-pagination-controls button.active,
+.incident-page-button.active,
+.db-page-num-btn.active,
+.reports-page-numbers button.active,
+.investigation-pagination-controls button.active,
+.network-page-buttons button.active {
+  background: linear-gradient(135deg, #00d2c4 0%, #0284c7 100%) !important;
+  color: #03141f !important;
+  font-weight: 850 !important;
+  border-color: #00d2c4 !important;
+  box-shadow: 0 0 16px rgba(0, 210, 196, 0.65), 0 0 4px rgba(2, 132, 199, 0.4) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Disabled State */
+.alerts-pagination-controls button:disabled,
+.incident-page-button:disabled,
+.page-nav-btn:disabled,
+.db-page-num-btn:disabled,
+.reports-pagination button:disabled,
+.investigation-pagination-controls button:disabled,
+.network-page-buttons button:disabled {
+  opacity: 0.25 !important;
+  cursor: not-allowed !important;
+  border-color: rgba(30, 58, 80, 0.4) !important;
+  background: rgba(10, 22, 34, 0.4) !important;
+  color: #526e82 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}

@@ -1,0 +1,21 @@
+Rank,Feature,Mean_Absolute_SHAP,Mean_SHAP
+1,Destination Port,0.8947856,-0.73810804
+2,Init_Win_bytes_backward,0.2940383,-0.12410013
+3,Init_Win_bytes_forward,0.2727133,-0.2023537
+4,Flow IAT Min,0.2453289,0.06983265
+5,min_seg_size_forward,0.24214481,-0.16633448
+6,Fwd IAT Min,0.21676745,-0.07070108
+7,Subflow Bwd Bytes,0.20525543,0.09848816
+8,Fwd Packet Length Max,0.19545588,-0.11145338
+9,Bwd Packet Length Mean,0.19354329,-0.09590064
+10,Total Length of Fwd Packets,0.1842823,-0.0840867
+11,Bwd Packets/s,0.15929492,-0.10447518
+12,Bwd Packet Length Std,0.14687185,-0.0350896
+13,Total Length of Bwd Packets,0.14603348,-0.06699137
+14,Bwd Header Length,0.13423853,-0.06834873
+15,Total Backward Packets,0.13312428,-0.09969689
+16,Packet Length Mean,0.12713328,-0.07947569
+17,Flow Bytes/s,0.1157059,-0.068252966
+18,Flow Duration,0.11518782,-0.03107351
+19,Average Packet Size,0.10949942,0.028650405
+20,Fwd IAT Mean,0.108243376,-0.08318464

@@ -1,0 +1,450 @@
+.zuka-notification-center {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.zuka-notification-trigger {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #223140;
+  border-radius: 8px;
+  background: #0b141d;
+  color: #9aabba;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.zuka-notification-trigger:hover {
+  border-color: #315067;
+  background: #0e1a24;
+  color: #dce8ef;
+}
+
+.zuka-notification-trigger.has-critical {
+  color: #f07b89;
+}
+
+.zuka-notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #071019;
+  border-radius: 999px;
+  background: #d95d6c;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.zuka-notification-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: default;
+  z-index: 1000;
+}
+
+.zuka-notification-panel {
+  position: fixed;
+  top: 84px;
+  right: 18px;
+  width: min(520px, calc(100vw - 36px));
+  max-width: calc(100vw - 36px);
+  max-height: calc(100vh - 102px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #203445;
+  border-radius: 14px;
+  background: #09131d;
+  color: #d8e3e9;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.48);
+  box-sizing: border-box;
+  z-index: 1001;
+}
+
+.zuka-notification-panel-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 18px 15px;
+  border-bottom: 1px solid #182936;
+}
+
+.zuka-notification-kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: #5e8199;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.zuka-notification-panel-header h2 {
+  margin: 0 0 5px;
+  color: #dce7ec;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.zuka-notification-panel-header p {
+  margin: 0;
+  color: #687f91;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.zuka-notification-close {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #6d8190;
+  cursor: pointer;
+}
+
+.zuka-notification-close:hover {
+  border-color: #293d4d;
+  background: #0d1b26;
+  color: #dce8ef;
+}
+
+.zuka-notification-toolbar {
+  flex: 0 0 auto;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 15px;
+  border-bottom: 1px solid #14232e;
+  background: #08141e;
+  color: #60778a;
+  font-size: 10px;
+}
+
+.zuka-notification-toolbar button {
+  padding: 7px 0;
+  border: 0;
+  background: transparent;
+  color: #4ccca9;
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.zuka-notification-toolbar button:hover:not(:disabled) {
+  color: #76e4c5;
+}
+
+.zuka-notification-toolbar button:disabled {
+  color: #415765;
+  cursor: default;
+}
+
+.zuka-notification-error {
+  flex: 0 0 auto;
+  margin: 10px 12px 0;
+  padding: 9px;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  border: 1px solid rgba(224, 101, 117, 0.25);
+  border-radius: 7px;
+  background: rgba(224, 101, 117, 0.06);
+  color: #e6818d;
+  font-size: 10px;
+}
+
+.zuka-notification-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: min(560px, calc(100vh - 275px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #2a4658 #09131d;
+}
+
+.zuka-notification-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+.zuka-notification-list::-webkit-scrollbar-track {
+  background: #09131d;
+}
+
+.zuka-notification-list::-webkit-scrollbar-thumb {
+  background: #2a4658;
+  border-radius: 10px;
+}
+
+.zuka-notification-item {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 16px;
+  align-items: start;
+  gap: 10px;
+  padding: 14px 15px;
+  border: 0;
+  border-bottom: 1px solid #14222d;
+  background: transparent;
+  color: #aebdc7;
+  text-align: left;
+  cursor: pointer;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  box-sizing: border-box;
+  transition: background 140ms ease, transform 160ms ease;
+}
+
+.zuka-notification-item:hover {
+  background: #0d1b26;
+}
+
+.zuka-notification-item.unread {
+  background: rgba(38, 215, 165, 0.045);
+}
+
+.zuka-notification-item.unread::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #3bd8b2;
+}
+
+.zuka-notification-severity-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+}
+
+.zuka-notification-item.critical .zuka-notification-severity-icon {
+  color: #ef6f7d;
+  background: rgba(239, 111, 125, 0.1);
+}
+
+.zuka-notification-item.high .zuka-notification-severity-icon {
+  color: #e7a25e;
+  background: rgba(231, 162, 94, 0.1);
+}
+
+.zuka-notification-item-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zuka-notification-item-top {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.zuka-notification-item-top strong {
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+
+.zuka-notification-item.critical .zuka-notification-item-top strong {
+  color: #ef6f7d;
+}
+
+.zuka-notification-item.high .zuka-notification-item-top strong {
+  color: #e7a25e;
+}
+
+.zuka-notification-item-top time {
+  flex: 0 0 auto;
+  color: #8297a6;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.zuka-notification-item-copy > b {
+  overflow: hidden;
+  color: #dce7ec;
+  font-size: 12px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zuka-notification-description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #7e93a3;
+  font-size: 10px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.zuka-notification-item-copy > small {
+  overflow: hidden;
+  color: #526b7d;
+  font-size: 9px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zuka-notification-item > svg:last-child {
+  align-self: center;
+  color: #728b9b;
+}
+
+.zuka-notification-empty {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 25px;
+  color: #557083;
+  text-align: center;
+}
+
+.zuka-notification-empty svg {
+  color: #315267;
+}
+
+.zuka-notification-empty strong {
+  color: #91a5b2;
+  font-size: 11px;
+}
+
+.zuka-notification-empty span {
+  max-width: 280px;
+  color: #566f80;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.zuka-notification-panel-footer {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 11px 15px;
+  border-top: 1px solid #182936;
+  background: #08141e;
+}
+
+.zuka-notification-panel-footer button {
+  min-height: 34px;
+  border: 1px solid #263d4d;
+  border-radius: 7px;
+  background: #0c1923;
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.zuka-notification-open-alerts {
+  color: #4ccca9;
+}
+
+.zuka-notification-clear {
+  color: #e18491;
+}
+
+.zuka-notification-panel-footer button:hover:not(:disabled) {
+  border-color: #38576b;
+  background: #11222e;
+}
+
+.zuka-notification-panel-footer button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .zuka-notification-panel {
+    top: 76px;
+    right: 12px;
+    width: min(520px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 88px);
+  }
+
+  .zuka-notification-list {
+    max-height: calc(100vh - 260px);
+  }
+}
+
+@media (max-width: 600px) {
+  .zuka-notification-panel {
+    top: 68px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100vh - 80px);
+    border-radius: 12px;
+  }
+
+  .zuka-notification-panel-header {
+    padding: 16px 14px 13px;
+  }
+
+  .zuka-notification-panel-header h2 {
+    font-size: 16px;
+  }
+
+  .zuka-notification-item {
+    grid-template-columns: 34px minmax(0, 1fr) 14px;
+    gap: 9px;
+    padding: 13px 12px;
+  }
+
+  .zuka-notification-severity-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .zuka-notification-item-top time {
+    font-size: 8px;
+  }
+
+  .zuka-notification-panel-footer {
+    padding: 10px 12px;
+  }
+}

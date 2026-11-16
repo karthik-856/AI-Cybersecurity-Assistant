@@ -1,0 +1,2 @@
+Notification_ID,Predicted_Class,Confidence,Severity,SOC_Priority,Assistant_Confidence_Level,Assistant_Risk_Level,XAI_Evidence,Assistant_Recommendation,Assistant_Status,Human_Approval_Required
+SOC-NOTIFY-20260901074609-0001,9,0.9997797608375548,HIGH,P1,HIGH,CRITICAL_REVIEW,"Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s",Immediately investigate and correlate the alert with other security telemetry. Review the affected flow context and determine whether escalation or containment is justified.,READY_FOR_ANALYST,True

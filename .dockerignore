@@ -1,0 +1,26 @@
+.git
+.env
+**/.env
+**/*.pem
+**/*.key
+.venv
+frontend/node_modules
+frontend/dist
+**/__pycache__
+.pytest_cache
+.agents
+.claude
+.idea
+tmp
+output
+outputs
+scratch
+data/raw
+data/processed
+data/*.db
+rag_assistant/data
+models/multiclass
+models/deep_learning
+models/zuka_unified_xgboost/model.json
+new notebook results
+docs/presentation

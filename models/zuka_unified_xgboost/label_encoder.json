@@ -1,0 +1,32 @@
+{
+  "classes": [
+    "BACKDOOR",
+    "BENIGN",
+    "BRUTE_FORCE",
+    "DDOS",
+    "DOS",
+    "EXPLOIT",
+    "FUZZING",
+    "INFILTRATION",
+    "MALWARE",
+    "OTHER_ATTACK",
+    "PORT_SCAN",
+    "RECONNAISSANCE",
+    "WEB_ATTACK"
+  ],
+  "class_to_index": {
+    "BACKDOOR": 0,
+    "BENIGN": 1,
+    "BRUTE_FORCE": 2,
+    "DDOS": 3,
+    "DOS": 4,
+    "EXPLOIT": 5,
+    "FUZZING": 6,
+    "INFILTRATION": 7,
+    "MALWARE": 8,
+    "OTHER_ATTACK": 9,
+    "PORT_SCAN": 10,
+    "RECONNAISSANCE": 11,
+    "WEB_ATTACK": 12
+  }
+}

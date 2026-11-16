@@ -1,0 +1,10 @@
+Property,Value
+Model,XGBoost
+SHAP Explainer,TreeExplainer
+SHAP Version,0.52.0
+Samples Explained,5000
+Features Explained,78
+Number of Classes,14
+SHAP Dimensions,"(5000, 78, 14)"
+NaN Values,0
+Infinite Values,0

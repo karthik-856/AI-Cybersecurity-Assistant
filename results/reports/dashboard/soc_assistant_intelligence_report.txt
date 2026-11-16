@@ -1,0 +1,45 @@
+==========================================================================================
+SOC ASSISTANT INTELLIGENCE REPORT
+==========================================================================================
+
+Generated: 2026-09-01T07:47:28.795758
+Alerts analyzed: 1
+
+ASSISTANT ARCHITECTURE
+------------------------------------------------------------------------------------------
+Automatic Network Detection -> XGBoost -> SHAP -> Alert Engine -> SOC Assistant -> SOC Analyst
+
+ASSISTANT CAPABILITIES
+------------------------------------------------------------------------------------------
+1. Interpret predicted attack class
+2. Interpret model confidence
+3. Present SHAP evidence
+4. Assess alert risk
+5. Generate investigation steps
+6. Generate analyst recommendations
+7. Generate analyst questions
+8. Prepare analyst-ready alert information
+
+SAFETY / CONTROL BOUNDARY
+------------------------------------------------------------------------------------------
+The assistant provides recommendations to the SOC analyst.
+It does not autonomously perform containment or destructive security actions.
+Human analyst approval remains required.
+
+==========================================================================================
+Alert: SOC-NOTIFY-20260901074609-0001
+Predicted Class: 9
+Confidence: 99.98%
+Severity: HIGH
+SOC Priority: P1
+Risk Level: CRITICAL_REVIEW
+
+XAI Evidence:
+Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s
+
+Assessment:
+The XGBoost detection engine classified this network event as attack class 9 with 99.98% confidence. The assigned severity is HIGH and the SOC priority is P1. The principal SHAP explanatory features are Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s. These features represent the model evidence associated with the prediction and should be reviewed together with the surrounding network and security telemetry.
+
+Recommendation:
+Immediately investigate and correlate the alert with other security telemetry. Review the affected flow context and determine whether escalation or containment is justified.
+

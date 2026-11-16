@@ -1,0 +1,15 @@
+FINAL XGBOOST MINORITY-CLASS ROBUSTNESS REPORT
+================================================================================
+
+Testing Accuracy: 0.998714
+Balanced Accuracy: 0.845601
+Macro F1: 0.872461
+Weighted F1: 0.998663
+
+Minority classes: [12, 8, 13, 3, 11, 1]
+Very-low-support classes: [12, 8]
+Recall below 50%: [13]
+F1 below 50%: [13]
+
+Interpretation:
+The final XGBoost model shows strong overall performance. However, class imbalance and low-support classes require class-level metrics to be considered alongside accuracy.

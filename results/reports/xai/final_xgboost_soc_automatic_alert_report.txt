@@ -1,0 +1,168 @@
+==========================================================================================
+FINAL XGBOOST — AUTOMATIC SOC ALERT REPORT
+==========================================================================================
+
+Purpose:
+Convert XGBoost predictions and SHAP explanations into analyst-readable cybersecurity alerts.
+
+Benign class ID: 0
+
+Total samples evaluated: 100
+Attack-class alerts generated: 13
+
+------------------------------------------------------------------------------------------
+Sample: 1
+Predicted class: 2
+Confidence: 0.9997
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 2 with 99.97% confidence. The strongest features supporting this prediction were: Fwd Packet Length Max, Total Backward Packets, act_data_pkt_fwd, Destination Port, Total Length of Fwd Packets.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 12
+Predicted class: 4
+Confidence: 0.9999
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 4 with 99.99% confidence. The strongest features supporting this prediction were: Bwd Packet Length Std, Init_Win_bytes_backward, FIN Flag Count, Destination Port, Idle Max.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 15
+Predicted class: 2
+Confidence: 0.9997
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 2 with 99.97% confidence. The strongest features supporting this prediction were: Fwd Packet Length Max, act_data_pkt_fwd, Total Backward Packets, Destination Port, Total Length of Fwd Packets.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 17
+Predicted class: 4
+Confidence: 0.9999
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 4 with 99.99% confidence. The strongest features supporting this prediction were: Bwd Packet Length Std, Init_Win_bytes_backward, FIN Flag Count, Destination Port, Idle Max.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 21
+Predicted class: 2
+Confidence: 1.0000
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 2 with 100.00% confidence. The strongest features supporting this prediction were: Total Length of Bwd Packets, Bwd IAT Max, Flow IAT Min, Fwd Packet Length Max, Total Length of Fwd Packets.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 30
+Predicted class: 9
+Confidence: 0.9869
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 9 with 98.69% confidence. The strongest features supporting this prediction were: Total Length of Fwd Packets, Flow Bytes/s, Subflow Fwd Bytes, PSH Flag Count, Bwd Packets/s.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 33
+Predicted class: 2
+Confidence: 0.9997
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 2 with 99.97% confidence. The strongest features supporting this prediction were: Fwd Packet Length Max, act_data_pkt_fwd, Total Backward Packets, Destination Port, Total Length of Fwd Packets.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 44
+Predicted class: 2
+Confidence: 0.9999
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 2 with 99.99% confidence. The strongest features supporting this prediction were: Fwd Packet Length Max, Bwd Packet Length Mean, Total Length of Fwd Packets, Destination Port, Total Length of Bwd Packets.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 47
+Predicted class: 2
+Confidence: 0.9999
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 2 with 99.99% confidence. The strongest features supporting this prediction were: Fwd Packet Length Max, Bwd Packet Length Mean, Total Length of Fwd Packets, Total Length of Bwd Packets, Destination Port.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 50
+Predicted class: 9
+Confidence: 0.9998
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 9 with 99.98% confidence. The strongest features supporting this prediction were: Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 59
+Predicted class: 4
+Confidence: 0.9999
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 4 with 99.99% confidence. The strongest features supporting this prediction were: Bwd Packet Length Std, Init_Win_bytes_backward, Idle Max, Idle Min, Destination Port.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 62
+Predicted class: 4
+Confidence: 0.9997
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 4 with 99.97% confidence. The strongest features supporting this prediction were: Bwd Packet Length Std, Init_Win_bytes_backward, Destination Port, Fwd Packet Length Std, Bwd Packet Length Mean.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+
+------------------------------------------------------------------------------------------
+Sample: 98
+Predicted class: 9
+Confidence: 0.9996
+Confidence level: HIGH
+Severity: HIGH
+Reason:
+XGBoost classified the observed network flow as class 9 with 99.96% confidence. The strongest features supporting this prediction were: Init_Win_bytes_forward, Total Length of Fwd Packets, min_seg_size_forward, Packet Length Mean, Flow Bytes/s.
+
+Recommendation:
+SOC analyst should investigate the affected flow, correlate the event with source/destination activity and review related network events.
+

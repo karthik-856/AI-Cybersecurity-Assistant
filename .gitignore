@@ -1,0 +1,59 @@
+# Dependencies & Environments
+node_modules/
+.venv/
+venv/
+env/
+
+# Python Cache & Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Sensitive Credentials & Keys
+.env
+*.pem
+*.key
+*.crt
+
+# Build Artifacts
+dist/
+build/
+outputs/
+*.egg-info/
+
+# Logs & Temporary Scratch
+*.log
+scratch/
+catboost_info/
+
+# Local sessions, generated documents, and personal presentation material
+.agents/
+.claude/
+.codex/
+.idea/
+*.code-workspace
+*.ndjson
+output/
+tmp/
+docs/presentation/
+new notebook results/
+*.db
+*.sqlite3
+*.db-shm
+*.db-wal
+rag_assistant/data/
+
+# Rebuildable research data and model experiments. The compressed runtime model,
+# label/schema metadata, and small replay example remain in the repository.
+data/raw/
+data/processed/
+models/multiclass/
+models/deep_learning/
+models/zuka_unified_xgboost/model.json
+results/tables/xai/*.npy
+template-inspect.ndjson
+

@@ -1,0 +1,54 @@
+{
+    "project": "AI-Cybersecurity-Assistant",
+    "current_stage": {
+        "status": "offline_evaluation_and_xai",
+        "input": "CIC-IDS2017 processed test/evaluation flows",
+        "model": "XGBoost",
+        "explainability": "SHAP",
+        "output": [
+            "attack_class",
+            "confidence",
+            "severity",
+            "soc_priority",
+            "xai_explanation",
+            "analyst_recommendation"
+        ]
+    },
+    "future_live_stage": {
+        "status": "planned",
+        "pipeline": [
+            "Network Traffic / Flow Source",
+            "Automatic Flow Capture",
+            "Automatic Feature Extraction",
+            "78-Feature Preprocessing",
+            "XGBoost Detection",
+            "Prediction Confidence",
+            "SHAP Explanation",
+            "Alert Severity Engine",
+            "SOC Priority Engine",
+            "Recommendation Engine",
+            "SOC Dashboard",
+            "SOC Analyst Alert"
+        ],
+        "important_requirement": "The live system must generate the same 78 model features automatically. Analysts should not manually enter feature values.",
+        "model_output": [
+            "Predicted Attack Class",
+            "Confidence",
+            "Top SHAP Features",
+            "Human-readable Explanation"
+        ],
+        "soc_output": [
+            "Alert",
+            "Priority",
+            "Severity",
+            "Explanation",
+            "Recommended Investigation",
+            "Evidence / Context"
+        ]
+    },
+    "human_in_the_loop": {
+        "analyst_required": true,
+        "purpose": "Validate and investigate model-generated detections before operational containment decisions."
+    },
+    "important_limitation": "The current notebook does not yet provide live packet capture or live network-flow ingestion."
+}

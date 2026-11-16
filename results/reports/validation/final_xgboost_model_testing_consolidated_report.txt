@@ -1,0 +1,28 @@
+FINAL XGBOOST MODEL TESTING CONSOLIDATED REPORT
+==========================================================================================
+
+Model: XGBClassifier
+Test samples: 478875
+Features: 78
+Classes: 14
+
+Accuracy: 0.998714
+Balanced Accuracy: 0.845601
+Macro Precision: 0.926422
+Macro Recall: 0.845601
+Macro F1: 0.872461
+Weighted F1: 0.998663
+
+Mean confidence: 0.998619
+Incorrect predictions: 616
+Error rate: 0.001286
+
+MODEL TESTING CONCLUSION
+------------------------------------------------------------------------------------------
+The XGBoost model demonstrates very strong overall classification performance on the held-out test data. However, accuracy alone is not sufficient because the dataset is highly imbalanced. Balanced accuracy, macro F1, and per-class metrics were therefore included in the final evaluation.
+
+Minority classes with very small support require cautious interpretation. In particular, class-level performance should be considered before claiming uniform detection capability across all 14 classes.
+
+The model has also been integrated with the tested SHAP explanation, automatic detection, SOC alert, recommendation, notification, assistant, dashboard, and simulated streaming components.
+
+Real network packet capture is not yet connected. The streaming validation currently uses existing CIC-IDS2017 records as simulated traffic input.

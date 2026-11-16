@@ -1,0 +1,16 @@
+cd C:\Users\admin\Downloads\AI-Cybersecurity-Assistant\frontend ## frontend and to run the website page
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+npm run build
+npm run dev
+
+# 1. Stop the existing process running on port 8000
+Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000).OwningProcess -Force
+
+# 2. Start Uvicorn with auto-reload
+uvicorn backend.app.main:app --reload  ## backend and api
+
+ python -m py_compile backend/app/models/file_name.py
+ python -m py_compile backend/app/main.py  
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d zuka_soc ## for sql
+
+-webkit-backdrop-filter: blur(7px);

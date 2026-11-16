@@ -1,0 +1,2 @@
+model,input_features,output_classes,architecture,dropout,optimizer,learning_rate,loss,epochs_requested,epochs_run,batch_size,best_epoch,best_validation_loss,best_validation_accuracy,test_accuracy,test_balanced_accuracy,test_macro_precision,test_macro_recall,test_macro_f1,test_weighted_f1
+Deep MLP,78,14,256 -> 128 -> 64 -> 32 -> 14,"[0.3, 0.3, 0.25, 0.2]",Adam,0.001,Sparse Categorical Crossentropy,15,15,1024,14,0.5930324196815491,0.7846306562423706,0.7840375880971026,0.8577432293803484,0.31382481681805974,0.8577432293803484,0.3703089087347289,0.8481598301674012

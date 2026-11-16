@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850" width="100%" height="100%">
+  <defs>
+    <style>
+      .title { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 24px; font-weight: bold; fill: #0f172a; }
+      .subtitle { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: normal; fill: #475569; }
+      .box-main { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 17px; font-weight: 500; fill: #0f172a; }
+      .box-sub { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: normal; fill: #475569; }
+      .arrow-lbl { font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif; font-size: 13px; font-weight: normal; fill: #475569; }
+    </style>
+    <marker id="arrow-marker" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#334155" />
+    </marker>
+  </defs>
+
+  <!-- Pure White Flat Background -->
+  <rect width="1400" height="850" fill="#ffffff" />
+
+  <!-- Title (Bold only, centered) -->
+  <text x="700" y="80" class="title" text-anchor="middle">ZUKA SOC: SOFTWARE ARCHITECTURE DIAGRAM</text>
+  <text x="700" y="115" class="subtitle" text-anchor="middle">Six-Component Architecture with Closed Feedback Cycle (IEEE Publication Style)</text>
+
+  <!-- ========================================================================= -->
+  <!-- ROW 1 (Left to Right: User -> Frontend -> Backend) -->
+  <!-- Box dimensions: 320x150, Gap: 90 -->
+  <!-- ========================================================================= -->
+
+  <!-- Box 1: User (Pastel Gray) -->
+  <g transform="translate(130, 200)">
+    <rect width="320" height="150" rx="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" />
+    <text x="160" y="70" class="box-main" text-anchor="middle">User</text>
+    <text x="160" y="98" class="box-sub" text-anchor="middle">SOC Security Analyst</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 450 275 L 535 275" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-marker)" />
+  <text x="492" y="260" class="arrow-lbl" text-anchor="middle">query</text>
+
+  <!-- Box 2: Frontend / Website (Pastel Blue) -->
+  <g transform="translate(540, 200)">
+    <rect width="320" height="150" rx="16" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2" />
+    <text x="160" y="70" class="box-main" text-anchor="middle">Frontend / Website</text>
+    <text x="160" y="98" class="box-sub" text-anchor="middle">React 18 Dashboard UI</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <path d="M 860 275 L 945 275" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-marker)" />
+  <text x="902" y="260" class="arrow-lbl" text-anchor="middle">request</text>
+
+  <!-- Box 3: Backend API (Pastel Teal) -->
+  <g transform="translate(950, 200)">
+    <rect width="320" height="150" rx="16" fill="#ccfbf1" stroke="#2dd4bf" stroke-width="2" />
+    <text x="160" y="70" class="box-main" text-anchor="middle">Backend API</text>
+    <text x="160" y="98" class="box-sub" text-anchor="middle">FastAPI Core Services</text>
+  </g>
+
+  <!-- Downward Arrow 3 -> 4 -->
+  <path d="M 1110 350 L 1110 495" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-marker)" />
+  <text x="1155" y="430" class="arrow-lbl" text-anchor="middle">context</text>
+
+  <!-- ========================================================================= -->
+  <!-- ROW 2 (Right to Left: Knowledge Base -> LLM Model -> Response back to User) -->
+  <!-- ========================================================================= -->
+
+  <!-- Box 4: Knowledge Base (Pastel Blue) -->
+  <g transform="translate(950, 500)">
+    <rect width="320" height="150" rx="16" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2" />
+    <text x="160" y="70" class="box-main" text-anchor="middle">Knowledge Base</text>
+    <text x="160" y="98" class="box-sub" text-anchor="middle">RAG &amp; Telemetry Center</text>
+  </g>
+
+  <!-- Arrow 4 -> 5 (Going Left) -->
+  <path d="M 950 575 L 865 575" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-marker)" />
+  <text x="907" y="560" class="arrow-lbl" text-anchor="middle">prompt</text>
+
+  <!-- Box 5: LLM Model (Pastel Teal) -->
+  <g transform="translate(540, 500)">
+    <rect width="320" height="150" rx="16" fill="#ccfbf1" stroke="#2dd4bf" stroke-width="2" />
+    <text x="160" y="70" class="box-main" text-anchor="middle">LLM Model</text>
+    <text x="160" y="98" class="box-sub" text-anchor="middle">Local Ollama Engine</text>
+  </g>
+
+  <!-- Arrow 5 -> 6 (Going Left) -->
+  <path d="M 540 575 L 455 575" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-marker)" />
+  <text x="497" y="560" class="arrow-lbl" text-anchor="middle">response</text>
+
+  <!-- Box 6: Response back to User (Pastel Gray) -->
+  <g transform="translate(130, 500)">
+    <rect width="320" height="150" rx="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" />
+    <text x="160" y="70" class="box-main" text-anchor="middle">Response back to User</text>
+    <text x="160" y="98" class="box-sub" text-anchor="middle">Triage &amp; Defense Action</text>
+  </g>
+
+  <!-- Upward Arrow 6 -> 1 (Closing the Feedback Cycle) -->
+  <path d="M 290 500 L 290 355" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-marker)" />
+  <text x="230" y="430" class="arrow-lbl" text-anchor="middle">feedback cycle</text>
+
+</svg>

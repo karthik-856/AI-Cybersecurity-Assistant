@@ -1,0 +1,14 @@
+AI CYBERSECURITY SOC ASSISTANT DASHBOARD
+================================================================================
+Total events: 10
+Attack alerts: 1
+Benign events: 9
+High severity: 1
+Medium severity: 0
+Low severity: 0
+P1 alerts: 1
+Attack rate: 10.00%
+Mean attack confidence: 0.9998
+
+Automatic pipeline:
+Network Traffic -> Feature Extraction -> XGBoost -> SHAP -> Alert Engine -> SOC Assistant -> SOC Analyst

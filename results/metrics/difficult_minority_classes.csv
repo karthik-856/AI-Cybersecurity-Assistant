@@ -1,0 +1,6 @@
+Class,Precision,Recall,F1,Support
+Bot,0.902821,0.738462,0.812412,390
+Infiltration,1.0,0.571429,0.727273,7
+Web Attack - Brute Force,0.713068,0.853741,0.77709,294
+Web Attack - Sql Injection,1.0,0.5,0.666667,4
+Web Attack - XSS,0.4,0.2,0.266667,130

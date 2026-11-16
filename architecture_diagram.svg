@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="760" viewBox="0 0 1800 760" role="img" aria-labelledby="title desc">
+  <title id="title">AI Cybersecurity Assistant for SOC Threat Detection</title>
+  <desc id="desc">Processed network flow data is prepared as model features, classified by XGBoost, explained with SHAP, converted into prioritized alerts and recommendations, and presented to a SOC analyst for review.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#263746"/>
+    </marker>
+    <style>
+      .title { font: 600 34px Arial, Helvetica, sans-serif; fill: #152536; }
+      .subtitle { font: 400 19px Arial, Helvetica, sans-serif; fill: #536575; }
+      .label { font: 600 21px Arial, Helvetica, sans-serif; fill: #17324d; }
+      .detail { font: 400 16px Arial, Helvetica, sans-serif; fill: #536575; }
+      .note { font: 400 15px Arial, Helvetica, sans-serif; fill: #536575; }
+      .box { fill: #ffffff; stroke: #7892a9; stroke-width: 2; }
+      .accent { fill: #eaf2f8; stroke: #587b99; stroke-width: 2; }
+      .arrow { fill: none; stroke: #263746; stroke-width: 2.2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1800" height="760" fill="#ffffff"/>
+  <text x="900" y="74" text-anchor="middle" class="title">AI Cybersecurity Assistant for SOC Threat Detection</text>
+  <text x="900" y="112" text-anchor="middle" class="subtitle">Explainable flow-based intrusion detection with analyst-reviewed alerting</text>
+
+  <!-- Six essential stages of the implemented detection and triage workflow. -->
+  <rect x="55" y="260" width="235" height="150" rx="5" class="box"/>
+  <rect x="345" y="260" width="235" height="150" rx="5" class="box"/>
+  <rect x="635" y="260" width="235" height="150" rx="5" class="accent"/>
+  <rect x="925" y="260" width="235" height="150" rx="5" class="box"/>
+  <rect x="1215" y="260" width="235" height="150" rx="5" class="box"/>
+  <rect x="1505" y="260" width="235" height="150" rx="5" class="accent"/>
+
+  <path d="M290 335 H329" class="arrow"/>
+  <path d="M580 335 H619" class="arrow"/>
+  <path d="M870 335 H909" class="arrow"/>
+  <path d="M1160 335 H1199" class="arrow"/>
+  <path d="M1450 335 H1489" class="arrow"/>
+
+  <text x="172.5" y="315" text-anchor="middle" class="label">
+    <tspan x="172.5">Network-flow</tspan><tspan x="172.5" dy="28">data</tspan>
+  </text>
+  <text x="172.5" y="378" text-anchor="middle" class="detail">Processed / simulated records</text>
+
+  <text x="462.5" y="315" text-anchor="middle" class="label">
+    <tspan x="462.5">Feature</tspan><tspan x="462.5" dy="28">preparation</tspan>
+  </text>
+  <text x="462.5" y="378" text-anchor="middle" class="detail">Model-ready flow features</text>
+
+  <text x="752.5" y="315" text-anchor="middle" class="label">
+    <tspan x="752.5">XGBoost</tspan><tspan x="752.5" dy="28">classification</tspan>
+  </text>
+  <text x="752.5" y="378" text-anchor="middle" class="detail">Attack class + confidence</text>
+
+  <text x="1042.5" y="315" text-anchor="middle" class="label">
+    <tspan x="1042.5">SHAP</tspan><tspan x="1042.5" dy="28">explanation</tspan>
+  </text>
+  <text x="1042.5" y="378" text-anchor="middle" class="detail">Contributing flow features</text>
+
+  <text x="1332.5" y="315" text-anchor="middle" class="label">
+    <tspan x="1332.5">Alert triage</tspan><tspan x="1332.5" dy="28">&amp; recommendation</tspan>
+  </text>
+  <text x="1332.5" y="378" text-anchor="middle" class="detail">Severity + SOC priority</text>
+
+  <text x="1622.5" y="315" text-anchor="middle" class="label">
+    <tspan x="1622.5">SOC dashboard</tspan><tspan x="1622.5" dy="28">&amp; analyst</tspan>
+  </text>
+  <text x="1622.5" y="378" text-anchor="middle" class="detail">Human review required</text>
+
+  <line x1="55" y1="500" x2="1740" y2="500" stroke="#d8e1e8" stroke-width="1.5"/>
+  <text x="900" y="548" text-anchor="middle" class="note">Current implementation evaluates processed or simulated flow records; live network capture is not connected.</text>
+  <text x="900" y="580" text-anchor="middle" class="note">SHAP provides model evidence for analyst review; it does not establish malicious activity or trigger autonomous containment.</text>
+</svg>

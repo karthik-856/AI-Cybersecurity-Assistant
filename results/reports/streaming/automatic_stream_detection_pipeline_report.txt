@@ -1,0 +1,25 @@
+AUTOMATIC STREAMING DETECTION PIPELINE
+================================================================================
+
+Architecture:
+Network Traffic
+ -> Traffic Collector
+ -> Feature Pipeline
+ -> XGBoost Detector
+ -> SHAP Explainer
+ -> Alert Engine
+ -> Recommendation Engine
+ -> SOC Assistant
+ -> Dashboard / SOC Analyst
+
+Records processed: 50
+Attack events: 10
+Benign events: 40
+Processing time: 4.6084 seconds
+Approx throughput: 10.85 records/sec
+
+Manual feature entry: NOT USED
+Input source: SIMULATED EXISTING TEST TRAFFIC
+Real network capture: NOT CONNECTED YET
+Automated containment: DISABLED
+Human analyst approval: REQUIRED

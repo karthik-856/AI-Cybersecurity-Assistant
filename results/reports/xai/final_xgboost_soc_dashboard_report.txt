@@ -1,0 +1,124 @@
+==========================================================================================
+FINAL XGBOOST SOC DASHBOARD REPORT
+==========================================================================================
+
+Model: XGBoost
+Classes: 14
+Features: 78
+Events evaluated: 5000
+Benign events: 4119
+Attack alerts: 881
+
+------------------------------------------------------------------------------------------
+ALERT GENERATION RULE
+------------------------------------------------------------------------------------------
+Class 0 = benign / no attack alert
+Non-zero predicted class = attack alert
+Confidence >= 0.90 = HIGH
+Confidence >= 0.70 = MEDIUM
+Confidence < 0.70 = LOW
+
+------------------------------------------------------------------------------------------
+TOP SOC ALERTS
+------------------------------------------------------------------------------------------
+
+Sample 244 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Total Length of Fwd Packets
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 219 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Packet Length Mean
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 255 | Class 10 | Confidence 100.00% | Severity HIGH
+Features: Destination Port | Fwd Packet Length Max | Total Length of Bwd Packets | Init_Win_bytes_backward | Init_Win_bytes_forward
+Explanation: XGBoost detected class 10 with 100.00% confidence. The prediction is primarily influenced by Destination Port, Fwd Packet Length Max, and Total Length of Bwd Packets.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 2881 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Total Length of Fwd Packets | Bwd Packet Length Mean | Fwd Packet Length Max | Active Min
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Total Length of Fwd Packets, and Bwd Packet Length Mean.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 2378 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Total Length of Fwd Packets | Bwd Packet Length Mean | Fwd Packet Length Max | Active Min
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Total Length of Fwd Packets, and Bwd Packet Length Mean.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 4803 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Total Length of Fwd Packets
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 359 | Class 10 | Confidence 100.00% | Severity HIGH
+Features: Destination Port | Fwd Packet Length Max | Total Length of Bwd Packets | Init_Win_bytes_backward | Init_Win_bytes_forward
+Explanation: XGBoost detected class 10 with 100.00% confidence. The prediction is primarily influenced by Destination Port, Fwd Packet Length Max, and Total Length of Bwd Packets.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 4567 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Total Length of Fwd Packets | Bwd Packet Length Mean | Fwd Packet Length Max | Active Min
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Total Length of Fwd Packets, and Bwd Packet Length Mean.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 575 | Class 1 | Confidence 100.00% | Severity HIGH
+Features: Bwd IAT Min | Flow IAT Std | Destination Port | Bwd Packet Length Max | Packet Length Mean
+Explanation: XGBoost detected class 1 with 100.00% confidence. The prediction is primarily influenced by Bwd IAT Min, Flow IAT Std, and Destination Port.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 3250 | Class 10 | Confidence 100.00% | Severity HIGH
+Features: Destination Port | Fwd Packet Length Max | Total Length of Bwd Packets | Init_Win_bytes_backward | Init_Win_bytes_forward
+Explanation: XGBoost detected class 10 with 100.00% confidence. The prediction is primarily influenced by Destination Port, Fwd Packet Length Max, and Total Length of Bwd Packets.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 500 | Class 10 | Confidence 100.00% | Severity HIGH
+Features: Destination Port | Fwd Packet Length Max | Total Length of Bwd Packets | Init_Win_bytes_backward | Init_Win_bytes_forward
+Explanation: XGBoost detected class 10 with 100.00% confidence. The prediction is primarily influenced by Destination Port, Fwd Packet Length Max, and Total Length of Bwd Packets.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 3322 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Total Length of Fwd Packets
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 4072 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Total Length of Fwd Packets | Bwd Packet Length Mean | Fwd Packet Length Max | Active Min
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Total Length of Fwd Packets, and Bwd Packet Length Mean.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 1423 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Total Length of Fwd Packets
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 609 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Total Length of Fwd Packets
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 4176 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Total Length of Fwd Packets
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 4256 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Packet Length Mean
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 1093 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Total Length of Fwd Packets | Bwd Packet Length Mean | Fwd Packet Length Max | Active Min
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Total Length of Fwd Packets, and Bwd Packet Length Mean.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 21 | Class 2 | Confidence 100.00% | Severity HIGH
+Features: Total Length of Bwd Packets | Bwd IAT Max | Flow IAT Min | Fwd Packet Length Max | Total Length of Fwd Packets
+Explanation: XGBoost detected class 2 with 100.00% confidence. The prediction is primarily influenced by Total Length of Bwd Packets, Bwd IAT Max, and Flow IAT Min.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+
+Sample 3329 | Class 7 | Confidence 100.00% | Severity HIGH
+Features: Destination Port | Fwd Packet Length Mean | Total Backward Packets | Flow Bytes/s | min_seg_size_forward
+Explanation: XGBoost detected class 7 with 100.00% confidence. The prediction is primarily influenced by Destination Port, Fwd Packet Length Mean, and Total Backward Packets.
+Recommendation: SOC analyst should review the alert, validate the network-flow context, correlate related events, and investigate the identified attack class.
+

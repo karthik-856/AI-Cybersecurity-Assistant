@@ -1,0 +1,24 @@
+==========================================================================================
+SOC DASHBOARD MONITORING REPORT
+==========================================================================================
+
+Total events : 10
+Attack events: 1
+Benign events: 9
+
+SOC KPI SUMMARY
+------------------------------------------------------------------------------------------
+Total Events: 10.0
+Attack Events: 1.0
+Benign Events: 9.0
+Attack Percentage: 10.0
+High Severity Alerts: 1.0
+Medium Severity Alerts: 0.0
+Low Severity Alerts: 0.0
+P1 Alerts: 1.0
+
+IMPORTANT ARCHITECTURE NOTE
+------------------------------------------------------------------------------------------
+The current dashboard is validated using existing network-flow records through the automatic XGBoost detection pipeline.
+No manual network-flow feature entry is required.
+A future live ingestion layer can provide network-flow records automatically to this same detection engine.

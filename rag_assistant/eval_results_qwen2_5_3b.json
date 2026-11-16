@@ -1,0 +1,796 @@
+{
+  "summary": {
+    "model": "qwen2.5:3b",
+    "total_questions": 40,
+    "overall_accuracy_pct": 85.0,
+    "in_domain_total": 32,
+    "in_domain_correct": 26,
+    "in_domain_accuracy_pct": 81.25,
+    "out_of_domain_total": 8,
+    "out_of_domain_correct": 8,
+    "out_of_domain_rejection_pct": 100.0,
+    "hallucination_count": 0,
+    "hallucination_rate_pct": 0.0,
+    "avg_latency_seconds": 46.92,
+    "timestamp": "2026-10-26T07:54:40Z"
+  },
+  "results": [
+    {
+      "id": "Q01",
+      "question": "What is the primary mission of the ZUKA SOC Platform?",
+      "category": "in_domain",
+      "target_section": "1. System Identity & Mission Overview",
+      "expected_answer": "The ZUKA SOC Platform is an enterprise-grade Security Operations Center platform specifically engineered to detect, diagnose, investigate, and triage network attacks directed against smart devices and IoT infrastructure.",
+      "model_answer": "The primary mission of the ZUKA SOC Platform is to detect, diagnose, investigate, and triage network attacks directed against smart devices and Internet of Thin...",
+      "sources": [
+        "1. System Identity & Mission Overview",
+        "Platform Overview & Document Metadata",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 72.57,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 4/4 key facts."
+    },
+    {
+      "id": "Q02",
+      "question": "Why do smart devices require dedicated SOC operations instead of traditional antivirus or EDR agents?",
+      "category": "in_domain",
+      "target_section": "1. System Identity & Mission Overview",
+      "expected_answer": "Microcontroller CPU and RAM constraints cannot support traditional antivirus or host-based EDR agents, and devices frequently have insecure defaults, unpatched firmware, and volumetric weaponization into Mirai-style botnets.",
+      "model_answer": "Resource Constraints, Insecure Defaults, Unpatched Firmware, and Volumetric Weaponization are reasons why smart devices require dedicated SOC operations instead...",
+      "sources": [
+        "1. System Identity & Mission Overview",
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "Platform Overview & Document Metadata"
+      ],
+      "latency_sec": 58.27,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/4 key facts."
+    },
+    {
+      "id": "Q03",
+      "question": "What is Zuka's policy regarding hallucinations and database queries?",
+      "category": "in_domain",
+      "target_section": "1. System Identity & Mission Overview",
+      "expected_answer": "Zuka adheres strictly to a Zero-Hallucination Policy where all IDs, counts, and metrics are derived directly from verified database queries.",
+      "model_answer": "Zuka adheres to a Zero-Hallucination Policy and all IDs, counts, and metrics are derived directly from verified database queries.",
+      "sources": [
+        "1. System Identity & Mission Overview",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "Platform Overview & Document Metadata"
+      ],
+      "latency_sec": 48.28,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 2/2 key facts."
+    },
+    {
+      "id": "Q04",
+      "question": "How does Zuka handle requests to generate exploit payloads?",
+      "category": "in_domain",
+      "target_section": "1. System Identity & Mission Overview",
+      "expected_answer": "Zuka operates under a Strict Defensive Boundary, refusing any request to generate exploit payloads or facilitate attacks.",
+      "model_answer": "Zuka strictly refuses any request to generate exploit code.",
+      "sources": [
+        "1. System Identity & Mission Overview",
+        "Platform Overview & Document Metadata",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 26.02,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 2/3 key facts."
+    },
+    {
+      "id": "Q05",
+      "question": "What frontend framework and libraries are used in the ZUKA platform?",
+      "category": "in_domain",
+      "target_section": "2. Platform Architecture & Technology Stack",
+      "expected_answer": "The frontend UI is built with React 18, TypeScript, Vite, and Lucide Icons.",
+      "model_answer": "React 18, TypeScript, Vite, Lucide are used in the ZUKA platform's frontend.",
+      "sources": [
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview",
+        "2. Platform Architecture & Technology Stack",
+        "9. Assistant System Prompt & Operating Boundaries"
+      ],
+      "latency_sec": 61.23,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q06",
+      "question": "Which Python version and web framework power the backend API?",
+      "category": "in_domain",
+      "target_section": "2. Platform Architecture & Technology Stack",
+      "expected_answer": "FastAPI on Python 3.13 with Uvicorn.",
+      "model_answer": "FastAPI (Python 3.13) power the backend API.",
+      "sources": [
+        "2. Platform Architecture & Technology Stack",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "4. Platform Modules & Operational Guide",
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)"
+      ],
+      "latency_sec": 100.0,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 2/3 key facts."
+    },
+    {
+      "id": "Q07",
+      "question": "What database and ORM are used for persistence in ZUKA?",
+      "category": "in_domain",
+      "target_section": "2. Platform Architecture & Technology Stack",
+      "expected_answer": "PostgreSQL with SQLAlchemy 2.0 and Alembic.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview",
+        "9. Assistant System Prompt & Operating Boundaries"
+      ],
+      "latency_sec": 32.75,
+      "verdict": "FAIL_REFUSAL",
+      "is_correct": false,
+      "is_hallucination": false,
+      "evaluation_note": "False negative: Refused to answer when context contained the answer."
+    },
+    {
+      "id": "Q08",
+      "question": "Which library is used to compute Explainable AI Shapley values?",
+      "category": "in_domain",
+      "target_section": "2. Platform Architecture & Technology Stack",
+      "expected_answer": "TreeSHAP via shap.TreeExplainer.",
+      "model_answer": "TreeSHAP (shap.TreeExplainer)",
+      "sources": [
+        "2. Platform Architecture & Technology Stack",
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives",
+        "9. Assistant System Prompt & Operating Boundaries"
+      ],
+      "latency_sec": 63.02,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 2/2 key facts."
+    },
+    {
+      "id": "Q09",
+      "question": "What operational constraints apply to the SOC_ANALYST role?",
+      "category": "in_domain",
+      "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+      "expected_answer": "SOC_ANALYST cannot approve new users, delete user accounts, or modify core database schema definitions.",
+      "model_answer": "SOC_ANALYST cannot approve new users, delete user accounts, or modify core database schema definitions.",
+      "sources": [
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview"
+      ],
+      "latency_sec": 38.75,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 2/2 key facts."
+    },
+    {
+      "id": "Q10",
+      "question": "Can an administrator delete or deactivate their own active account?",
+      "category": "in_domain",
+      "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+      "expected_answer": "No. There is a safety safeguard preventing administrators from deleting or deactivating their own active account.",
+      "model_answer": "Safety safeguard: Cannot delete or deactivate own active administrator account.",
+      "sources": [
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 34.97,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q11",
+      "question": "What permissions and constraints apply to the VIEWER role?",
+      "category": "in_domain",
+      "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+      "expected_answer": "Read-only access to operational overview on Dashboard and live packet inspection in Network Monitor. Cannot acknowledge alerts, open investigations, edit incident statuses, add notes, or export reports.",
+      "model_answer": "VIEWER has read-only access: Dashboard, live packet inspection in Network Monitor. Cannot acknowledge alerts, open investigations, edit incident statuses, add n...",
+      "sources": [
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 36.2,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q12",
+      "question": "Why can newly registered users not log in immediately after registration?",
+      "category": "in_domain",
+      "target_section": "3. Role-Based Access Control (RBAC) & User Management",
+      "expected_answer": "All newly registered accounts default to is_active = False (Pending Approval) and must be authorized by an administrator before login credentials become active.",
+      "model_answer": "Newly registered users default to is_active = False (Pending Approval) and require authorization before login credentials become active.",
+      "sources": [
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives"
+      ],
+      "latency_sec": 47.55,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/4 key facts."
+    },
+    {
+      "id": "Q13",
+      "question": "What does the central Dashboard module (/dashboard) display?",
+      "category": "in_domain",
+      "target_section": "4. Platform Modules & Operational Guide",
+      "expected_answer": "Displays live threat indicators, 24h attack distributions, protocol breakdowns (TCP/UDP/ICMP), active incident queues, and system operational health.",
+      "model_answer": "The central Dashboard module (/dashboard) displays live threat indicators, 24h attack distributions, protocol breakdowns (TCP/UDP/ICMP), active incident queues,...",
+      "sources": [
+        "4. Platform Modules & Operational Guide",
+        "2. Platform Architecture & Technology Stack",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives"
+      ],
+      "latency_sec": 63.94,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q14",
+      "question": "What is the structured lifecycle case management flow in Incident Management?",
+      "category": "in_domain",
+      "target_section": "4. Platform Modules & Operational Guide",
+      "expected_answer": "OPEN -> ACKNOWLEDGED -> INVESTIGATING -> RESOLVED -> CLOSED.",
+      "model_answer": "The structured lifecycle case management in Incident Management follows these steps:\n\n1. OPEN -> ACKNOWLEDGED\n2. ACKNOWLEDGED -> INVESTIGATING\n3. INVESTIGATING ...",
+      "sources": [
+        "4. Platform Modules & Operational Guide",
+        "6. Standard Operating Procedures (SOPs) & Workflows",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "2. Platform Architecture & Technology Stack"
+      ],
+      "latency_sec": 66.25,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 5/5 key facts."
+    },
+    {
+      "id": "Q15",
+      "question": "What defensive containment countermeasures can analysts apply in the Defense Department?",
+      "category": "in_domain",
+      "target_section": "4. Platform Modules & Operational Guide",
+      "expected_answer": "VLAN quarantine, IP block, credential rotation, rate limiting, and firmware lockdown.",
+      "model_answer": "Analysts in the Defense Department can apply the following defensive containment countermeasures:\n- VLAN quarantine\n- IP block\n- credential rotation\n- rate limi...",
+      "sources": [
+        "4. Platform Modules & Operational Guide",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives",
+        "3. Role-Based Access Control (RBAC) & User Management"
+      ],
+      "latency_sec": 45.13,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 4/4 key facts."
+    },
+    {
+      "id": "Q16",
+      "question": "What is the permanent immutable Analyst Action Ledger in the Database Center?",
+      "category": "in_domain",
+      "target_section": "4. Platform Modules & Operational Guide",
+      "expected_answer": "It is an administrator-only permanent ledger automatically recording all operational actions across the platform.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "2. Platform Architecture & Technology Stack",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives"
+      ],
+      "latency_sec": 43.34,
+      "verdict": "FAIL_REFUSAL",
+      "is_correct": false,
+      "is_hallucination": false,
+      "evaluation_note": "False negative: Refused to answer when context contained the answer."
+    },
+    {
+      "id": "Q17",
+      "question": "How many network flows was the XGBoost multiclass model trained on?",
+      "category": "in_domain",
+      "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+      "expected_answer": "The model was trained on 2,561,658 network flows with balanced class weighting.",
+      "model_answer": "The XGBoost multiclass model was trained on 2,561,658 network flows.",
+      "sources": [
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "2. Platform Architecture & Technology Stack"
+      ],
+      "latency_sec": 69.13,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 1/1 key facts."
+    },
+    {
+      "id": "Q18",
+      "question": "What validation accuracy and F1 scores does the ML detection model achieve?",
+      "category": "in_domain",
+      "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+      "expected_answer": "Validation achieves ~93.0% multiclass accuracy, 99.2% F1 on DDoS, 92.6% on DoS, and 96.3% on Benign traffic.",
+      "model_answer": "The ML detection model achieves ~93.0% multiclass accuracy, 99.2% F1 on DDoS, 92.6% on DoS, and 96.3% on Benign traffic.",
+      "sources": [
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "2. Platform Architecture & Technology Stack",
+        "4. Platform Modules & Operational Guide",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 59.31,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q19",
+      "question": "What is the typical severity assigned to the BOTNET and DDOS attack classes?",
+      "category": "in_domain",
+      "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+      "expected_answer": "CRITICAL severity.",
+      "model_answer": "CRITICAL for both BOTNET and DDOS attack classes.",
+      "sources": [
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "4. Platform Modules & Operational Guide",
+        "1. System Identity & Mission Overview",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 52.39,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 1/1 key facts."
+    },
+    {
+      "id": "Q20",
+      "question": "How many network flow features does the model evaluate?",
+      "category": "in_domain",
+      "target_section": "5. Machine Learning, IoT Detection & Explainable AI (XAI)",
+      "expected_answer": "The model evaluates 14 network flow features.",
+      "model_answer": "The model evaluates 14 network flow features.",
+      "sources": [
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "2. Platform Architecture & Technology Stack",
+        "4. Platform Modules & Operational Guide",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 26.01,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 1/1 key facts."
+    },
+    {
+      "id": "Q21",
+      "question": "According to SOP-01, what is the mandatory rule when acknowledging an alert?",
+      "category": "in_domain",
+      "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+      "expected_answer": "Acknowledging the alert sets both the alert and correlated incident to ACKNOWLEDGED.",
+      "model_answer": "Mandatory rule: Acknowledging the alert sets both alert and correlated incident to ACKNOWLEDGED.",
+      "sources": [
+        "6. Standard Operating Procedures (SOPs) & Workflows",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 49.53,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q22",
+      "question": "What happens when an analyst initiates an investigation in SOP-02?",
+      "category": "in_domain",
+      "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+      "expected_answer": "The system transitions the incident to INVESTIGATING and auto-provisions an active forensic dossier (INV-...) in IN_PROGRESS, visible in both Investigation and Defense Departments.",
+      "model_answer": "When an analyst initiates an investigation in SOP-02, the system transitions the incident to INVESTIGATING and auto-provisions an active forensic dossier (INV-....",
+      "sources": [
+        "6. Standard Operating Procedures (SOPs) & Workflows",
+        "4. Platform Modules & Operational Guide",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "9. Assistant System Prompt & Operating Boundaries"
+      ],
+      "latency_sec": 59.71,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q23",
+      "question": "What is the prerequisite rule required before an incident can be marked RESOLVED in SOP-04?",
+      "category": "in_domain",
+      "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+      "expected_answer": "A completed investigation with an evidence-based analyst conclusion unlocks incident resolution.",
+      "model_answer": "The prerequisite rule required before an incident can be marked RESOLVED in SOP-04 is that the incident's investigation dossier must be completed with forensic ...",
+      "sources": [
+        "6. Standard Operating Procedures (SOPs) & Workflows",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "4. Platform Modules & Operational Guide",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 76.34,
+      "verdict": "FAIL_INACCURATE",
+      "is_correct": false,
+      "is_hallucination": false,
+      "evaluation_note": "Incomplete or inaccurate answer: matched only ['resolution']."
+    },
+    {
+      "id": "Q24",
+      "question": "What steps are required to close an incident under SOP-06?",
+      "category": "in_domain",
+      "target_section": "6. Standard Operating Procedures (SOPs) & Workflows",
+      "expected_answer": "Select the RESOLVED incident in Incident Management, review final post-mortem, verify device health, click 'Close Incident' (or tell Zuka: close incident <ID>), and status updates to CLOSED.",
+      "model_answer": "1. Select the RESOLVED incident in Incident Management.\n2. Click 'Close Incident' (or tell Zuka: close incident <ID>).\n3. Status updates to CLOSED and the incid...",
+      "sources": [
+        "6. Standard Operating Procedures (SOPs) & Workflows",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "4. Platform Modules & Operational Guide"
+      ],
+      "latency_sec": 62.86,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/4 key facts."
+    },
+    {
+      "id": "Q25",
+      "question": "How does Zuka's dual-engine assistant process queries before falling back to Ollama?",
+      "category": "in_domain",
+      "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+      "expected_answer": "Queries first pass through a sub-5ms deterministic rule-based parser. If no pattern matches, the query safely falls back to local Ollama (qwen2.5:3b) using grounded database tool calling.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "Platform Overview & Document Metadata",
+        "9. Assistant System Prompt & Operating Boundaries"
+      ],
+      "latency_sec": 30.9,
+      "verdict": "FAIL_REFUSAL",
+      "is_correct": false,
+      "is_hallucination": false,
+      "evaluation_note": "False negative: Refused to answer when context contained the answer."
+    },
+    {
+      "id": "Q26",
+      "question": "What safety mechanism is triggered when an operator runs destructive actions like user deletion?",
+      "category": "in_domain",
+      "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+      "expected_answer": "Destructive actions generate a 60-second cryptographic confirmation token requiring explicit human confirmation.",
+      "model_answer": "A 60-second cryptographic confirmation token requires explicit human confirmation.",
+      "sources": [
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives",
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "9. Assistant System Prompt & Operating Boundaries"
+      ],
+      "latency_sec": 56.58,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 2/2 key facts."
+    },
+    {
+      "id": "Q27",
+      "question": "What does the assistant command 'system status' check?",
+      "category": "in_domain",
+      "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+      "expected_answer": "It checks live PostgreSQL health, table counts, and telemetry.",
+      "model_answer": "The assistant command 'system status' checks live PostgreSQL health, table counts, and telemetry.",
+      "sources": [
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives",
+        "3. Role-Based Access Control (RBAC) & User Management"
+      ],
+      "latency_sec": 45.34,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q28",
+      "question": "Which command flags an alert as FALSE_POSITIVE?",
+      "category": "in_domain",
+      "target_section": "7. Assistant Architecture, Command Palette & UI Primitives",
+      "expected_answer": "dismiss alert <id>",
+      "model_answer": "dismiss alert <id>",
+      "sources": [
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "6. Standard Operating Procedures (SOPs) & Workflows"
+      ],
+      "latency_sec": 43.65,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 1/1 key facts."
+    },
+    {
+      "id": "Q29",
+      "question": "Does ZUKA send telemetry or packet data to external cloud APIs?",
+      "category": "in_domain",
+      "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+      "expected_answer": "No. ZUKA is engineered for 100% on-premises local privacy. Backend, database, XGBoost inference, and Ollama LLM execute strictly on localhost without transmitting data to third-party clouds.",
+      "model_answer": "No.",
+      "sources": [
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)"
+      ],
+      "latency_sec": 45.03,
+      "verdict": "FAIL_INACCURATE",
+      "is_correct": false,
+      "is_hallucination": false,
+      "evaluation_note": "Incomplete or inaccurate answer: matched only ['no']."
+    },
+    {
+      "id": "Q30",
+      "question": "How is alert severity calculated from model prediction confidence?",
+      "category": "in_domain",
+      "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+      "expected_answer": "CRITICAL (>=90% or severe volumetric attack), HIGH (75-89%), MEDIUM (55-74%), LOW (<55%), and INFO (verified benign flows).",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "4. Platform Modules & Operational Guide",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 48.74,
+      "verdict": "FAIL_REFUSAL",
+      "is_correct": false,
+      "is_hallucination": false,
+      "evaluation_note": "False negative: Refused to answer when context contained the answer."
+    },
+    {
+      "id": "Q31",
+      "question": "How do analysts distinguish legitimate high-definition video streaming from a DoS flood?",
+      "category": "in_domain",
+      "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+      "expected_answer": "Legitimate video streaming has high payload bytes (dst_bytes), balanced TCP ACKs, and steady packet pacing. A DoS flood features abnormal packet rates with minimal or zero payload bytes and tiny inter-arrival times.",
+      "model_answer": "Legitimate video streaming features high payload bytes (dst_bytes), balanced TCP ACKs, and steady packet pacing. A DoS flood features abnormal packet rates with...",
+      "sources": [
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)",
+        "4. Platform Modules & Operational Guide",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 58.83,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 3/3 key facts."
+    },
+    {
+      "id": "Q32",
+      "question": "How are user passwords cryptographically protected in ZUKA?",
+      "category": "in_domain",
+      "target_section": "8. Comprehensive Frequently Asked Questions (FAQs)",
+      "expected_answer": "Passwords are cryptographically hashed using passlib with bcrypt or Argon2 hashing algorithms with unique salts, and never stored in plaintext.",
+      "model_answer": "Passwords are cryptographically protected using passlib with industry-standard bcrypt or Argon2 hashing algorithms with unique salts.",
+      "sources": [
+        "1. System Identity & Mission Overview",
+        "Platform Overview & Document Metadata",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 28.5,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Accurately answered with 4/4 key facts."
+    },
+    {
+      "id": "Q33",
+      "question": "What is the monthly subscription price for the Enterprise SaaS tier of ZUKA?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "9. Assistant System Prompt & Operating Boundaries"
+      ],
+      "latency_sec": 18.18,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    },
+    {
+      "id": "Q34",
+      "question": "What is the 24/7 telephone hotline number for emergency customer support?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "4. Platform Modules & Operational Guide",
+        "8. Comprehensive Frequently Asked Questions (FAQs)",
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview"
+      ],
+      "latency_sec": 30.49,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    },
+    {
+      "id": "Q35",
+      "question": "Does ZUKA have a mobile app available for download on Apple iOS in the App Store?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 32.67,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    },
+    {
+      "id": "Q36",
+      "question": "How can I configure AWS Lambda serverless functions to trigger incident responses?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "4. Platform Modules & Operational Guide",
+        "6. Standard Operating Procedures (SOPs) & Workflows",
+        "2. Platform Architecture & Technology Stack",
+        "7. Assistant Architecture",
+        "Command Palette & UI Primitives"
+      ],
+      "latency_sec": 37.36,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    },
+    {
+      "id": "Q37",
+      "question": "What is ZUKA's money-back guarantee and hardware refund policy?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "1. System Identity & Mission Overview",
+        "Platform Overview & Document Metadata",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 26.3,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    },
+    {
+      "id": "Q38",
+      "question": "Where is the physical corporate headquarters and office address of ZUKA located?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "8. Comprehensive Frequently Asked Questions (FAQs)"
+      ],
+      "latency_sec": 11.31,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    },
+    {
+      "id": "Q39",
+      "question": "What is the internal Wi-Fi password for guests visiting the SOC facility?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "1. System Identity & Mission Overview",
+        "Platform Overview & Document Metadata",
+        "3. Role-Based Access Control (RBAC) & User Management",
+        "5. Machine Learning",
+        "IoT Detection & Explainable AI (XAI)"
+      ],
+      "latency_sec": 38.29,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    },
+    {
+      "id": "Q40",
+      "question": "Can ZUKA install endpoint security software on Windows 11 desktop computers?",
+      "category": "out_of_domain",
+      "target_section": null,
+      "expected_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "model_answer": "I don't have that information. Please contact <chitlakarthik66@gmail.com>.",
+      "sources": [
+        "Platform Overview & Document Metadata",
+        "1. System Identity & Mission Overview",
+        "9. Assistant System Prompt & Operating Boundaries",
+        "4. Platform Modules & Operational Guide"
+      ],
+      "latency_sec": 30.91,
+      "verdict": "PASS",
+      "is_correct": true,
+      "is_hallucination": false,
+      "evaluation_note": "Correctly rejected out-of-domain question with designated contact fallback."
+    }
+  ]
+}

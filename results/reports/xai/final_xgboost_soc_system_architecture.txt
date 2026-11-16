@@ -1,0 +1,52 @@
+==========================================================================================
+AI-CYBERSECURITY-ASSISTANT — SOC SYSTEM ARCHITECTURE
+==========================================================================================
+
+CURRENT IMPLEMENTED PIPELINE
+------------------------------------------------------------------------------------------
+Processed CIC-IDS2017 Flow Data
+        ↓
+XGBoost Classification
+        ↓
+Attack Class + Confidence
+        ↓
+SHAP Explainability
+        ↓
+Severity + SOC Priority
+        ↓
+Human-readable Explanation
+        ↓
+Analyst Recommendation
+        ↓
+SOC Dashboard / Alert Queue
+
+FUTURE LIVE PIPELINE
+------------------------------------------------------------------------------------------
+Network Traffic / Flow Source
+        ↓
+Automatic Flow Capture
+        ↓
+Automatic Feature Extraction
+        ↓
+78-Feature Model Input
+        ↓
+XGBoost
+        ↓
+SHAP
+        ↓
+Alert + Severity + Priority
+        ↓
+Recommendation Engine
+        ↓
+SOC Dashboard
+        ↓
+SOC Analyst
+
+KEY DESIGN PRINCIPLES
+------------------------------------------------------------------------------------------
+1. No manual feature-value entry should be required in the final live system.
+2. Automatic feature extraction must produce the same 78 features used by XGBoost.
+3. SHAP explains model behavior and should not be treated as proof of malicious activity.
+4. Model confidence should be treated as model confidence, not automatically as a calibrated incident probability.
+5. The SOC analyst remains in the human-in-the-loop decision process.
+6. The current notebook is an offline/evaluation implementation, not yet a live network detector.
