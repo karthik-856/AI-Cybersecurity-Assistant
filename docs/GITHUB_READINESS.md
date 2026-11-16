@@ -9,18 +9,20 @@ queries, and a real summary PDF download have been verified on the deployment.
 
 ## Verified evidence
 
-[GitHub check run](https://github.com/karthik-856/AI-Cybersecurity-Assistant/actions/runs/43905613838)
-for production hardening commit `a705954` passed all three jobs:
+[GitHub check run](https://github.com/karthik-856/AI-Cybersecurity-Assistant/actions/runs/43907916824)
+for production hardening commit `e5741f1` passed all three jobs:
 
 - **191 backend tests passed** on Linux/Python 3.12 and PostgreSQL 16. There was
   one upstream Passlib deprecation warning about Python's `crypt` module; the
   runtime is pinned to Python 3.12. Local safety tests also pass with warnings
   treated as errors.
-- **Eight browser tests passed**, covering all ten main routes, assistant answers
+- **Nine browser tests passed**, covering all ten main routes, assistant answers
   and clearing history, settings saving, logout session invalidation, viewer
   restrictions, mobile navigation/layout, revoked-session redirects, and recovery
   when a page bundle is unavailable after a deployment. The chart regression
   verifies that percentages use all recorded alerts rather than the largest bar.
+  Investigation drafts survive linked-case background refreshes; saving notes
+  keeps an unsaved conclusion, and saved notes persist after a page reload.
 - The Docker image builds and runs under a **512 MiB memory limit**. Its smoke
   checks exercise the actual built website, PostgreSQL initialization, login,
   detection, native TreeSHAP, PDF generation, and the offline knowledge assistant.
