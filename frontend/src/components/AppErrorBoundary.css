@@ -1,0 +1,23 @@
+.app-recovery {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.app-recovery p {
+  color: var(--soc-text-secondary);
+  line-height: 1.6;
+}
+
+.app-recovery button {
+  margin-top: 12px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--soc-accent-emerald);
+  color: #06111d;
+  cursor: pointer;
+  font-weight: 600;
+}

@@ -105,6 +105,22 @@ test("revoked sessions return to sign-in", async ({ page, request }) => {
   await expect(page).toHaveURL(/\/login$/);
 });
 
+test("a missing page bundle offers recovery instead of a blank screen", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.route("**/assets/Reports-*.js", (route) => route.abort());
+  await page.getByRole("link", { name: "Reports", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "This page couldn’t load" }),
+  ).toBeVisible();
+  await page.unroute("**/assets/Reports-*.js");
+  await page.getByRole("button", { name: "Reload page" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Reports", exact: true }),
+  ).toBeVisible();
+});
+
 test("mobile navigation and screens fit the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await signIn(page);

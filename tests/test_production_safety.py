@@ -110,7 +110,9 @@ def test_spa_deep_links_and_unknown_api_routes(client, tmp_path, monkeypatch):
     import backend.app.main as main
     (tmp_path / "index.html").write_text("<!doctype html><title>ZUKA test</title>", encoding="utf-8")
     monkeypatch.setattr(main, "frontend_root", tmp_path)
-    assert "ZUKA test" in client.get("/incidents").text
+    page = client.get("/incidents")
+    assert "ZUKA test" in page.text
+    assert page.headers["cache-control"] == "no-store"
     response = client.get("/api/does-not-exist")
     assert response.status_code == 404 and "application/json" in response.headers["content-type"]
 

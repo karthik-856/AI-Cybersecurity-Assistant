@@ -210,8 +210,8 @@ def serve_dashboard(path: str):
     if not target.is_relative_to(frontend_root):
         raise HTTPException(status_code=404, detail="Not found.")
     if target.is_file():
-        return FileResponse(target)
+        return FileResponse(target, headers={"Cache-Control": "no-store"} if target.name == "index.html" else None)
     entry = frontend_root / "index.html"
     if not entry.exists():
         raise HTTPException(status_code=404, detail="Not found.")
-    return FileResponse(entry)
+    return FileResponse(entry, headers={"Cache-Control": "no-store"})
