@@ -422,7 +422,7 @@ function Dashboard() {
               </div>
 
               <div className="dashboard-data-box">
-                <span className="data-box-label">TCP Packets</span>
+                <span className="data-box-label">TCP Events</span>
                 <strong className="data-box-val">
                   {data ? formatNumber(data.network.tcp_events) : "—"}
                 </strong>
@@ -430,7 +430,7 @@ function Dashboard() {
               </div>
 
               <div className="dashboard-data-box">
-                <span className="data-box-label">UDP Packets</span>
+                <span className="data-box-label">UDP Events</span>
                 <strong className="data-box-val">
                   {data ? formatNumber(data.network.udp_events) : "—"}
                 </strong>
@@ -438,7 +438,7 @@ function Dashboard() {
               </div>
 
               <div className="dashboard-data-box">
-                <span className="data-box-label">Raw Protocols</span>
+                <span className="data-box-label">Other Events</span>
                 <strong className="data-box-val">
                   {data
                     ? formatNumber(data.network.other_protocol_events)

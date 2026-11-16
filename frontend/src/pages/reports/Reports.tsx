@@ -809,9 +809,7 @@ export default function Reports() {
       anchor.remove();
       URL.revokeObjectURL(url);
 
-      setSuccessNotice(
-        `Report successfully downloaded and preserved in PostgreSQL database ('reports' table).`,
-      );
+      setSuccessNotice("Report downloaded and saved.");
       setStoredPage(1);
       void loadStoredReports();
     } catch (err) {
@@ -905,7 +903,7 @@ export default function Reports() {
         <div>
           <span className="reports-eyebrow">SECURITY OPERATIONS / AUDIT</span>
           <h1>Reports</h1>
-          <p>Reports created from the live PostgreSQL database.</p>
+          <p>Create and download reports from recorded SOC activity.</p>
         </div>
         <div className="reports-header-actions">
           <button
@@ -1676,7 +1674,7 @@ export default function Reports() {
                     style={{ marginTop: "24px" }}
                   >
                     <div className="report-doc-subheading">
-                      Attack Class Distribution in Database
+                      Attack class distribution
                     </div>
                     <table className="report-doc-data-table">
                       <thead>
@@ -1711,9 +1709,7 @@ export default function Reports() {
             {/* Document Footer */}
             <div className="report-doc-footer">
               <div>
-                <span>Document Status: VERIFIED</span>
-                <span>•</span>
-                <span>Database Source: PostgreSQL (zuka_soc.reports)</span>
+                <span>Generated from recorded SOC activity</span>
               </div>
               <div>ZUKA SOC Cyber Defense Platform</div>
             </div>
@@ -1763,7 +1759,7 @@ export default function Reports() {
             </div>
 
             <span className="reports-result-count">
-              {storedTotal} Stored in Database
+              {storedTotal} saved reports
             </span>
           </div>
 
@@ -1772,7 +1768,7 @@ export default function Reports() {
             {storedLoading ? (
               <div className="reports-loading">
                 <Loader2 className="reports-spin" size={24} />
-                <span>Querying PostgreSQL database ('reports' table)...</span>
+                <span>Loading reports...</span>
               </div>
             ) : storedReports.length === 0 ? (
               <div className="reports-empty">

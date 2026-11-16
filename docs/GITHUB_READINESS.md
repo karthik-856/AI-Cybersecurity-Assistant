@@ -7,18 +7,17 @@ remain pending until the private hosting inputs are submitted.
 
 ## Verified evidence
 
-[GitHub check run](https://github.com/karthik-856/AI-Cybersecurity-Assistant/actions/runs/43899761998)
-for production hardening commit `90dc8c1` passed all three jobs:
+[GitHub check run](https://github.com/karthik-856/AI-Cybersecurity-Assistant/actions/runs/43902839603)
+for production hardening commit `8f58897` passed all three jobs:
 
 - **190 backend tests passed** on Linux/Python 3.12 and PostgreSQL 16. There was
   one upstream Passlib deprecation warning about Python's `crypt` module; the
   runtime is pinned to Python 3.12. Local safety tests also pass with warnings
   treated as errors.
-- **Five browser tests passed**, covering all ten main routes, assistant answers
+- **Seven browser tests passed**, covering all ten main routes, assistant answers
   and clearing history, settings saving, logout session invalidation, viewer
-  restrictions, and mobile navigation/layout. A further revoked-session redirect
-  regression is being added after visual review; use the latest check run for
-  its final result.
+  restrictions, mobile navigation/layout, revoked-session redirects, and recovery
+  when a page bundle is unavailable after a deployment.
 - The Docker image builds and runs under a **512 MiB memory limit**. Its smoke
   checks exercise the actual built website, PostgreSQL initialization, login,
   detection, native TreeSHAP, PDF generation, and the offline knowledge assistant.
@@ -61,8 +60,8 @@ were removed. Defense records do not enforce external firewall/device changes.
 ## Deployment limits and remaining validation
 
 Use [the free deployment guide](FREE_DEPLOYMENT.md). A Neon Free project named
-`zuka-soc` has been created in Frankfurt. The Render Free configuration is
-prepared; database/owner credentials must be entered privately before deployment.
+`zuka-soc` has been created in Frankfurt. The Render Free service has been
+submitted and its first build is in progress.
 No public website hostname is claimed as live until that service exists and its
 readiness, login, and UI checks pass.
 
