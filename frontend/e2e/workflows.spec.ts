@@ -34,7 +34,12 @@ test("included demo processing saves a real flow and explained alert", async ({
   await page
     .getByRole("button", { name: "View generated alert", exact: true })
     .click();
-  await page.locator("tbody tr").filter({ hasText: result.alert_id }).click();
+  await expect(
+    page.getByRole("complementary", {
+      name: "Alert investigation",
+      exact: true,
+    }),
+  ).toBeVisible();
   await expect(page.locator(".alert-explanation-row")).toHaveCount(5);
   await page.locator(".alert-explanation-list").scrollIntoViewIfNeeded();
   await page.screenshot({
@@ -55,7 +60,8 @@ test("an older seeded alert generates and retains its explanation", async ({
     headers: { Authorization: `Bearer ${token}` },
   });
   const data = await response.json();
-  const alert = data.items.find(
+  expect(response.status()).toBe(200);
+  const alert = data.alerts.find(
     (item: {
       alert_id: string;
       xai_explanation?: { top_contributions?: unknown[] };
@@ -63,7 +69,12 @@ test("an older seeded alert generates and retains its explanation", async ({
   );
   expect(alert).toBeTruthy();
   await page.goto(`/alerts?search=${encodeURIComponent(alert.alert_id)}`);
-  await page.locator("tbody tr").filter({ hasText: alert.alert_id }).click();
+  await expect(
+    page.getByRole("complementary", {
+      name: "Alert investigation",
+      exact: true,
+    }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Generate explanation", exact: true })
     .click();
@@ -71,7 +82,12 @@ test("an older seeded alert generates and retains its explanation", async ({
     timeout: 30000,
   });
   await page.reload();
-  await page.locator("tbody tr").filter({ hasText: alert.alert_id }).click();
+  await expect(
+    page.getByRole("complementary", {
+      name: "Alert investigation",
+      exact: true,
+    }),
+  ).toBeVisible();
   await expect(page.locator(".alert-explanation-row")).toHaveCount(5);
 });
 
