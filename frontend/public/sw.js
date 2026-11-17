@@ -8,12 +8,15 @@ self.addEventListener("push", (event) => {
   } catch {
     payload = {
       title: "ZUKA SECURITY ALERT",
-      body: event.data ? event.data.text() : "A new security alert requires attention.",
+      body: event.data
+        ? event.data.text()
+        : "A new security alert requires attention.",
     };
   }
 
   const title = payload.title || "ZUKA SECURITY ALERT";
-  const body = payload.body || "A new security alert requires analyst attention.";
+  const body =
+    payload.body || "A new security alert requires analyst attention.";
 
   const options = {
     body,
@@ -28,18 +31,19 @@ self.addEventListener("push", (event) => {
     },
   };
 
-  event.waitUntil(
-    self.registration.showNotification(title, options),
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const targetUrl = new URL(
+  let targetUrl = new URL(
     event.notification.data?.url || "/alerts",
     self.location.origin,
-  ).href;
+  );
+  if (targetUrl.origin !== self.location.origin)
+    targetUrl = new URL("/alerts", self.location.origin);
+  targetUrl = targetUrl.href;
 
   event.waitUntil(
     clients

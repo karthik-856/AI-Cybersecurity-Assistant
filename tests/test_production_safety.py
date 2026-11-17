@@ -44,7 +44,7 @@ def test_push_cannot_reach_arbitrary_services(url):
 def test_push_subscriptions_cannot_be_taken_over(client, headers):
     payload = {"endpoint": f"https://fcm.googleapis.com/test-{uuid4().hex}", "keys": {"auth": "test", "p256dh": "test"}}
     assert client.post("/api/push/subscribe", headers=headers["admin"], json=payload).status_code == 200
-    assert client.post("/api/push/subscribe", headers=headers["viewer"], json=payload).status_code == 409
+    assert client.post("/api/push/subscribe", headers=headers["arif"], json=payload).status_code == 409
     assert client.request("DELETE", "/api/push/subscribe", headers=headers["admin"], json=payload).status_code == 200
 
 

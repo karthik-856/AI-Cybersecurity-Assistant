@@ -11,6 +11,7 @@ from backend.app.database.session import SessionLocal
 from backend.app.models.auth_rate_limit import AuthRateLimit
 
 PUBLIC_AUTH_LIMITS = {
+    "/api/push/test": (3, 60),
     "/api/auth/login": (20, 300),
     "/api/auth/register": (10, 3600),
     "/api/auth/forgot-password": (5, 900),

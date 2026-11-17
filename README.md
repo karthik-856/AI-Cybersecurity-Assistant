@@ -71,6 +71,9 @@ revoke existing sessions.
 
 ## Local knowledge assistant
 
+For browser permission, background push setup, device tests, and free-host sleep
+limits, see [the notification guide](docs/NOTIFICATIONS.md).
+
 The default knowledge workflow uses local hashed text vectors and a SQLite index.
 Reviewed project answers, record queries, and guided operations work without a
 paid AI API or a model server. The index is built automatically when needed, or:

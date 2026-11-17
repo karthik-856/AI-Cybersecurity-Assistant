@@ -12,6 +12,7 @@ import { getAlerts, type Alert } from "../../services/api";
 import {
   disablePersistentPush,
   ensurePersistentPush,
+  showForegroundAlert,
 } from "../../services/push";
 import { playAlertSound, prepareAlertAudio } from "../../services/alertSound";
 import "./NotificationCenter.css";
@@ -181,6 +182,7 @@ export default function NotificationCenter() {
 
         if (enabled) {
           playConfiguredAlertSound();
+          void showForegroundAlert(alert).catch(() => undefined);
         }
       }
 

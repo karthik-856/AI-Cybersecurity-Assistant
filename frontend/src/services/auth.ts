@@ -1,4 +1,5 @@
 import { sessionFetch } from "./sessionFetch";
+import { disablePersistentPush } from "./push";
 import { getErrorMessage } from "./errors";
 import { API_BASE_URL } from "./config";
 
@@ -332,6 +333,7 @@ export async function revokeAllOtherSessions(): Promise<SessionActionResponse> {
 export async function logout(): Promise<void> {
   const token = localStorage.getItem("zuka_access_token");
   try {
+    await disablePersistentPush();
     if (token)
       await sessionFetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
@@ -342,5 +344,7 @@ export async function logout(): Promise<void> {
     localStorage.removeItem("zuka_access_token");
     localStorage.removeItem("zuka_user");
     sessionStorage.removeItem("zuka_chat_history");
+    localStorage.removeItem("zuka_notification_seen_ids");
+    localStorage.removeItem("zuka_notification_dismissed_ids");
   }
 }

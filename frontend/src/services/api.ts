@@ -1123,8 +1123,35 @@ export interface PushPublicKeyResponse {
   public_key: string;
 }
 
+export async function getPushStatus(): Promise<{ configured: boolean }> {
+  const response = await fetch(`${API_BASE_URL}/api/push/status`, {
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!response.ok)
+    throw new Error("Unable to check background notification setup.");
+  return response.json();
+}
+
+export async function sendPushTest(endpoint: string): Promise<void> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/push/test`, {
+    method: "POST",
+    body: JSON.stringify({ endpoint }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!response.ok)
+    throw new Error(
+      getErrorMessage(
+        await readResponse(response),
+        "The test notification could not be delivered.",
+      ),
+    );
+}
+
 export interface PushSubscriptionPayload {
   endpoint: string;
+  critical_alerts?: boolean;
+  high_alerts?: boolean;
+  notification_preview?: boolean;
   keys?: {
     p256dh?: string;
     auth?: string;
@@ -1136,6 +1163,7 @@ export async function getPushPublicKey(): Promise<PushPublicKeyResponse> {
     headers: {
       Accept: "application/json",
     },
+    signal: AbortSignal.timeout(10000),
   });
 
   const data = await readResponse(response);
@@ -1160,6 +1188,7 @@ export async function savePushSubscription(
     {
       method: "POST",
       body: JSON.stringify(subscription),
+      signal: AbortSignal.timeout(10000),
     },
   );
 
@@ -1188,6 +1217,7 @@ export async function deletePushSubscription(
     {
       method: "DELETE",
       body: JSON.stringify(subscription),
+      signal: AbortSignal.timeout(5000),
     },
   );
 

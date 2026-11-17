@@ -746,7 +746,7 @@ function Users() {
                     onChange={(event) =>
                       updateForm("password", event.target.value)
                     }
-                    placeholder="e.g. SecOps@2026!"
+                    placeholder="Choose a unique password"
                   />
                   <button
                     type="button"

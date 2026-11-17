@@ -2,32 +2,52 @@ from __future__ import annotations
 
 import json
 import logging
+import base64
+import hmac
 from pathlib import Path
 from typing import Any
 
 from pywebpush import WebPushException, webpush
+from py_vapid import Vapid
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from sqlalchemy import select
 
 from backend.app.core.config import settings
 from backend.app.database.session import SessionLocal
 from backend.app.models.push_subscription import PushSubscription
+from backend.app.models import User, Role
 
 logger = logging.getLogger(__name__)
 
 
+def get_vapid_signer():
+    """Load stable hosting secrets and reject mismatched key pairs."""
+    if not settings.vapid_public_key or not settings.vapid_subject.startswith(("mailto:", "https://")):
+        return None
+    try:
+        if settings.vapid_private_key:
+            signer = Vapid.from_string(settings.vapid_private_key.get_secret_value())
+        elif Path(settings.vapid_private_key_path).is_file():
+            signer = Vapid.from_pem(Path(settings.vapid_private_key_path).read_bytes())
+        else:
+            return None
+        encoded = base64.urlsafe_b64encode(signer.public_key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)).decode().rstrip("=")
+        return signer if hmac.compare_digest(encoded, settings.vapid_public_key.rstrip("=")) else None
+    except Exception:
+        logger.warning("Web Push signing configuration is invalid.")
+        return None
+
+
 def push_is_configured() -> bool:
-    return bool(
-        settings.vapid_public_key
-        and settings.vapid_subject
-        and Path(settings.vapid_private_key_path).exists()
-    )
+    return get_vapid_signer() is not None
 
 
 def send_push_to_subscription(
     subscription: PushSubscription,
     payload: dict[str, Any],
 ) -> bool:
-    if not push_is_configured():
+    signer = get_vapid_signer()
+    if signer is None:
         return False
 
     subscription_info = {
@@ -42,8 +62,10 @@ def send_push_to_subscription(
         webpush(
             subscription_info=subscription_info,
             data=json.dumps(payload),
-            vapid_private_key=settings.vapid_private_key_path,
+            vapid_private_key=signer,
             vapid_claims={"sub": settings.vapid_subject},
+            timeout=10,
+            ttl=86400,
         )
         return True
     except WebPushException as exc:
@@ -66,9 +88,9 @@ def send_push_to_subscription(
                 logger.exception("Unable to remove stale push subscription.")
         else:
             logger.warning(
-                "Web Push delivery failed for subscription id=%s: %s",
+                "Web Push delivery failed for subscription id=%s, status=%s",
                 subscription.id,
-                exc,
+                status_code,
             )
         return False
     except Exception:
@@ -101,15 +123,22 @@ def send_security_alert_push(alert: Any) -> None:
         "predicted_class": getattr(alert, "predicted_class", None),
         "confidence": float(getattr(alert, "confidence", 0.0)),
         "url": (
-            "/alerts?alert="
+            "/alerts?search="
             f"{getattr(alert, 'alert_id', '')}"
         ),
     }
 
     with SessionLocal() as db:
         subscriptions = db.scalars(
-            select(PushSubscription)
+            select(PushSubscription).join(User, User.id == PushSubscription.user_id).join(Role, Role.id == User.role_id).where(User.is_active.is_(True), Role.name.in_(("ADMIN", "SOC_ANALYST")))
         ).all()
 
     for subscription in subscriptions:
-        send_push_to_subscription(subscription, payload)
+        if (severity == "CRITICAL" and not subscription.critical_alerts) or (severity == "HIGH" and not subscription.high_alerts):
+            continue
+        message = dict(payload)
+        if not subscription.notification_preview:
+            message["body"] = "A new security alert requires your attention."
+            message.pop("predicted_class", None)
+            message.pop("confidence", None)
+        send_push_to_subscription(subscription, message)

@@ -632,6 +632,9 @@ function Login() {
                 >
                   New to ZUKA? Create a new account
                 </Link>
+                {!capabilities.registration && (
+                  <p>Need an account? Ask your administrator to create one.</p>
+                )}
               </>
             )}
 

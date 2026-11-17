@@ -3,7 +3,7 @@ from backend.app.core.time import utc_now
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, true
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.app.database.base import Base
@@ -43,6 +43,10 @@ class PushSubscription(Base):
         nullable=False,
         index=True,
     )
+
+    critical_alerts: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default=true())
+    high_alerts: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default=true())
+    notification_preview: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default=true())
 
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,

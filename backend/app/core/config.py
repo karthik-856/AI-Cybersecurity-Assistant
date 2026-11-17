@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import model_validator, field_validator
+from pydantic import model_validator, field_validator, SecretStr
 
 
 class Settings(BaseSettings):
@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     # Persistent Web Push / VAPID
     # ------------------------------------------------------------------
     vapid_public_key: str | None = None
+    vapid_private_key: SecretStr | None = None
     vapid_private_key_path: str = "backend/vapid_private.pem"
     vapid_subject: str = "mailto:admin@zuka.local"
 

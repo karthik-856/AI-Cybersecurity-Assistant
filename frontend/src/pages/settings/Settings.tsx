@@ -24,6 +24,13 @@ import TwoFactorVerification from "../../components/security/TwoFactorVerificati
 import PasswordRequirements from "../../components/auth/PasswordRequirements";
 import { evaluatePassword } from "../../utils/password";
 import {
+  disablePersistentPush,
+  ensurePersistentPush,
+  testBrowserNotification,
+} from "../../services/push";
+import { getPushStatus } from "../../services/api";
+import { playAlertSound } from "../../services/alertSound";
+import {
   changePassword,
   getActiveSessions,
   getLoginActivity,
@@ -170,10 +177,12 @@ function Toggle({
   checked,
   onChange,
   label,
+  disabled = false,
 }: {
   checked: boolean;
   onChange: (value: boolean) => void;
   label: string;
+  disabled?: boolean;
 }) {
   return (
     <button
@@ -181,6 +190,7 @@ function Toggle({
       className={`settings-toggle ${checked ? "active" : ""}`}
       aria-label={label}
       aria-pressed={checked}
+      disabled={disabled}
       onClick={() => onChange(!checked)}
     >
       <span />
@@ -283,6 +293,29 @@ export default function Settings() {
   const [revokingSessionId, setRevokingSessionId] = useState("");
   const [revokeAllLoading, setRevokeAllLoading] = useState(false);
   const user = useMemo(() => getStoredUser(), []);
+  const canReceiveAlerts = ["ADMIN", "SOC_ANALYST"].includes(user?.role ?? "");
+  const [notificationBusy, setNotificationBusy] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [backgroundPushConfigured, setBackgroundPushConfigured] = useState<
+    boolean | null
+  >(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getPushStatus()
+      .then((status) => {
+        if (!cancelled) setBackgroundPushConfigured(status.configured);
+      })
+      .catch(() => {
+        if (!cancelled)
+          setNotificationMessage(
+            "Background notification setup could not be checked.",
+          );
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.zukaDensity = preferences.density;
@@ -372,22 +405,80 @@ export default function Settings() {
     setSaved(false);
   }
 
-  function toggleBrowserNotifications() {
-    if (preferences.browserNotifications) {
-      update("browserNotifications", false);
-    } else if (browserPermission === "granted") {
-      update("browserNotifications", true);
+  async function toggleBrowserNotifications() {
+    if (!canReceiveAlerts || notificationBusy) return;
+    if (!("Notification" in window)) {
+      setNotificationMessage("This browser does not support notifications.");
+      return;
+    }
+    setNotificationBusy(true);
+    setNotificationMessage("");
+    try {
+      if (preferences.browserNotifications) {
+        const next = { ...preferences, browserNotifications: false };
+        setPreferences(next);
+        syncPreferencesToStorage(next);
+        await disablePersistentPush();
+        setNotificationMessage(
+          "Browser notifications disabled for this device.",
+        );
+      } else {
+        const permission =
+          Notification.permission === "granted"
+            ? "granted"
+            : await Notification.requestPermission();
+        setBrowserPermission(permission);
+        if (permission !== "granted") {
+          setNotificationMessage(
+            permission === "denied"
+              ? "Notifications are blocked. Allow them in this website’s browser settings, then try again."
+              : "Notification permission was not allowed. Use the toggle to try again.",
+          );
+          return;
+        }
+        const next = { ...preferences, browserNotifications: true };
+        setPreferences(next);
+        syncPreferencesToStorage(next);
+        const ready = await ensurePersistentPush();
+        setNotificationMessage(
+          ready
+            ? "Background notifications enabled for this device. Send a test to verify delivery."
+            : "Notifications enabled while this website is open. Background push still needs server setup or device registration.",
+        );
+      }
+      setSaved(false);
+    } catch {
+      setNotificationMessage(
+        "Notification setup failed. Check your browser permission and connection, then try again.",
+      );
+    } finally {
+      setNotificationBusy(false);
+    }
+  }
+
+  async function testNotification() {
+    setNotificationBusy(true);
+    try {
+      setNotificationMessage(await testBrowserNotification());
+    } catch (error) {
+      setNotificationMessage(
+        error instanceof Error
+          ? error.message
+          : "The notification test failed.",
+      );
+    } finally {
+      setNotificationBusy(false);
     }
   }
 
   const browserPermissionDescription =
     browserPermission === "granted"
-      ? "Browser notifications are enabled."
+      ? "Browser permission granted."
       : browserPermission === "denied"
         ? "Notifications are blocked in your browser."
         : browserPermission === "unsupported"
           ? "This browser does not support notifications."
-          : "Allow browser notifications to enable alerts.";
+          : "Use the toggle to allow browser notifications.";
 
   async function openLoginActivity() {
     setShowActivityPanel(true);
@@ -737,6 +828,17 @@ export default function Settings() {
                 description="Configure real-time alert triggers, browser Web Push, and audio signals."
               />
 
+              <p role="status" aria-live="polite">
+                {notificationMessage ||
+                  (!canReceiveAlerts
+                    ? "Detailed security notifications are available to administrators and SOC analysts."
+                    : backgroundPushConfigured === false
+                      ? "Background push is not configured on the server. Device notifications can still work while this website is open."
+                      : backgroundPushConfigured === true
+                        ? "The server supports background push. Enable this device and send a test."
+                        : "Checking background notification setup...")}
+              </p>
+
               <div className="settings-card">
                 <SettingRow
                   label="Critical severity alerts"
@@ -777,7 +879,25 @@ export default function Settings() {
                       }
                       onChange={toggleBrowserNotifications}
                       label="Browser notifications"
+                      disabled={
+                        notificationBusy ||
+                        !canReceiveAlerts ||
+                        browserPermission === "unsupported"
+                      }
                     />
+                    <button
+                      type="button"
+                      className="settings-secondary-button"
+                      disabled={
+                        notificationBusy ||
+                        !canReceiveAlerts ||
+                        !preferences.browserNotifications ||
+                        browserPermission !== "granted"
+                      }
+                      onClick={() => void testNotification()}
+                    >
+                      Send test notification
+                    </button>
                   </div>
                 </SettingRow>
 
@@ -809,6 +929,21 @@ export default function Settings() {
                       onChange={updateSoundAlerts}
                       label="Sound notifications"
                     />
+                    <button
+                      type="button"
+                      className="settings-secondary-button"
+                      onClick={() => {
+                        void playAlertSound().then((played) =>
+                          setNotificationMessage(
+                            played
+                              ? "Test sound started. Check your device volume."
+                              : "Sound could not start. Check browser and device audio settings.",
+                          ),
+                        );
+                      }}
+                    >
+                      Test sound
+                    </button>
                   </div>
                 </SettingRow>
 

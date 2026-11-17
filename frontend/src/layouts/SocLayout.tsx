@@ -341,7 +341,7 @@ function SocLayout() {
           </div>
 
           <div className="soc-topbar-right">
-            <NotificationCenter />
+            {["ADMIN", "SOC_ANALYST"].includes(role) && <NotificationCenter />}
 
             <div className="soc-user-wrapper" ref={profileDropdownRef}>
               <button
