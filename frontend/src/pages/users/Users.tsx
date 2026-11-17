@@ -773,6 +773,7 @@ function Users() {
               <label>
                 Role
                 <select
+                  aria-label="Account role"
                   value={form.role}
                   onChange={(event) =>
                     updateForm(

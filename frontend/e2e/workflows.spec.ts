@@ -10,11 +10,15 @@ async function signIn(page: Page, username = "admin") {
 
 test("an administrator can create a viewer account without SMTP", async ({
   page,
-}) => {
+}, testInfo) => {
   await signIn(page);
   await page.goto("/users");
   await page.getByRole("button", { name: "Create User", exact: true }).click();
   const form = page.locator(".users-form");
+  await page.screenshot({
+    path: testInfo.outputPath("create-user.png"),
+    fullPage: true,
+  });
   const username = `browser_viewer_${Date.now()}`;
   await form.getByLabel("Username", { exact: true }).fill(username);
   await form
@@ -23,7 +27,9 @@ test("an administrator can create a viewer account without SMTP", async ({
   await form
     .getByPlaceholder("Choose a unique password")
     .fill("Test-Password1!");
-  await form.getByLabel("Role", { exact: true }).selectOption("VIEWER");
+  await form
+    .getByRole("combobox", { name: "Account role", exact: true })
+    .selectOption("VIEWER");
   await form.getByRole("button", { name: "Create User", exact: true }).click();
   await expect(page.locator(".users-form-success")).toContainText(
     "created successfully",
@@ -117,7 +123,7 @@ function notificationProbe(page: Page) {
 
 test("notifications request permission and offer an honest device test without server keys", async ({
   page,
-}) => {
+}, testInfo) => {
   await mockDeviceNotifications(page);
   await signIn(page);
   await page.goto("/settings");
@@ -136,6 +142,10 @@ test("notifications request permission and offer an honest device test without s
     "Device notification shown. Background push needs server setup.",
   );
   expect((await notificationProbe(page)).shown).toBe(1);
+  await page.screenshot({
+    path: testInfo.outputPath("notification-settings.png"),
+    fullPage: true,
+  });
   await page.evaluate(() =>
     localStorage.setItem(
       "zuka_settings_preferences",
