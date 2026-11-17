@@ -878,6 +878,9 @@ function Alerts() {
     }
   }
 
+  const [autoOpenedAlertTarget, setAutoOpenedAlertTarget] = useState<
+    string | null
+  >(null);
   const [previousInputs1, setpreviousInputs1] = useState<
     readonly unknown[] | null
   >(null);
@@ -893,7 +896,10 @@ function Alerts() {
     const aid = searchParams.get("alert_id");
     if (aid && alerts.length > 0) {
       const found = alerts.find((a) => a.alert_id === aid);
-      if (found) setSelectedAlert(found);
+      if (found && autoOpenedAlertTarget !== `id:${aid}`) {
+        setSelectedAlert(found);
+        setAutoOpenedAlertTarget(`id:${aid}`);
+      }
     }
   }
 
@@ -909,9 +915,21 @@ function Alerts() {
   ) {
     setpreviousInputs2(currentInputs3);
 
-    if (search.trim() && alerts.length === 1 && !selectedAlert) {
+    if (
+      search.trim() &&
+      alerts.length === 1 &&
+      !selectedAlert &&
+      autoOpenedAlertTarget !== `search:${search.trim()}`
+    ) {
       setSelectedAlert(alerts[0]);
+      setAutoOpenedAlertTarget(`search:${search.trim()}`);
     }
+    if (
+      !search.trim() &&
+      !searchParams.get("alert_id") &&
+      autoOpenedAlertTarget !== null
+    )
+      setAutoOpenedAlertTarget(null);
   }
 
   const [updating, setUpdating] = useState(false);

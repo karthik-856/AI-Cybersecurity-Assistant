@@ -89,6 +89,26 @@ test("an older seeded alert generates and retains its explanation", async ({
     }),
   ).toBeVisible();
   await expect(page.locator(".alert-explanation-row")).toHaveCount(5);
+  await page
+    .getByRole("button", { name: "Close investigation", exact: true })
+    .click();
+  await expect(
+    page.getByRole("complementary", {
+      name: "Alert investigation",
+      exact: true,
+    }),
+  ).toHaveCount(0);
+  await page.waitForResponse(
+    (response) =>
+      response.url().includes("/api/alerts?") &&
+      response.request().method() === "GET",
+  );
+  await expect(
+    page.getByRole("complementary", {
+      name: "Alert investigation",
+      exact: true,
+    }),
+  ).toHaveCount(0);
 });
 
 test("email verification explains missing configuration and accepts configured email codes", async ({
