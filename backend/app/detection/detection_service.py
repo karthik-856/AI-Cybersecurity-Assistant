@@ -91,6 +91,7 @@ def detect_flow(
         "is_attack": is_attack,
 
         "prediction": prediction,
+        "input_features": {name: float(features[name]) for name in zuka_model_service.features},
 
         "severity": severity,
 

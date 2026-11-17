@@ -147,11 +147,17 @@
   border: 1px solid #1e293b;
   border-radius: 10px;
 
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(10, 16, 28, 0.96));
+  background: linear-gradient(
+    145deg,
+    rgba(15, 23, 42, 0.92),
+    rgba(10, 16, 28, 0.96)
+  );
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .network-stat-card:hover {
@@ -303,8 +309,7 @@
 
   background: #62c985;
 
-  box-shadow:
-    0 0 8px rgba(98, 201, 133, 0.35);
+  box-shadow: 0 0 8px rgba(98, 201, 133, 0.35);
 }
 
 .network-last-updated > div > span {
@@ -323,11 +328,7 @@
 .network-last-updated strong {
   color: #8994a2;
 
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Consolas,
-    monospace;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 
   font-size: 10px;
   font-weight: 500;
@@ -1011,7 +1012,11 @@
 }
 
 .network-action-btn.primary {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.16));
+  background: linear-gradient(
+    135deg,
+    rgba(244, 63, 94, 0.22),
+    rgba(225, 29, 72, 0.16)
+  );
   border-color: #f43f5e;
   color: #ff859b;
 }
@@ -1055,4 +1060,13 @@
   background: #112436;
   border-color: #2c5478;
   color: #edf4fa;
+}
+.network-demo-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 13px;
 }

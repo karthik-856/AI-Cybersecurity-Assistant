@@ -40,6 +40,7 @@ catboost_info/
 *.code-workspace
 *.ndjson
 output/
+report_downloads/
 tmp/
 docs/presentation/
 new notebook results/

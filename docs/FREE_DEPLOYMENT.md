@@ -56,6 +56,17 @@ SMTP is needed for email verification, self-registration, password recovery, and
 email two-factor authentication. These unavailable actions are hidden/disabled
 when SMTP is absent. An administrator can create teammate app accounts. Real
 SMTP and browser push delivery are not covered by the mocked-email tests.
+For email codes on Render Free, follow [Email setup](EMAIL_SETUP.md): ports
+25, 465, and 587 are blocked; use an SMTP provider supporting STARTTLS on 2525.
+
+In **Network Monitor**, administrators and analysts can choose **Process next
+demo event**. This processes one row of the included sample, saves its network
+flow, and creates an alert, incident, and real TreeSHAP explanation when the
+model predicts an attack. Benign predictions create only the flow record.
+Older alerts offer **Generate explanation**. Explanations require retained
+inputs or an unambiguous match to the included sample and stored replay
+evidence; reconstructed inputs are explicitly labeled. Unknown legacy alerts
+remain without an explanation rather than receiving invented evidence.
 
 Free web services sleep after inactivity and may take time to wake. Free compute,
 storage, transfer, and build quotas can suspend service when exhausted. Monitor

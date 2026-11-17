@@ -257,6 +257,7 @@ def _build_network_event(
             "detection pipeline."
         ),
         extra_metadata={
+            "input_features": _build_features(row),
             "replay": True,
             "source_file": row.get("source_file"),
             "dataset_name": row.get("dataset_name"),
@@ -306,6 +307,8 @@ def replay_row(
     db.add(network_event)
     db.commit()
     db.refresh(network_event)
+
+    detection_result["network_event_id"] = network_event.id
 
     alert = create_alert_from_detection(
         db=db,

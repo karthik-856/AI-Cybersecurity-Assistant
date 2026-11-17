@@ -147,3 +147,9 @@ validation. Authentication requests have persistent database-backed throttling.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for inviting teammates, branches, pull
 requests, required checks, and keeping deployment secrets out of source control.
+
+Email verification setup on Render Free: [Email setup](docs/EMAIL_SETUP.md).
+In Network Monitor, choose **Process next demo event** to run the included
+sample through detection and save an explanation for attack alerts. In Alert
+Center, older alerts offer **Generate explanation** when retained evidence
+supports reconstruction; unknown inputs are never invented.

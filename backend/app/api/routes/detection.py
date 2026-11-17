@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
 from backend.app.detection.detection_service import detect_flow
+from backend.app.detection.workload import model_task_lock
 from backend.app.security.dependencies import get_current_user, require_role
 from backend.app.database.session import get_db
 from backend.app.soc.alert_service import create_alert_from_detection
@@ -47,6 +48,8 @@ def predict_flow(
     _current_user=Depends(require_role("ADMIN", "SOC_ANALYST")),
     db=Depends(get_db),
 ):
+    if not model_task_lock.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail="The model is processing another request. Try again shortly.", headers={"Retry-After": "2"})
     try:
         result = detect_flow(
             features=payload.features,
@@ -75,3 +78,5 @@ def predict_flow(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=str(exc),
         )
+    finally:
+        model_task_lock.release()

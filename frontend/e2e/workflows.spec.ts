@@ -8,6 +8,120 @@ async function signIn(page: Page, username = "admin") {
   await expect(page).toHaveURL(/\/dashboard$/);
 }
 
+test("included demo processing saves a real flow and explained alert", async ({
+  page,
+}, testInfo) => {
+  await signIn(page);
+  await page.goto("/network-monitor");
+  // Row 5 is an attack sample in the checked-in demonstration CSV.
+  await page.evaluate(() => localStorage.setItem("zuka_demo_row", "5"));
+  const responsePromise = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/replay/demo") &&
+      response.request().method() === "POST",
+  );
+  await page
+    .getByRole("button", { name: "Process next demo event", exact: true })
+    .click();
+  const response = await responsePromise;
+  expect(response.status()).toBe(200);
+  const result = (await response.json()).result;
+  expect(result.network_event_id).toBeGreaterThan(0);
+  expect(result.alert_id).toBeTruthy();
+  await expect(
+    page.getByRole("status").filter({ hasText: "Demo event #" }),
+  ).toContainText("Alert and explanation saved.");
+  await page
+    .getByRole("button", { name: "View generated alert", exact: true })
+    .click();
+  await page.locator("tbody tr").filter({ hasText: result.alert_id }).click();
+  await expect(page.locator(".alert-explanation-row")).toHaveCount(5);
+  await page.locator(".alert-explanation-list").scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: testInfo.outputPath("demo-alert-explanation.png"),
+    fullPage: true,
+  });
+});
+
+test("an older seeded alert generates and retains its explanation", async ({
+  page,
+  request,
+}) => {
+  await signIn(page);
+  const token = await page.evaluate(() =>
+    localStorage.getItem("zuka_access_token"),
+  );
+  const response = await request.get("/api/alerts?limit=1000", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json();
+  const alert = data.items.find(
+    (item: {
+      alert_id: string;
+      xai_explanation?: { top_contributions?: unknown[] };
+    }) => !item.xai_explanation?.top_contributions?.length,
+  );
+  expect(alert).toBeTruthy();
+  await page.goto(`/alerts?search=${encodeURIComponent(alert.alert_id)}`);
+  await page.locator("tbody tr").filter({ hasText: alert.alert_id }).click();
+  await page
+    .getByRole("button", { name: "Generate explanation", exact: true })
+    .click();
+  await expect(page.locator(".alert-explanation-row")).toHaveCount(5, {
+    timeout: 30000,
+  });
+  await page.reload();
+  await page.locator("tbody tr").filter({ hasText: alert.alert_id }).click();
+  await expect(page.locator(".alert-explanation-row")).toHaveCount(5);
+});
+
+test("email verification explains missing configuration and accepts configured email codes", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto("/settings");
+  await page.getByRole("button", { name: /Security & Sessions/ }).click();
+  const panel = page.locator(".twofa-panel");
+  await expect(
+    panel.getByRole("button", { name: "Enable", exact: true }),
+  ).toBeDisabled();
+  await expect(panel.locator(".twofa-configuration-note")).toContainText(
+    "finish SMTP setup",
+  );
+  await page.route("**/api/auth/features", (route) =>
+    route.fulfill({
+      json: { registration: true, password_recovery: true, two_factor: true },
+    }),
+  );
+  let verified = false;
+  await page.route("**/api/auth/2fa/status", (route) =>
+    route.fulfill({ json: { enabled: verified, email: "test@example.com" } }),
+  );
+  await page.route("**/api/auth/2fa/request", (route) =>
+    route.fulfill({ json: { message: "Verification email sent." } }),
+  );
+  await page.route("**/api/auth/2fa/verify", async (route) => {
+    expect(route.request().postDataJSON()).toEqual({
+      action: "enable",
+      otp: "123456",
+    });
+    verified = true;
+    await route.fulfill({
+      json: { message: "Two-step verification enabled." },
+    });
+  });
+  await page.reload();
+  await page.getByRole("button", { name: /Security & Sessions/ }).click();
+  await panel.getByRole("button", { name: "Enable", exact: true }).click();
+  await panel
+    .getByRole("textbox", { name: "Two-step verification code" })
+    .fill("123456");
+  await panel
+    .getByRole("button", { name: "Verify & Enable", exact: true })
+    .click();
+  await expect(panel.locator(".twofa-status")).toContainText("Enabled");
+});
+
 test("an administrator can create a viewer account without SMTP", async ({
   page,
 }, testInfo) => {

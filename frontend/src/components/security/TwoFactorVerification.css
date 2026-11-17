@@ -1,1 +1,182 @@
-.twofa-panel{padding:16px 18px;border:1px solid var(--settings-border,#e2e8f0);border-radius:14px;background:var(--settings-card,#fff);margin-top:12px}.twofa-main{display:flex;align-items:center;gap:13px}.twofa-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#eef2ff;color:#4f46e5;flex:0 0 auto}.twofa-copy{flex:1;min-width:0}.twofa-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.twofa-title-row strong{font-size:14px;color:#0f172a}.twofa-copy p{margin:4px 0 0;color:#64748b;font-size:12px;line-height:1.5}.twofa-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700}.twofa-status span{width:6px;height:6px;border-radius:50%;background:currentColor}.twofa-status.enabled{color:#15803d}.twofa-status.disabled{color:#64748b}.twofa-primary-button,.twofa-danger-button,.twofa-cancel-button{border:0;border-radius:9px;padding:9px 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}.twofa-primary-button{background:#111827;color:white}.twofa-danger-button{background:#fff1f2;color:#b91c1c;border:1px solid #fecdd3}.twofa-cancel-button{background:#f8fafc;color:#475569;border:1px solid #cbd5e1}.twofa-primary-button:disabled,.twofa-danger-button:disabled,.twofa-cancel-button:disabled{opacity:.55;cursor:not-allowed}.twofa-verification-box{margin-top:15px;padding:14px;border-radius:11px;background:#f8fafc;border:1px solid #e2e8f0}.twofa-email-note{display:flex;align-items:center;gap:8px;color:#475569;font-size:12px;margin-bottom:11px}.twofa-email-note strong{color:#0f172a}.twofa-form-row{display:flex;gap:8px;align-items:center}.twofa-form-row input{width:130px;border:1px solid #cbd5e1;border-radius:9px;padding:9px 11px;font-size:15px;letter-spacing:3px;outline:none}.twofa-form-row input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.12)}.twofa-success,.twofa-error{margin-top:11px;padding:9px 11px;border-radius:9px;display:flex;align-items:center;gap:7px;font-size:12px}.twofa-success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}.twofa-error{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}.twofa-spin{animation:twofa-spin .8s linear infinite}@keyframes twofa-spin{to{transform:rotate(360deg)}}@media(max-width:700px){.twofa-main{align-items:flex-start;flex-wrap:wrap}.twofa-main>.twofa-primary-button,.twofa-main>.twofa-danger-button{margin-left:51px}.twofa-form-row{flex-wrap:wrap}.twofa-form-row input{width:100%}}
+.twofa-panel {
+  padding: 16px 18px;
+  border: 1px solid var(--settings-border, #e2e8f0);
+  border-radius: 14px;
+  background: var(--settings-card, #fff);
+  margin-top: 12px;
+}
+.twofa-main {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.twofa-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #eef2ff;
+  color: #4f46e5;
+  flex: 0 0 auto;
+}
+.twofa-copy {
+  flex: 1;
+  min-width: 0;
+}
+.twofa-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.twofa-title-row strong {
+  font-size: 14px;
+  color: #0f172a;
+}
+.twofa-copy p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.twofa-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.twofa-status span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.twofa-status.enabled {
+  color: #15803d;
+}
+.twofa-status.disabled {
+  color: #64748b;
+}
+.twofa-primary-button,
+.twofa-danger-button,
+.twofa-cancel-button {
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.twofa-primary-button {
+  background: #111827;
+  color: white;
+}
+.twofa-danger-button {
+  background: #fff1f2;
+  color: #b91c1c;
+  border: 1px solid #fecdd3;
+}
+.twofa-cancel-button {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+.twofa-primary-button:disabled,
+.twofa-danger-button:disabled,
+.twofa-cancel-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.twofa-verification-box {
+  margin-top: 15px;
+  padding: 14px;
+  border-radius: 11px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+.twofa-email-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-size: 12px;
+  margin-bottom: 11px;
+}
+.twofa-email-note strong {
+  color: #0f172a;
+}
+.twofa-form-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.twofa-form-row input {
+  width: 130px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  padding: 9px 11px;
+  font-size: 15px;
+  letter-spacing: 3px;
+  outline: none;
+}
+.twofa-form-row input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+.twofa-success,
+.twofa-error {
+  margin-top: 11px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+}
+.twofa-success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.twofa-error {
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+.twofa-spin {
+  animation: twofa-spin 0.8s linear infinite;
+}
+@keyframes twofa-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 700px) {
+  .twofa-main {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .twofa-main > .twofa-primary-button,
+  .twofa-main > .twofa-danger-button {
+    margin-left: 51px;
+  }
+  .twofa-form-row {
+    flex-wrap: wrap;
+  }
+  .twofa-form-row input {
+    width: 100%;
+  }
+}
+.twofa-configuration-note {
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 12px 0 0;
+}

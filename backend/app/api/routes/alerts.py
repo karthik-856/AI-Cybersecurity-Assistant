@@ -26,6 +26,8 @@ router = APIRouter(
 )
 
 from backend.app.soc.telemetry_resolver import resolve_network_telemetry
+from backend.app.detection.explanation_service import generate_alert_explanation
+from backend.app.detection.workload import model_task_lock
 
 def _enrich_alert_with_correlations(alert: Alert, db: Session) -> AlertResponse:
     alert_resp = AlertResponse.model_validate(alert)
@@ -224,6 +226,29 @@ def get_alert(
             detail="Alert not found.",
         )
 
+    return _enrich_alert_with_correlations(alert, db)
+
+
+@router.post("/{alert_id}/explanation", response_model=AlertResponse)
+def explain_alert(
+    alert_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role("ADMIN", "SOC_ANALYST")),
+):
+    alert = db.scalar(select(Alert).where(Alert.alert_id == alert_id))
+    if alert is None:
+        raise HTTPException(status_code=404, detail="Alert not found.")
+    if (alert.xai_explanation or {}).get("top_contributions"):
+        return _enrich_alert_with_correlations(alert, db)
+    if not model_task_lock.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail="The model is processing another request. Try again shortly.", headers={"Retry-After": "2"})
+    try:
+        generate_alert_explanation(alert, db)
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    finally:
+        model_task_lock.release()
     return _enrich_alert_with_correlations(alert, db)
 
 

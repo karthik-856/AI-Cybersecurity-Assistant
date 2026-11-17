@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import csv
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from backend.app.database.session import get_db
-from backend.app.models import User
-from backend.app.replay.replay_service import replay_dataset
+from backend.app.models import User, Incident
+from backend.app.replay.replay_service import replay_dataset, PROJECT_ROOT
+from backend.app.detection.workload import model_task_lock
 from backend.app.security.dependencies import get_current_user, require_role
 from backend.app.soc.incident_service import create_incident_from_alert
 
@@ -25,6 +28,55 @@ class ReplayNextRequest(BaseModel):
     include_xai: bool = True
 
 
+class DemoReplayRequest(BaseModel):
+    row_index: int = Field(default=0, ge=0, le=1000000)
+
+
+@router.post("/demo")
+def process_demo_event(
+    payload: DemoReplayRequest,
+    current_user: User = Depends(require_role("ADMIN", "SOC_ANALYST")),
+    db=Depends(get_db),
+):
+    path = PROJECT_ROOT / "data" / "sample_replay.csv"
+    try:
+        with path.open(encoding="utf-8") as source:
+            row_count = sum(1 for _ in csv.DictReader(source))
+    except OSError as exc:
+        raise HTTPException(
+            status_code=503, detail="The demonstration sample is unavailable."
+        ) from exc
+    if not row_count:
+        raise HTTPException(status_code=503, detail="The demonstration sample is unavailable.")
+    if not model_task_lock.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail="The model is processing another request. Try again shortly.", headers={"Retry-After": "2"})
+    try:
+        index = payload.row_index % row_count
+        result = replay_dataset(
+            csv_path=path, start_row=index, max_rows=1, include_xai=True, db=db
+        )
+        row_result = result["results"][0]
+        incident = db.query(Incident).filter_by(incident_id=row_result["incident_id"]).first() if row_result["incident_id"] else None
+        return {
+            "status": "processed",
+            "message": "Included demonstration sample processed.",
+            "row_index": index,
+            "next_row_index": (index + 1) % row_count,
+            "processed": True,
+            "result": row_result,
+            "incident": ({
+                "id": incident.id,
+                "incident_id": incident.incident_id,
+                "alert_id": incident.alert_id,
+                "severity": incident.severity,
+                "priority": incident.priority,
+                "status": incident.status,
+            } if incident else None),
+        }
+    finally:
+        model_task_lock.release()
+
+
 @router.post("/next")
 def replay_next(
     payload: ReplayNextRequest,
@@ -38,6 +90,8 @@ def replay_next(
     capture packets from a network interface.
     """
 
+    if not model_task_lock.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail="The model is processing another request. Try again shortly.", headers={"Retry-After": "2"})
     try:
         result = replay_dataset(
             start_row=payload.row_index,
@@ -117,3 +171,5 @@ def replay_next(
             status_code=500,
             detail=f"Dataset replay failed: {exc}",
         ) from exc
+    finally:
+        model_task_lock.release()

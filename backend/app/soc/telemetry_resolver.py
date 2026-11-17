@@ -17,7 +17,7 @@ def resolve_network_telemetry(
     """
     Resolve network detection telemetry for alerts and incidents.
     Never fabricates fake IP addresses or simulated network indicators.
-    Dataset name is strictly reported as 'Unknown' to avoid exposing internal dataset information.
+    Retain known dataset provenance and leave unknown sources explicit.
     """
     valid_source_ip = (
         source_ip.strip()
@@ -41,6 +41,6 @@ def resolve_network_telemetry(
         "source_port": source_port if (isinstance(source_port, int) and source_port > 0) else None,
         "destination_port": destination_port if (isinstance(destination_port, int) and destination_port > 0) else None,
         "protocol": valid_protocol,
-        "dataset_name": "Unknown",
-        "capture_source": capture_source or "Network Telemetry Sensor",
+        "dataset_name": dataset_name or "Not provided",
+        "capture_source": capture_source or "Not provided",
     }

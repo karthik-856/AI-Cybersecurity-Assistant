@@ -28,6 +28,7 @@ import {
 import "./NetworkMonitor.css";
 
 import { API_BASE_URL } from "../../services/config";
+import { processDemoEvent } from "../../services/api";
 const PAGE_SIZE = 10;
 
 interface NetworkEvent {
@@ -143,6 +144,18 @@ function NetworkMonitor() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [processingDemo, setProcessingDemo] = useState(false);
+  const [demoMessage, setDemoMessage] = useState("");
+  const [demoError, setDemoError] = useState("");
+  const [demoAlert, setDemoAlert] = useState<string | null>(null);
+  const [canProcessDemo] = useState(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem("zuka_user") || "{}");
+      return ["ADMIN", "SOC_ANALYST"].includes(user.role);
+    } catch {
+      return false;
+    }
+  });
 
   // Sync search query param if changes in URL
   const [previousInputs0, setpreviousInputs0] = useState<
@@ -203,32 +216,9 @@ function NetworkMonitor() {
       const rawEvents: NetworkEvent[] = Array.isArray(eventsData)
         ? eventsData
         : [];
-      // Filter strictly to today's records based on user's laptop local time
-      const todayEvents = rawEvents;
-
-      setEvents(todayEvents);
-      if (todayEvents.length > 0) {
-        setStats({
-          total_events: todayEvents.length,
-          unique_source_ips: new Set(
-            todayEvents.map((e) => e.source_ip).filter(Boolean),
-          ).size,
-          unique_destination_ips: new Set(
-            todayEvents.map((e) => e.destination_ip).filter(Boolean),
-          ).size,
-          tcp_events: todayEvents.filter(
-            (e) => (e.protocol || "").toUpperCase() === "TCP",
-          ).length,
-          udp_events: todayEvents.filter(
-            (e) => (e.protocol || "").toUpperCase() === "UDP",
-          ).length,
-          other_protocol_events: todayEvents.filter(
-            (e) => !["TCP", "UDP"].includes((e.protocol || "").toUpperCase()),
-          ).length,
-        });
-      } else {
-        setStats(statsData);
-      }
+      setEvents(rawEvents);
+      setStats(statsData);
+      setError("");
       setLastUpdated(new Date());
     } catch (err) {
       setError(
@@ -239,6 +229,36 @@ function NetworkMonitor() {
     } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  }
+
+  async function runDemo() {
+    setProcessingDemo(true);
+    setDemoMessage("");
+    setDemoError("");
+    setDemoAlert(null);
+    try {
+      const saved = Number(localStorage.getItem("zuka_demo_row") || "0");
+      const result = await processDemoEvent(
+        Number.isInteger(saved) && saved >= 0 && saved <= 1000000 ? saved : 0,
+      );
+      localStorage.setItem("zuka_demo_row", String(result.next_row_index));
+      const row = result.result;
+      setDemoMessage(
+        row
+          ? `Demo event #${row.network_event_id}: ${row.predicted_class}. ${row.alert_id ? "Alert and explanation saved." : "Benign flow; no alert created."}`
+          : result.message,
+      );
+      setDemoAlert(row?.alert_id || null);
+      await loadNetworkData();
+    } catch (error) {
+      setDemoError(
+        error instanceof Error
+          ? error.message
+          : "Unable to process demonstration event.",
+      );
+    } finally {
+      setProcessingDemo(false);
     }
   }
 
@@ -390,7 +410,10 @@ function NetworkMonitor() {
             <div>
               <h1>Network Monitor</h1>
 
-              <p>Inspect recorded network flows and their related alerts.</p>
+              <p>
+                Included dataset demonstration. Process a sample to add a flow
+                and run detection.
+              </p>
             </div>
           </div>
         </div>
@@ -398,7 +421,10 @@ function NetworkMonitor() {
         <button
           type="button"
           className="network-refresh-button"
-          onClick={() => loadNetworkData()}
+          onClick={() => {
+            setRefreshing(true);
+            void loadNetworkData();
+          }}
           disabled={refreshing}
         >
           <RefreshCw size={15} className={refreshing ? "network-spin" : ""} />
@@ -406,6 +432,37 @@ function NetworkMonitor() {
           {refreshing ? "Refreshing..." : "Refresh"}
         </button>
       </header>
+
+      <div className="network-demo-controls">
+        {canProcessDemo && (
+          <button
+            type="button"
+            className="network-refresh-button"
+            disabled={processingDemo}
+            onClick={() => void runDemo()}
+          >
+            {processingDemo
+              ? "Processing demo event..."
+              : "Process next demo event"}
+          </button>
+        )}
+        <span role="status">
+          {demoMessage ||
+            "Replay runs when requested. These records come from the included dataset."}
+        </span>
+        {demoError && <span role="alert">{demoError}</span>}
+        {demoAlert && (
+          <button
+            type="button"
+            className="network-refresh-button"
+            onClick={() =>
+              navigate(`/alerts?search=${encodeURIComponent(demoAlert)}`)
+            }
+          >
+            View generated alert
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="network-alert">
@@ -636,7 +693,7 @@ function NetworkMonitor() {
 
                       <span>
                         {events.length === 0
-                          ? "No network records recorded today. Telemetry flows will stream in here as dataset replay processes events."
+                          ? "No recorded flows yet. An administrator or analyst can process a demo event above."
                           : "Try changing the search or filters."}
                       </span>
                     </div>

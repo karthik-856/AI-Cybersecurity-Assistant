@@ -213,7 +213,10 @@ export default function TwoFactorVerification() {
       )}
 
       {!capabilities.two_factor && (
-        <p>Email verification is unavailable. Contact your administrator.</p>
+        <p className="twofa-configuration-note">
+          Email delivery is not configured. An administrator must finish SMTP
+          setup before email codes can be enabled.
+        </p>
       )}
       {message && (
         <div className="twofa-success">

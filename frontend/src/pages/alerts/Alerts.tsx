@@ -26,6 +26,7 @@ import {
 import {
   getAlerts,
   getAlert,
+  generateAlertExplanation,
   getAlertStats,
   updateAlertStatus,
 } from "../../services/api";
@@ -125,14 +126,43 @@ function AlertDetails({
   onClose,
   onStatusChange,
   updating,
+  onExplain,
 }: {
   alert: AlertRecord;
   onClose: () => void;
   onStatusChange: (alertId: string, nextStatus: AlertStatus) => Promise<void>;
   updating: boolean;
+  onExplain: (alertId: string) => Promise<void>;
 }) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [explaining, setExplaining] = useState(false);
+  const [explanationError, setExplanationError] = useState("");
+  const [canGenerateExplanation] = useState(() => {
+    try {
+      return ["ADMIN", "SOC_ANALYST"].includes(
+        JSON.parse(localStorage.getItem("zuka_user") || "{}").role,
+      );
+    } catch {
+      return false;
+    }
+  });
+
+  async function explain() {
+    setExplaining(true);
+    setExplanationError("");
+    try {
+      await onExplain(alert.alert_id);
+    } catch (error) {
+      setExplanationError(
+        error instanceof Error
+          ? error.message
+          : "Unable to generate explanation.",
+      );
+    } finally {
+      setExplaining(false);
+    }
+  }
 
   const features: ShapFeature[] = (alert.xai_explanation?.top_contributions ||
     alert.xai_explanation?.supporting_features ||
@@ -458,13 +488,30 @@ function AlertDetails({
                 <Info size={18} />
 
                 <div className="alerts-empty-title">
-                  No XAI details available
+                  Explanation not generated
                 </div>
 
                 <div className="alerts-empty-text">
-                  This alert does not contain stored feature-contribution
-                  information.
+                  Generate an explanation from saved model inputs or a matching
+                  demonstration sample.
                 </div>
+                <button
+                  type="button"
+                  className="alert-action-button"
+                  disabled={explaining || !canGenerateExplanation}
+                  onClick={() => void explain()}
+                >
+                  {explaining
+                    ? "Generating explanation..."
+                    : "Generate explanation"}
+                </button>
+                {!canGenerateExplanation && (
+                  <p>
+                    Ask an administrator or analyst to generate this
+                    explanation.
+                  </p>
+                )}
+                {explanationError && <p role="alert">{explanationError}</p>}
               </div>
             ) : (
               <div className="alert-explanation-list">
@@ -509,6 +556,13 @@ function AlertDetails({
           </section>
 
           {/* SUPPORTING / OPPOSING */}
+          {alert.xai_explanation?.input_source ===
+            "reconstructed_demo_sample" && (
+            <p className="alert-detail-value">
+              Explanation reconstructed from a matching included sample and
+              stored replay evidence.
+            </p>
+          )}
 
           {(supportingFeatures.length > 0 || opposingFeatures.length > 0) && (
             <section className="alert-drawer-section">
@@ -1474,10 +1528,17 @@ function Alerts() {
 
       {selectedAlert && (
         <AlertDetails
+          key={selectedAlert.alert_id}
           alert={selectedAlert}
           onClose={() => setSelectedAlert(null)}
           onStatusChange={updateStatus}
           updating={updating}
+          onExplain={async (alertId) => {
+            const updated = await generateAlertExplanation(alertId);
+            setSelectedAlert((current) =>
+              current?.alert_id === alertId ? updated : current,
+            );
+          }}
         />
       )}
     </div>

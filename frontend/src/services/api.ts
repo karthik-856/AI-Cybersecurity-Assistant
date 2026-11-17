@@ -873,6 +873,7 @@ export interface Alert {
 
   xai_explanation: {
     method?: string;
+    input_source?: string;
     predicted_class?: string;
     confidence?: number;
     top_contributions?: ShapFeature[];
@@ -956,6 +957,21 @@ export async function getAlert(alertId: string): Promise<Alert> {
     );
   }
 
+  return data as Alert;
+}
+
+export async function generateAlertExplanation(
+  alertId: string,
+): Promise<Alert> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/api/alerts/${encodeURIComponent(alertId)}/explanation`,
+    { method: "POST", signal: AbortSignal.timeout(120000) },
+  );
+  const data = await readResponse(response);
+  if (!response.ok)
+    throw new Error(
+      getErrorMessage(data, "Unable to generate this explanation."),
+    );
   return data as Alert;
 }
 
@@ -1084,6 +1100,22 @@ export interface ReplayResponse {
     priority: string;
     status: string;
   } | null;
+}
+
+export async function processDemoEvent(
+  rowIndex: number,
+): Promise<ReplayResponse> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/replay/demo`, {
+    method: "POST",
+    body: JSON.stringify({ row_index: rowIndex }),
+    signal: AbortSignal.timeout(120000),
+  });
+  const data = await readResponse(response);
+  if (!response.ok)
+    throw new Error(
+      getErrorMessage(data, "Unable to process the demonstration sample."),
+    );
+  return data as ReplayResponse;
 }
 
 export async function replayNext(
