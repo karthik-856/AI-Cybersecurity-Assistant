@@ -5,6 +5,12 @@ account. Administrator-created teammate accounts work without SMTP at
 **User Management → Create User**. Use a real, accessible email address for
 any account that will enable email verification.
 
+Public self-sign-up is available from **Login → New to ZUKA? Create a new
+account** at `/register`. Until email delivery is configured, it displays an
+availability notice. Once configured, users register, receive a six-digit code,
+and verify their email before they can sign in. New accounts receive **VIEWER**
+access; only an administrator can grant SOC_ANALYST or ADMIN access.
+
 Render Free blocks outbound SMTP ports **25, 465, and 587**. A normal Gmail
 SMTP configuration on port 587 will therefore fail on this service. Use a
 provider supporting **2525 with STARTTLS**, such as Brevo. Its Free plan has a

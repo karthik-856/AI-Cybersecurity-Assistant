@@ -625,15 +625,14 @@ function Login() {
                   </button>
                 </form>
 
-                <Link
-                  to="/register"
-                  className="register-link"
-                  hidden={!capabilities.registration}
-                >
+                <Link to="/register" className="register-link">
                   New to ZUKA? Create a new account
                 </Link>
-                {!capabilities.registration && (
-                  <p>Need an account? Ask your administrator to create one.</p>
+                {!capabilities.loading && !capabilities.registration && (
+                  <p>
+                    Email sign-up is temporarily unavailable. Existing users can
+                    sign in.
+                  </p>
                 )}
               </>
             )}

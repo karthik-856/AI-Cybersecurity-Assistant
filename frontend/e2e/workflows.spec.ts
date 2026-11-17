@@ -8,6 +8,85 @@ async function signIn(page: Page, username = "admin") {
   await expect(page).toHaveURL(/\/dashboard$/);
 }
 
+test("public signup is discoverable and email verification is required in the UI", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/login");
+  await page
+    .getByRole("link", {
+      name: "New to ZUKA? Create a new account",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Create your account", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/Email sign-up is temporarily unavailable/),
+  ).toBeVisible();
+  // Capture only the email transport responses here. The backend suite
+  // separately verifies persisted accounts, OTP validation, and login denial.
+  await page.route("**/api/auth/features", (route) =>
+    route.fulfill({
+      json: { registration: true, password_recovery: true, two_factor: true },
+    }),
+  );
+  const username = `public_ui_${Date.now()}`;
+  const email = `${username}@example.com`;
+  await page.route("**/api/auth/register", async (route) => {
+    expect(route.request().postDataJSON()).toMatchObject({
+      username,
+      email,
+      role: "VIEWER",
+    });
+    await route.fulfill({
+      status: 201,
+      json: {
+        email,
+        verification_required: true,
+        message: "Verification code sent.",
+      },
+    });
+  });
+  await page.route("**/api/auth/verify-email", async (route) => {
+    expect(route.request().postDataJSON()).toEqual({ email, otp: "123456" });
+    await route.fulfill({
+      json: { message: "Email verified successfully. You can now sign in." },
+    });
+  });
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Create ZUKA Account", exact: true }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath("public-signup.png"),
+    fullPage: true,
+  });
+  await page.getByLabel("Username", { exact: true }).fill(username);
+  await page.getByLabel("Email", { exact: true }).fill(email);
+  await page.getByLabel("Password", { exact: true }).fill("Test-Password1!");
+  await page
+    .getByLabel("Confirm Password", { exact: true })
+    .fill("Test-Password1!");
+  await page
+    .getByRole("button", { name: "Create ZUKA Account", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Verify your email", exact: true }),
+  ).toBeVisible();
+  for (let i = 0; i < 6; i++)
+    await page
+      .getByRole("textbox", { name: `Digit ${i + 1}`, exact: true })
+      .fill(String(i + 1));
+  await page.getByRole("button", { name: "Verify Email", exact: true }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(
+    page.getByText("Email verified successfully. You can now sign in.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+});
+
 test("included demo processing saves a real flow and explained alert", async ({
   page,
 }, testInfo) => {

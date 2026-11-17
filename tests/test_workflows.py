@@ -96,6 +96,19 @@ def test_reports_crud_and_viewer_denial(client, headers):
     assert client.get(f"/api/reports/{report_id}", headers=headers["admin"]).status_code == 404
 
 
+def test_signup_without_email_configuration_does_not_persist_account(client):
+    from sqlalchemy import select
+    from backend.app.database.session import SessionLocal
+    from backend.app.models import User
+    name = "unconfigured_" + uuid4().hex[:10]
+    response = client.post("/api/auth/register", json={
+        "username": name, "email": f"{name}@example.com", "password": "Test-Password1!"})
+    assert response.status_code == 503, response.text
+    assert "temporarily unavailable" in response.json()["detail"]
+    with SessionLocal() as db:
+        assert db.scalar(select(User).where(User.username == name)) is None
+
+
 def test_database_restricts_and_redacts_security_records(client, headers):
     assert client.get("/api/database/overview", headers=headers["viewer"]).status_code == 403
     for table, forbidden in (("users", "hashed_password"), ("auth_otps", "otp_hash"), ("auth_sessions", "session_id")):

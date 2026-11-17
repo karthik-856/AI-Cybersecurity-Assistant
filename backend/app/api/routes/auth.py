@@ -39,6 +39,7 @@ from backend.app.security.password import (
 )
 from backend.app.core.config import settings
 from backend.app.services.email_service import (
+    EmailConfigurationError,
     send_email_verification_otp,
     send_password_reset_otp,
     send_two_factor_otp,
@@ -357,6 +358,9 @@ def register(
             username=user.username,
             otp=otp,
         )
+    except EmailConfigurationError as exc:
+        db.rollback()
+        raise HTTPException(status_code=503, detail="Email sign-up is temporarily unavailable. Please try again later.") from exc
     except Exception:
         db.rollback()
 

@@ -14,6 +14,7 @@ const unavailable: Capabilities = {
 
 export function useCapabilities() {
   const [capabilities, setCapabilities] = useState(unavailable);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const controller = new AbortController();
     void fetch(`${API_BASE_URL}/api/auth/features`, {
@@ -25,8 +26,11 @@ export function useCapabilities() {
       .then((result) => {
         if (!controller.signal.aborted) setCapabilities(result);
       })
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
     return () => controller.abort();
   }, []);
-  return capabilities;
+  return { ...capabilities, loading };
 }

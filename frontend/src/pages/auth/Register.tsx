@@ -153,12 +153,24 @@ function Register() {
     }
   }
 
+  if (capabilities.loading)
+    return (
+      <main className="register-page">
+        <section className="register-card">
+          <p role="status">Checking account availability...</p>
+        </section>
+      </main>
+    );
+
   if (!capabilities.registration)
     return (
       <main className="register-page">
         <section className="register-card">
-          <h1>Join your workspace</h1>
-          <p>Contact your administrator for an invitation.</p>
+          <h1>Create your account</h1>
+          <p>
+            Email sign-up is temporarily unavailable. Please try again once
+            email delivery is restored.
+          </p>
           <Link to="/login">Back to sign in</Link>
         </section>
       </main>
@@ -174,7 +186,7 @@ function Register() {
         <h1>ZUKA</h1>
         <p className="register-subtitle">SECURITY OPERATIONS CENTER</p>
         <p className="register-description">
-          Create your authorized ZUKA SOC account.
+          Create your ZUKA account and verify your email.
         </p>
 
         <div className="security-status">
@@ -265,13 +277,10 @@ function Register() {
                 />
               </div>
 
-              <label htmlFor="role">Role</label>
-              <div className="input-wrapper">
-                <Shield size={17} />
-                <select id="role" value={role} disabled={loading}>
-                  <option value="VIEWER">Viewer (Read-Only Access)</option>
-                </select>
-              </div>
+              <p>
+                New accounts have read-only access. Ask an administrator for
+                analyst access.
+              </p>
 
               <label htmlFor="password">Password</label>
               <div className="input-wrapper">

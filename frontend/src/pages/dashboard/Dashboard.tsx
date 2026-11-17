@@ -549,7 +549,10 @@ function Dashboard() {
                 {data.recent_alerts.map((alert) => (
                   <tr key={alert.alert_id}>
                     <td>
-                      <Link to={`/alerts`} className="dashboard-cell-id">
+                      <Link
+                        to={`/alerts?search=${encodeURIComponent(alert.alert_id)}`}
+                        className="dashboard-cell-id"
+                      >
                         {alert.alert_id}
                       </Link>
                     </td>
@@ -579,7 +582,7 @@ function Dashboard() {
                     </td>
                     <td>
                       <span className="dashboard-cell-dataset">
-                        Not provided
+                        {alert.dataset_name || "Not provided"}
                       </span>
                     </td>
                     <td>
