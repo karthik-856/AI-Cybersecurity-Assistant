@@ -41,6 +41,10 @@ def initialize_database():
 
 def main():
     initialize_database()
+    # Load before importing the full API and creating request-worker threads.
+    # This also validates the artifact before readiness can accept demo requests.
+    from backend.app.detection.model_service import zuka_model_service
+    zuka_model_service.load()
     uvicorn.run("backend.app.main:app", host="0.0.0.0", port=int(os.environ.get("PORT", "8000")), workers=1,
                 proxy_headers=True, forwarded_allow_ips=os.environ.get("FORWARDED_ALLOW_IPS", "127.0.0.1"))
 

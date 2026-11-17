@@ -114,4 +114,7 @@ jobs:
             frontend/test-results
       - name: Container logs
         if: always()
-        run: docker logs zuka-web || true
+        run: |
+          docker inspect --format '{{json .State}}' zuka-web || true
+          docker stats --no-stream zuka-web || true
+          docker logs zuka-web || true
