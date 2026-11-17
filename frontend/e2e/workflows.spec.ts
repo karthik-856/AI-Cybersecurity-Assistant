@@ -41,6 +41,11 @@ test("included demo processing saves a real flow and explained alert", async ({
     }),
   ).toBeVisible();
   await expect(page.locator(".alert-explanation-row")).toHaveCount(5);
+  await expect(
+    page
+      .getByRole("complementary", { name: "Alert investigation", exact: true })
+      .getByText("CIC-IDS2017", { exact: true }),
+  ).toBeVisible();
   await page.locator(".alert-explanation-list").scrollIntoViewIfNeeded();
   await page.screenshot({
     path: testInfo.outputPath("demo-alert-explanation.png"),

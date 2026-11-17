@@ -328,14 +328,16 @@ function AlertDetails({
               <div className="alert-detail-card">
                 <div className="alert-detail-label">Dataset</div>
 
-                <div className="alert-detail-value">Unknown</div>
+                <div className="alert-detail-value">
+                  {alert.dataset_name || "Not provided"}
+                </div>
               </div>
 
               <div className="alert-detail-card">
                 <div className="alert-detail-label">Source Type</div>
 
                 <div className="alert-detail-value">
-                  {alert.capture_source ?? "Live Sensor"}
+                  {alert.capture_source || "Not provided"}
                 </div>
               </div>
 
@@ -1440,7 +1442,9 @@ function Alerts() {
                     {/* DATASET */}
 
                     <td>
-                      <div className="alert-cell-dataset">Unknown</div>
+                      <div className="alert-cell-dataset">
+                        {alert.dataset_name || "Not provided"}
+                      </div>
                     </td>
 
                     {/* TIME */}
