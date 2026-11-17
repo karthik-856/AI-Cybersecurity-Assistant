@@ -195,6 +195,53 @@ test("an older seeded alert generates and retains its explanation", async ({
   ).toHaveCount(0);
 });
 
+test("automatic dataset demo processes real events and pauses without extra writes", async ({
+  page,
+}, testInfo) => {
+  await signIn(page);
+  await page.goto("/network-monitor");
+  let writes = 0;
+  page.on("request", (request) => {
+    if (
+      request.url().endsWith("/api/replay/demo") &&
+      request.method() === "POST"
+    )
+      writes++;
+  });
+  const first = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/replay/demo") &&
+      response.request().method() === "POST",
+  );
+  await page
+    .getByRole("button", { name: "Start demo replay", exact: true })
+    .click();
+  expect((await first).status()).toBe(200);
+  const second = await page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/replay/demo") &&
+      response.request().method() === "POST",
+  );
+  expect(second.status()).toBe(200);
+  await page
+    .getByRole("button", { name: "Pause demo replay", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Start demo replay", exact: true }),
+  ).toBeVisible();
+  for (let i = 0; i < 3; i++)
+    await page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/network/events?") &&
+        response.request().method() === "GET",
+    );
+  expect(writes).toBe(2);
+  await page.screenshot({
+    path: testInfo.outputPath("automatic-demo-paused.png"),
+    fullPage: true,
+  });
+});
+
 test("email verification explains missing configuration and accepts configured email codes", async ({
   page,
 }) => {
@@ -373,7 +420,7 @@ test("notifications request permission and offer an honest device test without s
     .getByRole("button", { name: "Send test notification", exact: true })
     .click();
   await expect(page.getByRole("status")).toContainText(
-    "Device notification shown. Background push needs server setup.",
+    "Device test submitted.",
   );
   expect((await notificationProbe(page)).shown).toBe(1);
   await page.screenshot({
@@ -410,6 +457,38 @@ test("denied notification permission stays disabled with actionable guidance", a
   await expect(
     page.getByRole("button", { name: "Send test notification", exact: true }),
   ).toBeDisabled();
+});
+
+test("a changed browser permission releases setup even if its callback stays pending", async ({
+  page,
+}) => {
+  await mockDeviceNotifications(page);
+  await page.addInitScript(() => {
+    Notification.requestPermission = () => {
+      setTimeout(
+        () => sessionStorage.setItem("zuka-test-permission", "granted"),
+        50,
+      );
+      return new Promise<NotificationPermission>(() => {});
+    };
+  });
+  await signIn(page);
+  await page.goto("/settings");
+  await page.getByRole("button", { name: /Alert Notifications/ }).click();
+  const toggle = page.getByRole("button", {
+    name: "Browser notifications",
+    exact: true,
+  });
+  await toggle.click();
+  await expect(toggle).toBeEnabled();
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await page
+    .getByRole("button", { name: "Send test notification", exact: true })
+    .click();
+  await expect(page.getByRole("status")).toContainText(
+    "Device test submitted.",
+  );
+  expect((await notificationProbe(page)).shown).toBe(1);
 });
 
 test("a new high-severity alert produces a privacy-aware foreground notification", async ({
@@ -649,6 +728,7 @@ test("mobile navigation and screens fit the viewport", async ({ page }) => {
   for (const path of [
     "/dashboard",
     "/alerts",
+    "/network-monitor",
     "/incidents",
     "/investigation",
     "/defense",

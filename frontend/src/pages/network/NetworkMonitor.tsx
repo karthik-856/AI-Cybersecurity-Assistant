@@ -1,6 +1,6 @@
 import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Activity,
@@ -145,6 +145,9 @@ function NetworkMonitor() {
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [processingDemo, setProcessingDemo] = useState(false);
+  const [demoRunning, setDemoRunning] = useState(false);
+  const [demoRunCount, setDemoRunCount] = useState(0);
+  const demoInFlight = useRef(false);
   const [demoMessage, setDemoMessage] = useState("");
   const [demoError, setDemoError] = useState("");
   const [demoAlert, setDemoAlert] = useState<string | null>(null);
@@ -176,7 +179,7 @@ function NetworkMonitor() {
     }
   }
 
-  async function loadNetworkData() {
+  const loadNetworkData = useCallback(async () => {
     try {
       const token = localStorage.getItem("zuka_access_token");
 
@@ -230,9 +233,11 @@ function NetworkMonitor() {
       setLoading(false);
       setRefreshing(false);
     }
-  }
+  }, []);
 
-  async function runDemo() {
+  const runDemo = useCallback(async (): Promise<boolean> => {
+    if (demoInFlight.current) return false;
+    demoInFlight.current = true;
     setProcessingDemo(true);
     setDemoMessage("");
     setDemoError("");
@@ -251,16 +256,46 @@ function NetworkMonitor() {
       );
       setDemoAlert(row?.alert_id || null);
       await loadNetworkData();
+      return true;
     } catch (error) {
       setDemoError(
         error instanceof Error
           ? error.message
           : "Unable to process demonstration event.",
       );
+      return false;
     } finally {
+      demoInFlight.current = false;
       setProcessingDemo(false);
     }
-  }
+  }, [loadNetworkData]);
+
+  useEffect(() => {
+    if (!demoRunning) return;
+    let active = true;
+    let processed = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    async function tick() {
+      const succeeded = await runDemo();
+      if (!active) return;
+      if (!succeeded) {
+        setDemoRunning(false);
+        return;
+      }
+      processed += 1;
+      setDemoRunCount(processed);
+      if (processed >= 65) {
+        setDemoRunning(false);
+        return;
+      }
+      timer = setTimeout(() => void tick(), 5000);
+    }
+    timer = setTimeout(() => void tick(), 0);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [demoRunning, runDemo]);
 
   useEffect(() => {
     const cancelInitialLoad = scheduleLoad(loadNetworkData);
@@ -273,7 +308,7 @@ function NetworkMonitor() {
       cancelInitialLoad();
       window.clearInterval(timer);
     };
-  }, []);
+  }, [loadNetworkData]);
 
   const sourceOptions = useMemo(() => {
     const values = new Set<string>();
@@ -438,7 +473,30 @@ function NetworkMonitor() {
           <button
             type="button"
             className="network-refresh-button"
-            disabled={processingDemo}
+            disabled={!demoRunning && processingDemo}
+            onClick={() => {
+              if (demoRunning) setDemoRunning(false);
+              else {
+                setDemoRunCount(0);
+                setDemoRunning(true);
+              }
+            }}
+          >
+            {demoRunning ? "Pause demo replay" : "Start demo replay"}
+          </button>
+        )}
+        <span className="network-demo-progress">
+          {demoRunning
+            ? `Running: ${demoRunCount}/65 samples. Stops when you leave this page.`
+            : demoRunCount >= 65
+              ? "Demo complete: 65 samples processed."
+              : "Replay paused. Start runs up to 65 samples, five seconds apart."}
+        </span>
+        {canProcessDemo && (
+          <button
+            type="button"
+            className="network-refresh-button"
+            disabled={processingDemo || demoRunning}
             onClick={() => void runDemo()}
           >
             {processingDemo

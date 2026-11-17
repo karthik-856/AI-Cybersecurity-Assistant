@@ -34,11 +34,55 @@ function supported() {
   );
 }
 
+export async function requestBrowserNotificationPermission(): Promise<NotificationPermission> {
+  if (Notification.permission !== "default") return Notification.permission;
+  let poll: ReturnType<typeof setInterval> | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const requested = Notification.requestPermission();
+    const observed = new Promise<NotificationPermission>((resolve) => {
+      poll = setInterval(() => {
+        if (Notification.permission !== "default")
+          resolve(Notification.permission);
+      }, 250);
+      timer = setTimeout(() => resolve(Notification.permission), 20000);
+    });
+    return await Promise.race([requested, observed]);
+  } finally {
+    clearInterval(poll);
+    clearTimeout(timer);
+  }
+}
+
+async function notificationDeadline<T>(operation: Promise<T>): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      operation,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () =>
+            reject(
+              new Error(
+                "The browser notification request timed out. Reload this page and check browser notification settings.",
+              ),
+            ),
+          10000,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function notificationRegistration() {
-  await navigator.serviceWorker.register("/sw.js", {
-    scope: "/",
-    updateViaCache: "none",
-  });
+  await notificationDeadline(
+    navigator.serviceWorker.register("/sw.js", {
+      scope: "/",
+      updateViaCache: "none",
+    }),
+  );
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     return await Promise.race([
@@ -111,7 +155,7 @@ async function syncPush(): Promise<boolean> {
 let synchronization: Promise<boolean> = Promise.resolve(false);
 export function ensurePersistentPush(): Promise<boolean> {
   synchronization = synchronization.catch(() => false).then(syncPush);
-  return synchronization;
+  return notificationDeadline(synchronization).catch(() => false);
 }
 
 export async function disablePersistentPush(): Promise<void> {
@@ -136,7 +180,7 @@ export async function disablePersistentPush(): Promise<void> {
       await subscription.unsubscribe();
       return false;
     });
-  await synchronization.catch(() => false);
+  await notificationDeadline(synchronization).catch(() => false);
 }
 
 export async function showForegroundAlert(alert: {
@@ -149,15 +193,17 @@ export async function showForegroundAlert(alert: {
   if (!supported() || !prefs.enabled || Notification.permission !== "granted")
     return;
   const registration = await notificationRegistration();
-  await registration.showNotification(`${alert.severity} SECURITY ALERT`, {
-    body: prefs.preview
-      ? `${alert.predicted_class} detected`
-      : "A new security alert requires attention.",
-    icon: "/zuka-push-icon.svg",
-    badge: "/zuka-push-badge.svg",
-    tag: `zuka-${alert.alert_id}`,
-    data: { url: `/alerts?search=${encodeURIComponent(alert.alert_id)}` },
-  });
+  await notificationDeadline(
+    registration.showNotification(`${alert.severity} SECURITY ALERT`, {
+      body: prefs.preview
+        ? `${alert.predicted_class} detected`
+        : "A new security alert requires attention.",
+      icon: "/zuka-push-icon.svg",
+      badge: "/zuka-push-badge.svg",
+      tag: `zuka-${alert.alert_id}`,
+      data: { url: `/alerts?search=${encodeURIComponent(alert.alert_id)}` },
+    }),
+  );
 }
 
 export async function testBrowserNotification(): Promise<string> {
@@ -176,10 +222,12 @@ export async function testBrowserNotification(): Promise<string> {
     return "Test push accepted. Check your device notifications.";
   }
   const registration = await notificationRegistration();
-  await registration.showNotification("ZUKA test notification", {
-    body: "Notifications work while this website is open. Background push still needs server setup.",
-    tag: "zuka-notification-test",
-    data: { url: "/settings" },
-  });
-  return "Device notification shown. Background push needs server setup.";
+  await notificationDeadline(
+    registration.showNotification("ZUKA test notification", {
+      body: "Notifications work while this website is open. Background push still needs server setup.",
+      tag: "zuka-notification-test",
+      data: { url: "/settings" },
+    }),
+  );
+  return "Device test submitted. If no banner appears, allow Chrome in your system notification settings and turn off Do Not Disturb. Background push needs server setup.";
 }

@@ -27,6 +27,7 @@ import {
   disablePersistentPush,
   ensurePersistentPush,
   testBrowserNotification,
+  requestBrowserNotificationPermission,
 } from "../../services/push";
 import { getPushStatus } from "../../services/api";
 import { playAlertSound } from "../../services/alertSound";
@@ -426,7 +427,7 @@ export default function Settings() {
         const permission =
           Notification.permission === "granted"
             ? "granted"
-            : await Notification.requestPermission();
+            : await requestBrowserNotificationPermission();
         setBrowserPermission(permission);
         if (permission !== "granted") {
           setNotificationMessage(
@@ -439,7 +440,10 @@ export default function Settings() {
         const next = { ...preferences, browserNotifications: true };
         setPreferences(next);
         syncPreferencesToStorage(next);
-        const ready = await ensurePersistentPush();
+        const ready =
+          backgroundPushConfigured === true
+            ? await ensurePersistentPush()
+            : false;
         setNotificationMessage(
           ready
             ? "Background notifications enabled for this device. Send a test to verify delivery."

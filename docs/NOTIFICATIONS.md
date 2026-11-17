@@ -15,6 +15,11 @@ plan and accepted idle sleep. Keep billing unchanged.
    If previously denied, allow notifications in the site's browser settings.
 3. Click Send test notification. Test sound separately and check browser/OS
    volume and Do Not Disturb settings if it is inaudible.
+   A successful device test means Chrome accepted the notification API request;
+   it cannot prove Windows displayed a banner. If no banner appears, allow
+   Chrome in Windows Settings → System → Notifications, and turn off Do Not
+   Disturb. The website bounds setup requests so a stalled browser operation
+   does not keep the toggle or test button disabled indefinitely.
 4. Device notifications can work for newly detected alerts while the page is
    open. Background delivery also needs the server keys below and successful
    registration of that device. The UI distinguishes these states.
@@ -23,6 +28,12 @@ Existing alerts are history and do not generate fresh banners at each sign-in.
 The included 65-row sample is imported once. With replay disabled and no new
 incoming detections, no new security notifications are expected. The test button
 verifies delivery without fabricating an alert.
+
+For ongoing demonstration activity, open Network Monitor and choose **Start
+demo replay**. It processes one sample every five seconds, up to 65 per run.
+**Pause demo replay** stops future samples after the current request. Leaving
+Network Monitor also stops replay. This browser-driven demonstration is separate
+from the hosted API's availability; a sleeping laptop stops its own demo loop.
 
 A sleeping/offline receiving device cannot be promised immediate notifications.
 Push messages request a 24-hour provider TTL for later delivery, subject to the

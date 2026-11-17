@@ -63,6 +63,9 @@ In **Network Monitor**, administrators and analysts can choose **Process next
 demo event**. This processes one row of the included sample, saves its network
 flow, and creates an alert, incident, and real TreeSHAP explanation when the
 model predicts an attack. Benign predictions create only the flow record.
+**Start demo replay** runs samples automatically, five seconds apart, for up
+to 65 samples per run. Pause stops future requests; leaving Network Monitor
+also stops replay. It requires this browser page to remain open and awake.
 Older alerts offer **Generate explanation**. Explanations require retained
 inputs or an unambiguous match to the included sample and stored replay
 evidence; reconstructed inputs are explicitly labeled. Unknown legacy alerts
