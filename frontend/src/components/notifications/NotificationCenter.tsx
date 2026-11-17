@@ -318,7 +318,7 @@ export default function NotificationCenter() {
     });
 
     setOpen(false);
-    navigate(`/alerts?alert=${encodeURIComponent(alert.alert_id)}`);
+    navigate(`/alerts?search=${encodeURIComponent(alert.alert_id)}`);
   }
 
   function handlePointerDown(

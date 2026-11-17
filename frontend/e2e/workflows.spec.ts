@@ -545,6 +545,56 @@ test("attack chart shows shares of all alerts", async ({ page }) => {
   await expect(page.locator(".attack-share").nth(1)).toHaveText("(10%)");
 });
 
+test("bell notifications open the selected alert and support older alert links", async ({
+  page,
+  request,
+}) => {
+  await signIn(page);
+  const token = await page.evaluate(() =>
+    localStorage.getItem("zuka_access_token"),
+  );
+  const response = await request.get("/api/alerts?severity=CRITICAL&limit=1", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(response.status()).toBe(200);
+  const alert = (await response.json()).alerts[0];
+  await page
+    .getByRole("button", { name: "Open security notifications", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: new RegExp(`^CRITICAL.*${alert.alert_id}`) })
+    .click();
+  await expect(page).toHaveURL(new RegExp(`search=${alert.alert_id}`));
+  const drawer = page.getByRole("complementary", {
+    name: "Alert investigation",
+    exact: true,
+  });
+  await expect(
+    drawer.getByRole("heading", { name: alert.alert_id, exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Close investigation", exact: true })
+    .click();
+  await expect(drawer).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Open security notifications", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: new RegExp(`^CRITICAL.*${alert.alert_id}`) })
+    .click();
+  await expect(
+    drawer.getByRole("heading", { name: alert.alert_id, exact: true }),
+  ).toBeVisible();
+  for (const parameter of ["alert", "alert_id"]) {
+    await page.goto(
+      `/alerts?${parameter}=${encodeURIComponent(alert.alert_id)}`,
+    );
+    await expect(
+      drawer.getByRole("heading", { name: alert.alert_id, exact: true }),
+    ).toBeVisible();
+  }
+});
+
 test("investigation drafts survive refreshes and notes persist after saving", async ({
   page,
   request,

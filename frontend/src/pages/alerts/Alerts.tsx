@@ -1,7 +1,7 @@
 import { scheduleLoad } from "../../utils/scheduleLoad";
 import { formatShortDateTime } from "../../utils/datetime";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   AlertTriangle,
@@ -817,15 +817,23 @@ function AlertDetails({
 
 function Alerts() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
 
   const [alerts, setAlerts] = useState<AlertRecord[]>([]);
+  const [loadedSearch, setLoadedSearch] = useState<string | null>(null);
 
   const [total, setTotal] = useState(0);
 
   const [history, setHistory] = useState<AlertRecord[]>([]);
 
   const [historyTotal, setHistoryTotal] = useState(0);
-  const [search, setSearch] = useState(() => searchParams.get("search") || "");
+  const [search, setSearch] = useState(
+    () =>
+      searchParams.get("search") ||
+      searchParams.get("alert_id") ||
+      searchParams.get("alert") ||
+      "",
+  );
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
@@ -837,6 +845,9 @@ function Alerts() {
   });
 
   const [selectedAlert, setSelectedAlert] = useState<AlertRecord | null>(null);
+  const [autoOpenedAlertTarget, setAutoOpenedAlertTarget] = useState<
+    string | null
+  >(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -858,7 +869,7 @@ function Alerts() {
   const [previousInputs0, setpreviousInputs0] = useState<
     readonly unknown[] | null
   >(null);
-  const currentInputs1 = [searchParams];
+  const currentInputs1 = [searchParams, location.key];
   if (
     previousInputs0 === null ||
     currentInputs1.some(
@@ -867,48 +878,26 @@ function Alerts() {
   ) {
     setpreviousInputs0(currentInputs1);
 
-    const q = searchParams.get("search");
-    if (q !== null && q !== undefined) {
-      setSearch(q);
-    }
-    if (
+    const q =
+      searchParams.get("search") ||
+      searchParams.get("alert_id") ||
+      searchParams.get("alert") ||
+      "";
+    setSearch(q);
+    setAlerts([]);
+    setSelectedAlert(null);
+    setAutoOpenedAlertTarget(null);
+    setShowHistory(
       searchParams.get("history") === "true" ||
-      searchParams.get("tab") === "history"
-    ) {
-      setShowHistory(true);
-      setPage(1);
-    }
-  }
-
-  const [autoOpenedAlertTarget, setAutoOpenedAlertTarget] = useState<
-    string | null
-  >(null);
-  const [previousInputs1, setpreviousInputs1] = useState<
-    readonly unknown[] | null
-  >(null);
-  const currentInputs2 = [searchParams, alerts];
-  if (
-    previousInputs1 === null ||
-    currentInputs2.some(
-      (value, index) => !Object.is(value, previousInputs1?.[index]),
-    )
-  ) {
-    setpreviousInputs1(currentInputs2);
-
-    const aid = searchParams.get("alert_id");
-    if (aid && alerts.length > 0) {
-      const found = alerts.find((a) => a.alert_id === aid);
-      if (found && autoOpenedAlertTarget !== `id:${aid}`) {
-        setSelectedAlert(found);
-        setAutoOpenedAlertTarget(`id:${aid}`);
-      }
-    }
+        searchParams.get("tab") === "history",
+    );
+    setPage(1);
   }
 
   const [previousInputs2, setpreviousInputs2] = useState<
     readonly unknown[] | null
   >(null);
-  const currentInputs3 = [alerts, search, selectedAlert];
+  const currentInputs3 = [alerts, search, selectedAlert, loadedSearch];
   if (
     previousInputs2 === null ||
     currentInputs3.some(
@@ -919,6 +908,7 @@ function Alerts() {
 
     if (
       search.trim() &&
+      loadedSearch === search.trim() &&
       alerts.length === 1 &&
       !selectedAlert &&
       autoOpenedAlertTarget !== `search:${search.trim()}`
@@ -949,6 +939,7 @@ function Alerts() {
       });
 
       setAlerts(data.alerts);
+      setLoadedSearch(search.trim());
 
       setTotal(data.total);
 
