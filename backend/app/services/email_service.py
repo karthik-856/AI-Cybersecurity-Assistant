@@ -119,10 +119,13 @@ def _send_email(
 
 
 def send_email_verification_otp(
-    recipient: str,
-    username: str,
-    otp: str,
+    recipient: str = "",
+    username: str = "User",
+    otp: str = "",
+    *,
+    recipient_email: str | None = None,
 ) -> None:
+    target_recipient = recipient or recipient_email or ""
     safe_username = html.escape(username)
 
     subject = "ZUKA — Verify Your Email Address"
@@ -265,7 +268,7 @@ ZUKA Security Operations Center
 """.strip()
 
     _send_email(
-        recipient=recipient,
+        recipient=target_recipient,
         subject=subject,
         text_body=text_body,
         html_body=html_body,

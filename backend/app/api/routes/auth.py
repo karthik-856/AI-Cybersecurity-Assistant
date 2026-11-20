@@ -490,12 +490,19 @@ def resend_verification(
 
     try:
         send_email_verification_otp(
-            recipient_email=user.email,
+            recipient=user.email,
+            username=user.username,
             otp=otp,
         )
 
         db.commit()
 
+    except EmailConfigurationError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Email sign-up is temporarily unavailable. Please try again later.",
+        ) from exc
     except Exception:
         db.rollback()
 
