@@ -150,6 +150,7 @@ function NetworkMonitor() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const {
     canProcessDemo,
+    serverReplay,
     demoRunning,
     demoRunCount,
     processingDemo,
@@ -412,56 +413,58 @@ function NetworkMonitor() {
         </button>
       </header>
 
-      <div className="network-demo-controls">
-        {canProcessDemo && (
-          <button
-            type="button"
-            className="network-refresh-button"
-            disabled={!demoRunning && processingDemo}
-            onClick={() => {
-              if (demoRunning) pauseDemo();
-              else startDemo();
-            }}
-          >
-            {demoRunning ? "Pause demo replay" : "Start demo replay"}
-          </button>
-        )}
-        <span className="network-demo-progress">
-          {demoRunning
-            ? `Running: ${demoRunCount}/65 samples. Continues across pages in this tab.`
-            : demoRunCount >= 65
-              ? "Demo complete: 65 samples processed."
-              : "Replay paused. Start runs up to 65 samples, five seconds apart."}
-        </span>
-        {canProcessDemo && (
-          <button
-            type="button"
-            className="network-refresh-button"
-            disabled={processingDemo || demoRunning}
-            onClick={() => void runDemo()}
-          >
-            {processingDemo
-              ? "Processing demo event..."
-              : "Process next demo event"}
-          </button>
-        )}
-        <span role="status">
-          {demoMessage ||
-            "Replay runs when requested. These records come from the included dataset."}
-        </span>
-        {demoError && <span role="alert">{demoError}</span>}
-        {demoAlert && (
-          <button
-            type="button"
-            className="network-refresh-button"
-            onClick={() =>
-              navigate(`/alerts?search=${encodeURIComponent(demoAlert)}`)
-            }
-          >
-            View generated alert
-          </button>
-        )}
-      </div>
+      {!serverReplay?.enabled && (
+        <div className="network-demo-controls">
+          {canProcessDemo && (
+            <button
+              type="button"
+              className="network-refresh-button"
+              disabled={!demoRunning && processingDemo}
+              onClick={() => {
+                if (demoRunning) pauseDemo();
+                else startDemo();
+              }}
+            >
+              {demoRunning ? "Pause demo replay" : "Start demo replay"}
+            </button>
+          )}
+          <span className="network-demo-progress">
+            {demoRunning
+              ? `Running: ${demoRunCount}/65 samples. Continues across pages in this tab.`
+              : demoRunCount >= 65
+                ? "Demo complete: 65 samples processed."
+                : "Replay paused. Start runs up to 65 samples, five seconds apart."}
+          </span>
+          {canProcessDemo && (
+            <button
+              type="button"
+              className="network-refresh-button"
+              disabled={processingDemo || demoRunning}
+              onClick={() => void runDemo()}
+            >
+              {processingDemo
+                ? "Processing demo event..."
+                : "Process next demo event"}
+            </button>
+          )}
+          <span role="status">
+            {demoMessage ||
+              "Replay runs when requested. These records come from the included dataset."}
+          </span>
+          {demoError && <span role="alert">{demoError}</span>}
+          {demoAlert && (
+            <button
+              type="button"
+              className="network-refresh-button"
+              onClick={() =>
+                navigate(`/alerts?search=${encodeURIComponent(demoAlert)}`)
+              }
+            >
+              View generated alert
+            </button>
+          )}
+        </div>
+      )}
 
       {error && (
         <div className="network-alert">

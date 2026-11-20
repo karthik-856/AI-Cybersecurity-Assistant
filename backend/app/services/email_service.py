@@ -10,7 +10,7 @@ class EmailConfigurationError(RuntimeError):
     """Raised when SMTP configuration is incomplete."""
 
 
-def _validate_smtp_configuration() -> None:
+def missing_smtp_settings() -> list[str]:
     required = {
         "SMTP_HOST": settings.smtp_host,
         "SMTP_USERNAME": settings.smtp_username,
@@ -18,12 +18,15 @@ def _validate_smtp_configuration() -> None:
         "SMTP_FROM_EMAIL": settings.smtp_from_email,
     }
 
-    missing = [
+    return [
         name
         for name, value in required.items()
-        if not value
+        if not value or not value.strip()
     ]
 
+
+def _validate_smtp_configuration() -> None:
+    missing = missing_smtp_settings()
     if missing:
         raise EmailConfigurationError(
             "SMTP email service is not configured. "

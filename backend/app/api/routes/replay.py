@@ -11,6 +11,8 @@ from backend.app.replay.replay_service import replay_dataset, PROJECT_ROOT
 from backend.app.detection.workload import model_task_lock
 from backend.app.security.dependencies import get_current_user, require_role
 from backend.app.soc.incident_service import create_incident_from_alert
+from backend.app.core.config import settings
+from backend.app.replay.replay_worker import replay_worker
 
 
 router = APIRouter(
@@ -30,6 +32,12 @@ class ReplayNextRequest(BaseModel):
 
 class DemoReplayRequest(BaseModel):
     row_index: int = Field(default=0, ge=0, le=1000000)
+
+
+@router.get("/status")
+def replay_status(current_user: User = Depends(get_current_user)):
+    return {"enabled": settings.enable_in_process_replay,
+            "source": "Dataset replay", "selection": "random", **replay_worker.snapshot()}
 
 
 @router.post("/demo")

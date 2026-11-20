@@ -29,13 +29,24 @@ The included 65-row sample is imported once. With replay disabled and no new
 incoming detections, no new security notifications are expected. The test button
 verifies delivery without fabricating an alert.
 
-For ongoing demonstration activity, open Network Monitor and choose **Start
-demo replay**. It processes one sample every five seconds, up to 65 per run.
-**Pause demo replay** stops future samples after the current request. Replay
-continues when navigating between signed-in pages in the same tab.
-The status and Start/Pause controls are also visible on Dashboard. Refreshing
-or signing out ends the run. A sleeping device pauses its browser timers. This
-browser-driven demonstration is separate from the hosted API's availability.
+The hosted backend can run random dataset detection with
+`ENABLE_IN_PROCESS_REPLAY=true`. Its worker selects a random sample from the
+included CSV every 15 seconds, runs the real model and TreeSHAP, saves a network
+event, and creates an alert/incident only for model-classified attacks. Samples
+are selected with replacement; benign samples increase events without alerts.
+This runs on Render independently of browser tabs or the owner's laptop.
+Dashboard and Network Monitor show the authenticated `/api/replay/status` result,
+including processed samples, generated alerts, errors and running state. The
+shared model lock prevents simultaneous inference jobs on the small instance.
+Counters in the worker status restart after a server restart; saved SOC records
+remain in PostgreSQL. Render Free still sleeps after idle; this does not promise
+24-hour processing and replay does not keep the service awake artificially.
+
+When backend replay is disabled, operators can use the bounded browser replay
+instead: **Start demo replay** processes up to 65 samples, five seconds apart,
+across signed-in pages. **Pause demo replay** stops after the current request.
+Refreshing/signing out ends that fallback run; device sleep pauses its timers.
+The UI hides these browser controls when backend replay is enabled.
 
 A sleeping/offline receiving device cannot be promised immediate notifications.
 Push messages request a 24-hour provider TTL for later delivery, subject to the

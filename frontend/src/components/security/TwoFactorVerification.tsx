@@ -39,6 +39,27 @@ export default function TwoFactorVerification() {
   const [verifying, setVerifying] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [missingEmailFields, setMissingEmailFields] = useState<string[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    try {
+      if (
+        JSON.parse(localStorage.getItem("zuka_user") || "{}").role === "ADMIN"
+      ) {
+        void requestJson("/api/auth/email-status")
+          .then((data) => {
+            if (active) setMissingEmailFields(data.missing_fields || []);
+          })
+          .catch(() => undefined);
+      }
+    } catch {
+      /* No administrator configuration details without a valid user. */
+    }
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function loadStatus() {
     try {
@@ -216,6 +237,8 @@ export default function TwoFactorVerification() {
         <p className="twofa-configuration-note">
           Email delivery is not configured. An administrator must finish SMTP
           setup before email codes can be enabled.
+          {missingEmailFields.length > 0 &&
+            ` Missing settings: ${missingEmailFields.join(", ")}.`}
         </p>
       )}
       {message && (

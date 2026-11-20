@@ -1,6 +1,7 @@
 """Verify the production image against an explicitly disposable CI database."""
 import csv
 import os
+import time
 from pathlib import Path
 
 from sqlalchemy import select
@@ -34,6 +35,16 @@ def main():
         assert response.status_code == 200, response.text
         headers = {"Authorization": "Bearer " + response.json()["access_token"]}
         assert client.get("/api/detection/health", headers=headers).status_code == 200
+        if settings.enable_in_process_replay:
+            deadline = time.monotonic() + 30
+            while time.monotonic() < deadline:
+                replay = client.get("/api/replay/status", headers=headers).json()
+                if replay["processed_events"] > 0:
+                    assert replay["running"] and replay["dataset_rows"] == 65
+                    break
+                time.sleep(0.1)
+            else:
+                raise AssertionError("The production background worker did not process a dataset sample.")
         with Path("data/sample_replay.csv").open(encoding="utf-8") as source:
             row = next(csv.DictReader(source))
         response = client.post("/api/detection/predict", headers=headers, json={"features": {name: float(row[name]) for name in zuka_model_service.features}, "include_xai": True})

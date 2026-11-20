@@ -23,7 +23,7 @@ services:
       - key: BOOTSTRAP_ADMIN_PASSWORD
         sync: false
       - key: ENABLE_IN_PROCESS_REPLAY
-        value: "false"
+        value: "true"
       - key: SEED_DEMO_DATA
         value: "true"
       - key: ZUKA_LLM_PROVIDER

@@ -40,12 +40,13 @@ from backend.app.security.password import (
 from backend.app.core.config import settings
 from backend.app.services.email_service import (
     EmailConfigurationError,
+    missing_smtp_settings,
     send_email_verification_otp,
     send_password_reset_otp,
     send_two_factor_otp,
     send_analyst_approval_email,
 )
-from backend.app.security.dependencies import get_current_user
+from backend.app.security.dependencies import get_current_user, require_role
 
 
 router = APIRouter(
@@ -1346,5 +1347,12 @@ def logout(request: Request, db: Session = Depends(get_db), current_user: User =
 
 @router.get("/features")
 def authentication_features():
-    email_available = bool(settings.smtp_host and settings.smtp_username and settings.smtp_password and settings.smtp_from_email)
+    email_available = not missing_smtp_settings()
     return {"registration": email_available, "password_recovery": email_available, "two_factor": email_available}
+
+
+@router.get("/email-status")
+def email_configuration_status(current_user: User = Depends(require_role("ADMIN"))):
+    """Report missing setting names to administrators, never credential values."""
+    missing = missing_smtp_settings()
+    return {"configured": not missing, "missing_fields": missing}

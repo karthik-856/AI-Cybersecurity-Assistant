@@ -81,6 +81,7 @@ jobs:
           -e JWT_SECRET_KEY=ci-signing-secret-never-used-in-a-real-deployment-123
           -e OTP_SECRET=ci-otp-secret-never-used-in-a-real-deployment-456
           -e SMOKE_TEST_ONLY=true -e AUTH_RATE_LIMIT_ENABLED=false -e SEED_DEMO_DATA=true
+          -e ENABLE_IN_PROCESS_REPLAY=true
           zuka-ci python -m scripts.smoke_deployment
       - name: Start the production container
         run: >-

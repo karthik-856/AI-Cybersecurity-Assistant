@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { processDemoEvent } from "../services/api";
+import {
+  getServerReplayStatus,
+  processDemoEvent,
+  type ServerReplayStatus,
+} from "../services/api";
 
 // The signed-in layout owns the run, so route changes cannot stop it.
 // Runs remain explicit and bounded; refresh/sign-out ends them, sleep pauses timers.
@@ -12,6 +16,36 @@ export function useDemoReplay(canProcessDemo: boolean) {
   const [demoAlert, setDemoAlert] = useState<string | null>(null);
   const [demoEvent, setDemoEvent] = useState<number | null>(null);
   const inFlight = useRef(false);
+  const [serverReplay, setServerReplay] = useState<ServerReplayStatus | null>(
+    null,
+  );
+  const [serverUnavailable, setServerUnavailable] = useState(false);
+  useEffect(() => {
+    let active = true;
+    let checking = false;
+    async function check() {
+      if (checking) return;
+      checking = true;
+      try {
+        const status = await getServerReplayStatus();
+        if (active) {
+          setServerReplay(status);
+          setServerUnavailable(false);
+          if (status.enabled) setDemoRunning(false);
+        }
+      } catch {
+        if (active) setServerUnavailable(true);
+      } finally {
+        checking = false;
+      }
+    }
+    void check();
+    const timer = setInterval(() => void check(), 5000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, []);
 
   const runDemo = useCallback(async (): Promise<boolean> => {
     if (!canProcessDemo || inFlight.current) return false;
@@ -77,6 +111,8 @@ export function useDemoReplay(canProcessDemo: boolean) {
   }
 
   return {
+    serverReplay,
+    serverUnavailable,
     canProcessDemo,
     demoRunning,
     demoRunCount,

@@ -458,38 +458,73 @@ function SocLayout() {
 
         <main className="soc-content">
           <div className="soc-content-inner">
-            {demo.canProcessDemo && pathname !== "/network-monitor" && (
+            {demo.serverReplay?.enabled ? (
               <section
                 className="soc-demo-status"
-                aria-label="Dataset demonstration"
+                aria-label="Backend dataset detection"
               >
                 <div>
                   <strong>
-                    {demo.demoRunning
-                      ? `Dataset demo running: ${demo.demoRunCount}/65`
-                      : demo.demoRunCount >= 65
-                        ? "Dataset demo complete: 65/65"
-                        : "Dataset demo paused"}
+                    {demo.serverUnavailable
+                      ? "Checking backend connection…"
+                      : demo.serverReplay.running
+                        ? "Backend random dataset detection running"
+                        : "Backend dataset detection stopped"}
                   </strong>
                   <span>
-                    {demo.demoRunning
-                      ? "Detection continues across pages in this tab."
-                      : "Start replay to process new samples and create attack alerts."}
+                    {demo.serverReplay.processed_events} samples processed ·{" "}
+                    {demo.serverReplay.generated_alerts} attack alerts since
+                    server start · every {demo.serverReplay.interval_seconds}{" "}
+                    seconds
                   </span>
                   <small>
-                    Browser demonstration; pauses while this device sleeps.
-                    Refresh or sign-out ends the run.
+                    Runs on the hosted backend without this browser. Render Free
+                    pauses during idle sleep.
                   </small>
-                  {demo.demoError && <span role="alert">{demo.demoError}</span>}
+                  {demo.serverReplay.error && (
+                    <span role="alert">{demo.serverReplay.error}</span>
+                  )}
                 </div>
-                <button
-                  type="button"
-                  disabled={!demo.demoRunning && demo.processingDemo}
-                  onClick={demo.demoRunning ? demo.pauseDemo : demo.startDemo}
-                >
-                  {demo.demoRunning ? "Pause demo replay" : "Start demo replay"}
-                </button>
               </section>
+            ) : (
+              demo.canProcessDemo &&
+              pathname !== "/network-monitor" && (
+                <section
+                  className="soc-demo-status"
+                  aria-label="Dataset demonstration"
+                >
+                  <div>
+                    <strong>
+                      {demo.demoRunning
+                        ? `Dataset demo running: ${demo.demoRunCount}/65`
+                        : demo.demoRunCount >= 65
+                          ? "Dataset demo complete: 65/65"
+                          : "Dataset demo paused"}
+                    </strong>
+                    <span>
+                      {demo.demoRunning
+                        ? "Detection continues across pages in this tab."
+                        : "Start replay to process new samples and create attack alerts."}
+                    </span>
+                    <small>
+                      Browser demonstration; pauses while this device sleeps.
+                      Refresh or sign-out ends the run.
+                    </small>
+                    {demo.demoError && (
+                      <span role="alert">{demo.demoError}</span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    disabled={!demo.demoRunning && demo.processingDemo}
+                    onClick={demo.demoRunning ? demo.pauseDemo : demo.startDemo}
+                  >
+                    {demo.demoRunning
+                      ? "Pause demo replay"
+                      : "Start demo replay"}
+                  </button>
+                </section>
+              )
             )}
             <Outlet context={demo} />
           </div>

@@ -252,6 +252,60 @@ test("automatic dataset demo survives navigation and pauses without extra writes
   });
 });
 
+test("backend replay status replaces browser timers and stays visible across pages", async ({
+  page,
+}, testInfo) => {
+  let checks = 0;
+  let browserWrites = 0;
+  await page.route("**/api/replay/status", (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        running: true,
+        interval_seconds: 15,
+        dataset_rows: 65,
+        processed_events: ++checks,
+        generated_alerts: 1,
+        last_processed_at: new Date().toISOString(),
+        error: null,
+      },
+    }),
+  );
+  page.on("request", (request) => {
+    if (
+      request.url().endsWith("/api/replay/demo") &&
+      request.method() === "POST"
+    )
+      browserWrites++;
+  });
+  await signIn(page);
+  const banner = page.getByRole("region", {
+    name: "Backend dataset detection",
+  });
+  await expect(banner).toContainText(
+    "Backend random dataset detection running",
+  );
+  await expect(
+    page.getByRole("button", { name: "Start demo replay", exact: true }),
+  ).toHaveCount(0);
+  await page
+    .getByRole("link", { name: "Network Monitor", exact: true })
+    .click();
+  await expect(banner).toContainText("without this browser");
+  await expect(
+    page.getByRole("button", { name: "Process next demo event", exact: true }),
+  ).toHaveCount(0);
+  await page.waitForResponse((response) =>
+    response.url().endsWith("/api/replay/status"),
+  );
+  expect(checks).toBeGreaterThanOrEqual(2);
+  expect(browserWrites).toBe(0);
+  await page.screenshot({
+    path: testInfo.outputPath("backend-random-replay.png"),
+    fullPage: true,
+  });
+});
+
 test("email verification explains missing configuration and accepts configured email codes", async ({
   page,
 }) => {

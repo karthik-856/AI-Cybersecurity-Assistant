@@ -1118,6 +1118,29 @@ export async function processDemoEvent(
   return data as ReplayResponse;
 }
 
+export interface ServerReplayStatus {
+  enabled: boolean;
+  running: boolean;
+  interval_seconds: number;
+  dataset_rows: number | null;
+  processed_events: number;
+  generated_alerts: number;
+  last_processed_at: string | null;
+  error: string | null;
+}
+
+export async function getServerReplayStatus(): Promise<ServerReplayStatus> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/api/replay/status`,
+    {
+      signal: AbortSignal.timeout(10000),
+    },
+  );
+  if (!response.ok)
+    throw new Error("Unable to check backend detection status.");
+  return response.json();
+}
+
 export async function replayNext(
   rowIndex: number,
   includeXai = true,
