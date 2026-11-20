@@ -506,6 +506,9 @@ function Login() {
 
               {view === "reset" &&
                 "Choose a new password for your ZUKA account."}
+
+              {["2fa", "verify", "forgot-otp"].includes(view) &&
+                " If the code is missing, check Spam or Junk."}
             </p>
 
             {error && (

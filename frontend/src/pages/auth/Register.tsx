@@ -222,7 +222,7 @@ function Register() {
             <p>
               {view === "form"
                 ? "Register for access to the ZUKA Security Operations Center."
-                : `Enter the 6-digit code sent to ${email}.`}
+                : `Enter the 6-digit code sent to ${email}. If it is missing, check Spam or Junk.`}
             </p>
           </div>
 
@@ -437,8 +437,8 @@ function Register() {
           <div className="register-footer">
             <Shield size={14} />
             <span>
-              All accounts activate immediately upon 6-digit email OTP
-              verification.
+              Verify your email to continue. SOC Analyst accounts also require
+              administrator approval.
             </span>
           </div>
         </div>

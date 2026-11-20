@@ -61,3 +61,25 @@ connection** to distinguish missing fields, TLS failures, timeouts and rejected
 SMTP authentication. The result never includes credentials. Authentication
 success is separate from actual delivery, which must be checked with a real
 verification message and the provider's delivery log.
+
+## Messages delivered to Spam or Junk
+
+SMTP authentication and a provider's Delivered status do not establish Inbox
+placement. Brevo replaces free-email senders such as Gmail with a
+`brevosend.com` sender because the account cannot authenticate Gmail's domain.
+Recipients can open their Spam/Junk folder, select the expected ZUKA message,
+and mark it Not spam. This helps that recipient; it does not fix delivery for
+every new user. Do not disable spam filtering or share verification codes.
+
+The current zero-cost setup remains supported, with this delivery limitation.
+Registration and sign-in code screens remind users to check Spam/Junk.
+For improved deliverability, use a sending domain whose DNS you control,
+add it in Brevo, and configure the exact Brevo verification, DKIM and DMARC
+records shown for that domain. Preserve existing DNS policies. After Brevo
+reports Authenticated, verify a sender on that domain and update
+`SMTP_FROM_EMAIL`. A Render-hosted website address alone does not provide
+the email DNS control needed for this. Domain authentication improves
+deliverability but does not guarantee Inbox placement.
+
+See [Brevo domain troubleshooting](https://help.brevo.com/hc/en-us/articles/16045394674066)
+and [domain authentication](https://help.brevo.com/hc/en-us/articles/12163873383186).
