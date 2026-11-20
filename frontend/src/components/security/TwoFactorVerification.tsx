@@ -40,6 +40,34 @@ export default function TwoFactorVerification() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [missingEmailFields, setMissingEmailFields] = useState<string[]>([]);
+  const [mailChecking, setMailChecking] = useState(false);
+  const [mailCheckMessage, setMailCheckMessage] = useState("");
+  const [isAdministrator] = useState(() => {
+    try {
+      return (
+        JSON.parse(localStorage.getItem("zuka_user") || "{}").role === "ADMIN"
+      );
+    } catch {
+      return false;
+    }
+  });
+
+  async function checkMail() {
+    setMailChecking(true);
+    setMailCheckMessage("");
+    try {
+      const result = await requestJson("/api/auth/email-status/check", {
+        method: "POST",
+      });
+      setMailCheckMessage(
+        `${result.message}${result.connected ? "" : ` Stage: ${result.stage}.`}`,
+      );
+    } catch {
+      setMailCheckMessage("Unable to check the email connection.");
+    } finally {
+      setMailChecking(false);
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -240,6 +268,21 @@ export default function TwoFactorVerification() {
           {missingEmailFields.length > 0 &&
             ` Missing settings: ${missingEmailFields.join(", ")}.`}
         </p>
+      )}
+      {isAdministrator && (
+        <div className="twofa-verification-box">
+          <button
+            type="button"
+            className="twofa-primary-button"
+            disabled={mailChecking}
+            onClick={() => void checkMail()}
+          >
+            {mailChecking
+              ? "Checking email connection…"
+              : "Check email connection"}
+          </button>
+          {mailCheckMessage && <p role="status">{mailCheckMessage}</p>}
+        </div>
       )}
       {message && (
         <div className="twofa-success">

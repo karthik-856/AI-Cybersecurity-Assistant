@@ -41,6 +41,7 @@ from backend.app.core.config import settings
 from backend.app.services.email_service import (
     EmailConfigurationError,
     missing_smtp_settings,
+    check_email_connection,
     send_email_verification_otp,
     send_password_reset_otp,
     send_two_factor_otp,
@@ -1356,3 +1357,8 @@ def email_configuration_status(current_user: User = Depends(require_role("ADMIN"
     """Report missing setting names to administrators, never credential values."""
     missing = missing_smtp_settings()
     return {"configured": not missing, "missing_fields": missing}
+
+
+@router.post("/email-status/check")
+def email_connection_check(current_user: User = Depends(require_role("ADMIN"))):
+    return check_email_connection()

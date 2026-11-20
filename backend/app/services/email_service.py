@@ -10,6 +10,36 @@ class EmailConfigurationError(RuntimeError):
     """Raised when SMTP configuration is incomplete."""
 
 
+def check_email_connection() -> dict:
+    """Authenticate without sending mail; expose only safe failure categories."""
+    missing = missing_smtp_settings()
+    if missing:
+        return {"connected": False, "stage": "configuration", "error_code": "missing_settings",
+                "message": "Missing settings: " + ", ".join(missing)}
+    stage = "connect"
+    try:
+        context = ssl.create_default_context()
+        connection = (smtplib.SMTP_SSL(settings.smtp_host, settings.smtp_port, context=context, timeout=10)
+                      if settings.smtp_use_ssl else smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=10))
+        with connection as server:
+            if settings.smtp_use_tls and not settings.smtp_use_ssl:
+                stage = "tls"
+                server.starttls(context=context)
+            stage = "authenticate"
+            server.login(settings.smtp_username, settings.smtp_password)
+        return {"connected": True, "stage": "authenticated", "error_code": None,
+                "message": "SMTP authentication succeeded. Send a verification code to test delivery."}
+    except smtplib.SMTPAuthenticationError:
+        code, message = "authentication_failed", "The provider rejected the SMTP login/key or account activation."
+    except ssl.SSLError:
+        code, message = "tls_failed", "The TLS connection failed. Check SMTP port and SSL/STARTTLS settings."
+    except TimeoutError:
+        code, message = "connection_timeout", "The SMTP connection timed out."
+    except (OSError, smtplib.SMTPException):
+        code, message = "connection_failed", "The SMTP connection failed. Check provider and transport settings."
+    return {"connected": False, "stage": stage, "error_code": code, "message": message}
+
+
 def missing_smtp_settings() -> list[str]:
     required = {
         "SMTP_HOST": settings.smtp_host,
