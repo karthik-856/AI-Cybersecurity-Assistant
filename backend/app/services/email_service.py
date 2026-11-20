@@ -529,7 +529,8 @@ def send_analyst_approval_email(
     safe_username = html.escape(analyst_username)
     safe_analyst_email = html.escape(analyst_email)
 
-    url = approval_url or f"http://127.0.0.1:8000/api/admin/users/{analyst_id}/approve-via-mail?token={approval_token}"
+    console_url = settings.frontend_base_url.rstrip("/") + "/users"
+    url = approval_url or console_url
 
     subject = f"ZUKA SOC — Action Required: Approve SOC Analyst '{analyst_username}'"
 
@@ -544,11 +545,11 @@ A new SOC Analyst account has been registered on ZUKA Security Operations Center
 - Requested Role: SOC_ANALYST
 - Current Status: PENDING_APPROVAL (Inactive)
 
-To approve this account and allow the analyst to access the SOC platform, click the link below:
+To approve this account and allow the analyst to access the SOC platform, open the review page below:
 
 {url}
 
-You can also approve or reject this analyst directly in the ZUKA User Management console (http://127.0.0.1:5173/users).
+You can also approve or reject this analyst directly in the ZUKA User Management console ({console_url}).
 
 Regards,
 ZUKA Security Operations Center
@@ -610,12 +611,12 @@ ZUKA Security Operations Center
 
         <div style="text-align:center;margin:32px 0;">
             <a href="{url}" style="display:inline-block;background:#0284c7;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:14px 32px;border-radius:8px;box-shadow:0 4px 14px rgba(2,132,199,0.4);">
-                ✔ Approve SOC Analyst Account
+                Review analyst request
             </a>
         </div>
 
         <p style="color:#94a3b8;font-size:12.5px;line-height:1.6;margin-top:24px;border-top:1px solid #1e293b;padding-top:18px;">
-            Alternatively, you can manage, activate, or reject this user directly in the <a href="http://127.0.0.1:5173/users" style="color:#38bdf8;text-decoration:none;">User Management Console</a>.
+            Alternatively, you can manage, activate, or reject this user directly in the <a href="{console_url}" style="color:#38bdf8;text-decoration:none;">User Management Console</a>.
         </p>
     </div>
 
@@ -633,4 +634,11 @@ ZUKA Security Operations Center
         text_body=text_body,
         html_body=html_body,
     )
+
+
+def send_analyst_approved_notice(recipient: str, username: str) -> None:
+    url = settings.frontend_base_url.rstrip("/") + "/login"
+    _send_email(recipient, "ZUKA — SOC Analyst access approved",
+        f"Hello {username},\nYour administrator approved your SOC Analyst account. You can now sign in at {url}.",
+        f"<p>Hello {html.escape(username)},</p><p>Your SOC Analyst account has been approved.</p><a href=\"{html.escape(url, quote=True)}\">Sign in to ZUKA</a>")
 

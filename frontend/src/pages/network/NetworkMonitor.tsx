@@ -391,8 +391,9 @@ function NetworkMonitor() {
               <h1>Network Monitor</h1>
 
               <p>
-                Included dataset demonstration. Process a sample to add a flow
-                and run detection.
+                {serverReplay?.enabled
+                  ? "Dataset samples are classified automatically on the backend."
+                  : "Included dataset demonstration. Process a sample to run detection."}
               </p>
             </div>
           </div>

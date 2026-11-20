@@ -83,7 +83,7 @@ def get_current_user(
         select(User).where(User.id == user_id)
     )
 
-    if user is None or not user.is_active:
+    if user is None or not user.is_active or not user.email_verified or user.approval_pending:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User account is unavailable.",

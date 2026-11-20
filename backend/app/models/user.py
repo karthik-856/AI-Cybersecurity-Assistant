@@ -40,6 +40,9 @@ class User(Base):
         nullable=False,
     )
 
+    email_verified: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true", nullable=False)
+    approval_pending: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
+
     role_id: Mapped[int] = mapped_column(
         ForeignKey("roles.id"),
         nullable=False,

@@ -35,8 +35,9 @@ included CSV every 15 seconds, runs the real model and TreeSHAP, saves a network
 event, and creates an alert/incident only for model-classified attacks. Samples
 are selected with replacement; benign samples increase events without alerts.
 This runs on Render independently of browser tabs or the owner's laptop.
-Dashboard and Network Monitor show the authenticated `/api/replay/status` result,
-including processed samples, generated alerts, errors and running state. The
+The authenticated `/api/replay/status` endpoint reports processed samples,
+generated alerts, errors and running state. The persistent status banner has
+been removed; Dashboard counters and Network Monitor records show new activity. The
 shared model lock prevents simultaneous inference jobs on the small instance.
 Counters in the worker status restart after a server restart; saved SOC records
 remain in PostgreSQL. Render Free still sleeps after idle; this does not promise

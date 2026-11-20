@@ -31,6 +31,8 @@ interface User {
   email: string;
   role: string;
   is_active: boolean;
+  email_verified?: boolean;
+  approval_pending?: boolean;
   created_at: string;
   last_login_at: string | null;
   last_login_ip: string | null;
@@ -322,6 +324,31 @@ function Users() {
     }
   }
 
+  async function approveAnalyst(userId: number) {
+    setUpdatingUserId(userId);
+    setError("");
+    try {
+      const token = localStorage.getItem("zuka_access_token");
+      const response = await sessionFetch(
+        `${API_BASE_URL}/api/admin/users/${userId}/approve`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(result.detail || "Unable to approve analyst.");
+      await loadUsers();
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Unable to approve analyst.",
+      );
+    } finally {
+      setUpdatingUserId(null);
+    }
+  }
+
   /*
    * Open in-website Delete User confirmation modal.
    */
@@ -571,7 +598,12 @@ function Users() {
                         <select
                           className="users-role-select"
                           value={user.role}
-                          disabled={isUpdating || isCurrentUser}
+                          disabled={
+                            isUpdating ||
+                            isCurrentUser ||
+                            user.approval_pending ||
+                            user.email_verified === false
+                          }
                           title={
                             isCurrentUser
                               ? "You cannot change your own ADMIN role."
@@ -596,7 +628,12 @@ function Users() {
                           className={`users-status-button ${
                             user.is_active ? "active" : "inactive"
                           }`}
-                          disabled={isUpdating || isCurrentUser}
+                          disabled={
+                            isUpdating ||
+                            isCurrentUser ||
+                            user.approval_pending ||
+                            user.email_verified === false
+                          }
                           title={
                             isCurrentUser
                               ? "You cannot deactivate your own account."
@@ -608,7 +645,11 @@ function Users() {
                             changeUserStatus(user.id, !user.is_active)
                           }
                         >
-                          {user.is_active ? (
+                          {user.email_verified === false ? (
+                            "Verify email"
+                          ) : user.approval_pending ? (
+                            "Pending approval"
+                          ) : user.is_active ? (
                             <>
                               <UserCheck size={13} />
                               Active
@@ -630,6 +671,19 @@ function Users() {
 
                       {/* ACTIONS: IN-WEBSITE MODAL CONFIRMATION DELETE */}
                       <td>
+                        {user.approval_pending && (
+                          <button
+                            type="button"
+                            className="users-status-button active"
+                            disabled={
+                              isUpdating || user.email_verified === false
+                            }
+                            aria-label={`Approve analyst ${user.username}`}
+                            onClick={() => void approveAnalyst(user.id)}
+                          >
+                            Approve analyst
+                          </button>
+                        )}
                         {!isCurrentUser ? (
                           <button
                             type="button"

@@ -1,7 +1,5 @@
-from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.responses import HTMLResponse
-import jwt
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -17,7 +15,7 @@ from backend.app.schemas.admin import (
 )
 from backend.app.security.dependencies import require_role
 from backend.app.security.password import hash_password, validate_password_complexity
-from backend.app.services.email_service import send_analyst_approval_email
+from backend.app.services.email_service import send_analyst_approved_notice
 from backend.app.audit.audit_service import record_audit_event
 
 
@@ -126,91 +124,19 @@ def create_user(
         email=user.email,
         role=user.role.name,
         is_active=user.is_active,
+        email_verified=user.email_verified,
+        approval_pending=user.approval_pending,
         created_at=user.created_at,
         last_login_at=user.last_login_at,
         last_login_ip=user.last_login_ip,
     )
 
 
-@router.get("/users/{user_id}/approve-via-mail", response_class=HTMLResponse)
-def approve_user_via_mail(
-    user_id: int,
-    token: str = Query(...),
-    db: Session = Depends(get_db),
-):
-    """Email action callback to approve and activate a pending SOC Analyst account."""
-    try:
-        payload = jwt.decode(
-            token,
-            settings.jwt_secret_key,
-            algorithms=[settings.jwt_algorithm],
-        )
-        if payload.get("action") != "approve_analyst" or int(payload.get("sub")) != user_id:
-            raise HTTPException(status_code=400, detail="Invalid approval token.")
-    except Exception:
-        return HTMLResponse(
-            content="""
-            <!DOCTYPE html>
-            <html>
-            <head><title>ZUKA SOC — Token Expired</title></head>
-            <body style="margin:0;padding:50px;background:#0b1220;color:#f87171;font-family:sans-serif;text-align:center;">
-              <div style="max-width:500px;margin:auto;background:#111827;border:1px solid #1e293b;border-radius:12px;padding:36px;">
-                <h2 style="margin-top:0;">Authorization Token Invalid or Expired</h2>
-                <p style="color:#94a3b8;font-size:14px;">This security token could not be verified. You can still approve this analyst directly from the ZUKA User Management console.</p>
-                <a href="http://127.0.0.1:5173/users" style="display:inline-block;margin-top:16px;background:#0284c7;color:#fff;text-decoration:none;padding:10px 22px;border-radius:6px;font-weight:600;">Open User Management</a>
-              </div>
-            </body>
-            </html>
-            """,
-            status_code=400,
-        )
-
-    user = db.scalar(select(User).where(User.id == user_id))
-    if not user:
-        raise HTTPException(status_code=404, detail="User account not found.")
-
-    user.is_active = True
-    db.commit()
-
-    record_audit_event(
-        db,
-        user_id=user.id,
-        action="ANALYST_APPROVED_VIA_EMAIL",
-        resource_type="USER",
-        resource_id=str(user.id),
-        description=f"SOC Analyst account '{user.username}' was authorized and activated via administrative email link.",
-        commit=True,
-    )
-
-    return HTMLResponse(
-        content=f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>ZUKA SOC — Account Approved</title>
-          <style>
-            body {{ margin:0; padding:40px; background:#0b1220; color:#f8fafc; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; display:flex; justify-content:center; align-items:center; min-height:80vh; }}
-            .card {{ max-width:540px; background:#111827; border:1px solid #263244; border-radius:14px; padding:38px; text-align:center; box-shadow:0 12px 30px rgba(0,0,0,0.5); }}
-            .icon {{ font-size:46px; margin-bottom:12px; color:#10b981; }}
-            h1 {{ font-size:22px; margin:0 0 12px; color:#f8fafc; font-weight:700; }}
-            p {{ color:#94a3b8; font-size:14px; line-height:1.6; margin:0 0 24px; }}
-            .badge {{ display:inline-block; padding:5px 14px; background:#064e3b; color:#34d399; border-radius:6px; font-weight:700; font-size:12px; margin-bottom:18px; }}
-            .btn {{ display:inline-block; background:#0284c7; color:#ffffff; text-decoration:none; padding:12px 28px; border-radius:8px; font-weight:700; font-size:14px; }}
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <div class="icon">✔</div>
-            <div class="badge">ACCOUNT AUTHORIZED & ACTIVATED</div>
-            <h1>SOC Analyst Approved Successfully</h1>
-            <p>The SOC Analyst account for <strong>{user.username}</strong> (<code style="color:#38bdf8;">{user.email}</code>) has been approved and activated. The analyst is now authorized to sign in and perform triage investigations.</p>
-            <a href="http://127.0.0.1:5173/login" class="btn">Return to ZUKA SOC Console</a>
-          </div>
-        </body>
-        </html>
-        """
-    )
+@router.get("/users/{user_id}/approve-via-mail", include_in_schema=False)
+def approve_user_via_mail(user_id: int):
+    # Email scanners, forwarded links and GET requests cannot grant access.
+    return RedirectResponse(settings.frontend_base_url.rstrip("/") + "/users", status_code=303,
+                            headers={"Referrer-Policy": "no-referrer"})
 
 
 @router.post("/users/{user_id}/approve", response_model=AdminUserResponse)
@@ -224,6 +150,18 @@ def approve_user_in_console(
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
 
+    if user.role.name != "SOC_ANALYST":
+        raise HTTPException(status_code=409, detail="This account is not a SOC Analyst request.")
+    if not user.email_verified:
+        raise HTTPException(status_code=409, detail="Email verification is required before approval.")
+    if not user.approval_pending:
+        if not user.is_active:
+            raise HTTPException(status_code=409, detail="This account has no pending analyst request.")
+        return AdminUserResponse(id=user.id, username=user.username, email=user.email,
+            role=user.role.name, is_active=user.is_active, email_verified=user.email_verified,
+            approval_pending=False, created_at=user.created_at,
+            last_login_at=user.last_login_at, last_login_ip=user.last_login_ip)
+    user.approval_pending = False
     user.is_active = True
     db.commit()
     db.refresh(user)
@@ -237,6 +175,11 @@ def approve_user_in_console(
         description=f"SOC Analyst account '{user.username}' was authorized and activated in the User Management console by admin '{current_user.username}'.",
         commit=True,
     )
+    try:
+        send_analyst_approved_notice(user.email, user.username)
+    except Exception:
+        import logging
+        logging.getLogger("zuka.mail").warning("Analyst approval confirmation could not be sent.")
 
     return AdminUserResponse(
         id=user.id,
@@ -244,6 +187,8 @@ def approve_user_in_console(
         email=user.email,
         role=user.role.name,
         is_active=user.is_active,
+        email_verified=user.email_verified,
+        approval_pending=user.approval_pending,
         created_at=user.created_at,
         last_login_at=user.last_login_at,
         last_login_ip=user.last_login_ip,
@@ -271,6 +216,8 @@ def list_users(
             email=user.email,
             role=user.role.name,
             is_active=user.is_active,
+            email_verified=user.email_verified,
+            approval_pending=user.approval_pending,
             created_at=user.created_at,
             last_login_at=user.last_login_at,
             last_login_ip=user.last_login_ip,
@@ -341,6 +288,11 @@ def update_user_role(
             detail="Requested role does not exist.",
         )
 
+    if request.role in {"SOC_ANALYST", "ADMIN"} and (not user.email_verified or user.approval_pending):
+        raise HTTPException(status_code=409, detail="Verify email and approve the analyst request before granting operational access.")
+    if request.role == "VIEWER":
+        user.approval_pending = False
+
     user.role_id = role.id
 
     db.commit()
@@ -352,6 +304,8 @@ def update_user_role(
         email=user.email,
         role=user.role.name,
         is_active=user.is_active,
+        email_verified=user.email_verified,
+        approval_pending=user.approval_pending,
         created_at=user.created_at,
         last_login_at=user.last_login_at,
         last_login_ip=user.last_login_ip,
@@ -393,6 +347,9 @@ def update_user_status(
             ),
         )
 
+    if request.is_active and (not user.email_verified or user.approval_pending):
+        raise HTTPException(status_code=409, detail="Email verification and analyst approval are required before activation.")
+
     user.is_active = request.is_active
 
     db.commit()
@@ -404,6 +361,8 @@ def update_user_status(
         email=user.email,
         role=user.role.name,
         is_active=user.is_active,
+        email_verified=user.email_verified,
+        approval_pending=user.approval_pending,
         created_at=user.created_at,
         last_login_at=user.last_login_at,
         last_login_ip=user.last_login_ip,

@@ -25,6 +25,8 @@ class AdminUserResponse(BaseModel):
     email: EmailStr
     role: str
     is_active: bool
+    email_verified: bool = True
+    approval_pending: bool = False
     created_at: datetime
     last_login_at: datetime | None
     last_login_ip: str | None

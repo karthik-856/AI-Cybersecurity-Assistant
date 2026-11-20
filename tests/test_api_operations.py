@@ -79,7 +79,8 @@ def test_registration_cannot_grant_analyst_privileges(client, monkeypatch):
     assert response.status_code == 201, response.text
     with SessionLocal() as db:
         user = db.scalar(select(User).where(User.username == name))
-        assert user.role.name == "VIEWER"
+        assert user.role.name == "SOC_ANALYST"
+        assert user.approval_pending and not user.email_verified
         assert not user.is_active
 
 

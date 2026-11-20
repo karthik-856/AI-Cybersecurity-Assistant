@@ -8,8 +8,11 @@ any account that will enable email verification.
 Public self-sign-up is available from **Login → New to ZUKA? Create a new
 account** at `/register`. Until email delivery is configured, it displays an
 availability notice. Once configured, users register, receive a six-digit code,
-and verify their email before they can sign in. New accounts receive **VIEWER**
-access; only an administrator can grant SOC_ANALYST or ADMIN access.
+and verify their email before they can sign in. Applicants choose **Viewer** or
+**SOC Analyst**. Viewers can sign in after email verification. Analyst requests
+remain inactive after email verification until an administrator opens **User
+Management → Approve analyst**. An email review link opens that console and
+never grants access automatically. Public registration cannot request ADMIN.
 
 Render Free blocks outbound SMTP ports **25, 465, and 587**. A normal Gmail
 SMTP configuration on port 587 will therefore fail on this service. Use a
@@ -52,3 +55,9 @@ account; that requires the private configuration and an actual received code.
 References: [Render Free limitations](https://render.com/docs/free),
 [Brevo SMTP credentials](https://developers.brevo.com/docs/smtp-integration),
 [Brevo ports and STARTTLS](https://help.brevo.com/hc/en-us/articles/10905415650322-Which-SMTP-port-should-I-use-Port-587-465-or-2525).
+
+Administrators can use **Settings → Security & Sessions → Check email
+connection** to distinguish missing fields, TLS failures, timeouts and rejected
+SMTP authentication. The result never includes credentials. Authentication
+success is separate from actual delivery, which must be checked with a real
+verification message and the provider's delivery log.

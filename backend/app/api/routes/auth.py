@@ -317,9 +317,8 @@ def register(
             detail="Email already exists.",
         )
 
-    # Public sign-up never grants operational privileges. An administrator
-    # can promote a verified account through the user management API.
-    requested_role_name = "VIEWER"
+    # Requested analyst accounts stay inactive until email verification AND approval.
+    requested_role_name = request.role
 
     assigned_role = db.scalar(
         select(Role).where(
@@ -342,6 +341,8 @@ def register(
             request.password
         ),
         is_active=False,
+        email_verified=False,
+        approval_pending=requested_role_name == "SOC_ANALYST",
         role_id=assigned_role.id,
     )
 
@@ -415,7 +416,7 @@ def verify_email(
     )
     if already_verified is not None:
         return MessageResponse(
-            message="Email is already verified. You can now sign in.",
+            message="Email is verified. Await administrator approval." if user.approval_pending else "Email is already verified. You can now sign in.",
         )
 
     record = _verify_otp(
@@ -430,15 +431,25 @@ def verify_email(
     record.verified_at = now
     record.used_at = now
 
-    user.is_active = True
+    user.email_verified = True
+    user.is_active = not user.approval_pending
     db.commit()
-
-    return MessageResponse(
-        message=(
-            "Email verified successfully. "
-            "You can now sign in."
-        ),
-    )
+    if user.approval_pending:
+        admins = db.scalars(select(User).join(Role).where(
+            Role.name == "ADMIN", User.is_active.is_(True), User.email_verified.is_(True)
+        )).all()
+        for admin in admins:
+            try:
+                send_analyst_approval_email(recipient=admin.email,
+                    analyst_username=user.username, analyst_email=user.email,
+                    analyst_id=user.id, approval_token="",
+                    approval_url=settings.frontend_base_url.rstrip("/") + "/users")
+            except Exception:
+                # Verification remains valid; the request is always in User Management.
+                import logging
+                logging.getLogger("zuka.mail").warning("Analyst approval notification could not be sent.")
+        return MessageResponse(message="Email verified. Your SOC Analyst account is pending administrator approval.")
+    return MessageResponse(message="Email verified successfully. You can now sign in.")
 
 
 @router.post(
@@ -463,10 +474,8 @@ def resend_verification(
             detail="Account not found.",
         )
 
-    if user.is_active:
-        return MessageResponse(
-            message="Email is already verified.",
-        )
+    if user.email_verified:
+        return MessageResponse(message="Email is verified. Await administrator approval." if user.approval_pending else "Email is already verified.")
 
     previous = _latest_otp(
         db=db,
@@ -576,6 +585,11 @@ def login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username/email or password.",
         )
+
+    if not user.email_verified:
+        raise HTTPException(status_code=403, detail="Please verify your email with the 6-digit OTP before signing in.")
+    if user.approval_pending:
+        raise HTTPException(status_code=403, detail="Your SOC Analyst account is pending administrator approval.")
 
     if not user.is_active:
         pending_verification = _latest_otp(

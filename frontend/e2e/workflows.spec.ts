@@ -37,7 +37,7 @@ test("public signup is discoverable and email verification is required in the UI
     expect(route.request().postDataJSON()).toMatchObject({
       username,
       email,
-      role: "VIEWER",
+      role: "SOC_ANALYST",
     });
     await route.fulfill({
       status: 201,
@@ -51,13 +51,23 @@ test("public signup is discoverable and email verification is required in the UI
   await page.route("**/api/auth/verify-email", async (route) => {
     expect(route.request().postDataJSON()).toEqual({ email, otp: "123456" });
     await route.fulfill({
-      json: { message: "Email verified successfully. You can now sign in." },
+      json: {
+        message:
+          "Email verified. Your SOC Analyst account is pending administrator approval.",
+      },
     });
   });
   await page.reload();
   await expect(
     page.getByRole("button", { name: "Create ZUKA Account", exact: true }),
   ).toBeVisible();
+  await expect(page.getByLabel("Account role", { exact: true })).toHaveValue(
+    "VIEWER",
+  );
+  await page
+    .getByLabel("Account role", { exact: true })
+    .selectOption("SOC_ANALYST");
+  await expect(page.getByText(/wait for administrator approval/)).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath("public-signup.png"),
     fullPage: true,
@@ -81,9 +91,12 @@ test("public signup is discoverable and email verification is required in the UI
   await page.getByRole("button", { name: "Verify Email", exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
   await expect(
-    page.getByText("Email verified successfully. You can now sign in.", {
-      exact: true,
-    }),
+    page.getByText(
+      "Email verified. Your SOC Analyst account is pending administrator approval.",
+      {
+        exact: true,
+      },
+    ),
   ).toBeVisible();
 });
 
@@ -226,9 +239,12 @@ test("automatic dataset demo survives navigation and pauses without extra writes
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(
     page.getByRole("region", { name: "Dataset demonstration" }),
-  ).toContainText("Dataset demo running");
+  ).toHaveCount(0);
   const second = await secondResponse;
   expect(second.status()).toBe(200);
+  await page
+    .getByRole("link", { name: "Network Monitor", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Pause demo replay", exact: true })
     .click();
@@ -252,7 +268,7 @@ test("automatic dataset demo survives navigation and pauses without extra writes
   });
 });
 
-test("backend replay status replaces browser timers and stays visible across pages", async ({
+test("backend replay does not require browser timers or a persistent status banner", async ({
   page,
 }, testInfo) => {
   let checks = 0;
@@ -282,16 +298,14 @@ test("backend replay status replaces browser timers and stays visible across pag
   const banner = page.getByRole("region", {
     name: "Backend dataset detection",
   });
-  await expect(banner).toContainText(
-    "Backend random dataset detection running",
-  );
+  await expect(banner).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Start demo replay", exact: true }),
   ).toHaveCount(0);
   await page
     .getByRole("link", { name: "Network Monitor", exact: true })
     .click();
-  await expect(banner).toContainText("without this browser");
+  await expect(banner).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Process next demo event", exact: true }),
   ).toHaveCount(0);
@@ -861,4 +875,49 @@ test("mobile navigation and screens fit the viewport", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "Dashboard", exact: true }),
   ).toBeVisible();
+});
+
+test("administrator approves a verified analyst request in User Management", async ({
+  page,
+}) => {
+  let approved = false;
+  const pendingUser = () => ({
+    id: 9001,
+    username: "approval_ui",
+    email: "approval_ui@example.com",
+    role: "SOC_ANALYST",
+    is_active: approved,
+    email_verified: true,
+    approval_pending: !approved,
+    created_at: new Date().toISOString(),
+    last_login_at: null,
+    last_login_ip: null,
+  });
+  await page.route("**/api/admin/users", (route) =>
+    route.fulfill({ json: [pendingUser()] }),
+  );
+  await page.route("**/api/admin/users/9001/approve", (route) => {
+    expect(route.request().method()).toBe("POST");
+    approved = true;
+    return route.fulfill({ json: pendingUser() });
+  });
+  await signIn(page);
+  await page
+    .getByRole("link", { name: "User Management", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Pending approval", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole("button", { name: "Approve analyst approval_ui", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Active", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", {
+      name: "Approve analyst approval_ui",
+      exact: true,
+    }),
+  ).toHaveCount(0);
 });

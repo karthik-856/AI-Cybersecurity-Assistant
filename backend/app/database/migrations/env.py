@@ -5,15 +5,17 @@ from sqlalchemy import engine_from_config, pool
 
 from backend.app.core.config import settings
 from backend.app.database.base import Base
+from backend.app.database.migration_url import migration_database_url
 from backend.app.models import Role, User  # noqa: F401
 from backend.app.models.auth_otp import AuthOtp  # noqa: F401
 
 config = context.config
 
-# Use the database URL from .env
+# Migrations need a direct connection; normal application traffic stays pooled.
+migration_url = migration_database_url(settings.database_url)
 config.set_main_option(
     "sqlalchemy.url",
-    settings.database_url.replace("%", "%%"),
+    migration_url.replace("%", "%%"),
 )
 
 if config.config_file_name is not None:
@@ -26,7 +28,7 @@ target_metadata = Base.metadata
 def run_migrations_offline() -> None:
     """Run migrations in offline mode."""
 
-    url = settings.database_url
+    url = migration_url
 
     context.configure(
         url=url,

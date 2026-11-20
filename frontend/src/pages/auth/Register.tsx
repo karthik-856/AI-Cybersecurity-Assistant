@@ -31,7 +31,7 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const role = "VIEWER" as const;
+  const [role, setRole] = useState<"VIEWER" | "SOC_ANALYST">("VIEWER");
   const [otp, setOtp] = useState("");
 
   const [error, setError] = useState("");
@@ -277,9 +277,25 @@ function Register() {
                 />
               </div>
 
+              <label htmlFor="requested-role">Account role</label>
+              <div className="input-wrapper">
+                <Shield size={17} />
+                <select
+                  id="requested-role"
+                  value={role}
+                  disabled={loading}
+                  onChange={(event) =>
+                    setRole(event.target.value as "VIEWER" | "SOC_ANALYST")
+                  }
+                >
+                  <option value="VIEWER">Viewer</option>
+                  <option value="SOC_ANALYST">SOC Analyst</option>
+                </select>
+              </div>
               <p>
-                New accounts have read-only access. Ask an administrator for
-                analyst access.
+                {role === "SOC_ANALYST"
+                  ? "Verify your email, then wait for administrator approval before signing in as an analyst."
+                  : "Viewer accounts can sign in after email verification."}
               </p>
 
               <label htmlFor="password">Password</label>
