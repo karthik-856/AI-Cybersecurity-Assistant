@@ -31,9 +31,11 @@ verifies delivery without fabricating an alert.
 
 For ongoing demonstration activity, open Network Monitor and choose **Start
 demo replay**. It processes one sample every five seconds, up to 65 per run.
-**Pause demo replay** stops future samples after the current request. Leaving
-Network Monitor also stops replay. This browser-driven demonstration is separate
-from the hosted API's availability; a sleeping laptop stops its own demo loop.
+**Pause demo replay** stops future samples after the current request. Replay
+continues when navigating between signed-in pages in the same tab.
+The status and Start/Pause controls are also visible on Dashboard. Refreshing
+or signing out ends the run. A sleeping device pauses its browser timers. This
+browser-driven demonstration is separate from the hosted API's availability.
 
 A sleeping/offline receiving device cannot be promised immediate notifications.
 Push messages request a 24-hour provider TTL for later delivery, subject to the

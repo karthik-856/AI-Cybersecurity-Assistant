@@ -1,7 +1,11 @@
 import { sessionFetch } from "../../services/sessionFetch";
 import { scheduleLoad } from "../../utils/scheduleLoad";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useNavigate,
+  useOutletContext,
+  useSearchParams,
+} from "react-router-dom";
 import {
   Activity,
   ArrowDownToLine,
@@ -28,7 +32,7 @@ import {
 import "./NetworkMonitor.css";
 
 import { API_BASE_URL } from "../../services/config";
-import { processDemoEvent } from "../../services/api";
+import type { DemoReplayState } from "../../hooks/useDemoReplay";
 const PAGE_SIZE = 10;
 
 interface NetworkEvent {
@@ -144,21 +148,19 @@ function NetworkMonitor() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [processingDemo, setProcessingDemo] = useState(false);
-  const [demoRunning, setDemoRunning] = useState(false);
-  const [demoRunCount, setDemoRunCount] = useState(0);
-  const demoInFlight = useRef(false);
-  const [demoMessage, setDemoMessage] = useState("");
-  const [demoError, setDemoError] = useState("");
-  const [demoAlert, setDemoAlert] = useState<string | null>(null);
-  const [canProcessDemo] = useState(() => {
-    try {
-      const user = JSON.parse(localStorage.getItem("zuka_user") || "{}");
-      return ["ADMIN", "SOC_ANALYST"].includes(user.role);
-    } catch {
-      return false;
-    }
-  });
+  const {
+    canProcessDemo,
+    demoRunning,
+    demoRunCount,
+    processingDemo,
+    demoMessage,
+    demoError,
+    demoAlert,
+    demoEvent,
+    runDemo,
+    startDemo,
+    pauseDemo,
+  } = useOutletContext<DemoReplayState>();
 
   // Sync search query param if changes in URL
   const [previousInputs0, setpreviousInputs0] = useState<
@@ -235,67 +237,9 @@ function NetworkMonitor() {
     }
   }, []);
 
-  const runDemo = useCallback(async (): Promise<boolean> => {
-    if (demoInFlight.current) return false;
-    demoInFlight.current = true;
-    setProcessingDemo(true);
-    setDemoMessage("");
-    setDemoError("");
-    setDemoAlert(null);
-    try {
-      const saved = Number(localStorage.getItem("zuka_demo_row") || "0");
-      const result = await processDemoEvent(
-        Number.isInteger(saved) && saved >= 0 && saved <= 1000000 ? saved : 0,
-      );
-      localStorage.setItem("zuka_demo_row", String(result.next_row_index));
-      const row = result.result;
-      setDemoMessage(
-        row
-          ? `Demo event #${row.network_event_id}: ${row.predicted_class}. ${row.alert_id ? "Alert and explanation saved." : "Benign flow; no alert created."}`
-          : result.message,
-      );
-      setDemoAlert(row?.alert_id || null);
-      await loadNetworkData();
-      return true;
-    } catch (error) {
-      setDemoError(
-        error instanceof Error
-          ? error.message
-          : "Unable to process demonstration event.",
-      );
-      return false;
-    } finally {
-      demoInFlight.current = false;
-      setProcessingDemo(false);
-    }
-  }, [loadNetworkData]);
-
   useEffect(() => {
-    if (!demoRunning) return;
-    let active = true;
-    let processed = 0;
-    let timer: ReturnType<typeof setTimeout>;
-    async function tick() {
-      const succeeded = await runDemo();
-      if (!active) return;
-      if (!succeeded) {
-        setDemoRunning(false);
-        return;
-      }
-      processed += 1;
-      setDemoRunCount(processed);
-      if (processed >= 65) {
-        setDemoRunning(false);
-        return;
-      }
-      timer = setTimeout(() => void tick(), 5000);
-    }
-    timer = setTimeout(() => void tick(), 0);
-    return () => {
-      active = false;
-      clearTimeout(timer);
-    };
-  }, [demoRunning, runDemo]);
+    if (demoEvent !== null) return scheduleLoad(loadNetworkData);
+  }, [demoEvent, loadNetworkData]);
 
   useEffect(() => {
     const cancelInitialLoad = scheduleLoad(loadNetworkData);
@@ -475,11 +419,8 @@ function NetworkMonitor() {
             className="network-refresh-button"
             disabled={!demoRunning && processingDemo}
             onClick={() => {
-              if (demoRunning) setDemoRunning(false);
-              else {
-                setDemoRunCount(0);
-                setDemoRunning(true);
-              }
+              if (demoRunning) pauseDemo();
+              else startDemo();
             }}
           >
             {demoRunning ? "Pause demo replay" : "Start demo replay"}
@@ -487,7 +428,7 @@ function NetworkMonitor() {
         )}
         <span className="network-demo-progress">
           {demoRunning
-            ? `Running: ${demoRunCount}/65 samples. Stops when you leave this page.`
+            ? `Running: ${demoRunCount}/65 samples. Continues across pages in this tab.`
             : demoRunCount >= 65
               ? "Demo complete: 65 samples processed."
               : "Replay paused. Start runs up to 65 samples, five seconds apart."}

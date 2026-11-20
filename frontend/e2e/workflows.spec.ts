@@ -195,7 +195,7 @@ test("an older seeded alert generates and retains its explanation", async ({
   ).toHaveCount(0);
 });
 
-test("automatic dataset demo processes real events and pauses without extra writes", async ({
+test("automatic dataset demo survives navigation and pauses without extra writes", async ({
   page,
 }, testInfo) => {
   await signIn(page);
@@ -217,11 +217,17 @@ test("automatic dataset demo processes real events and pauses without extra writ
     .getByRole("button", { name: "Start demo replay", exact: true })
     .click();
   expect((await first).status()).toBe(200);
-  const second = await page.waitForResponse(
+  const secondResponse = page.waitForResponse(
     (response) =>
       response.url().endsWith("/api/replay/demo") &&
       response.request().method() === "POST",
   );
+  await page.getByRole("link", { name: "Dashboard", exact: true }).click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(
+    page.getByRole("region", { name: "Dataset demonstration" }),
+  ).toContainText("Dataset demo running");
+  const second = await secondResponse;
   expect(second.status()).toBe(200);
   await page
     .getByRole("button", { name: "Pause demo replay", exact: true })
@@ -229,6 +235,10 @@ test("automatic dataset demo processes real events and pauses without extra writ
   await expect(
     page.getByRole("button", { name: "Start demo replay", exact: true }),
   ).toBeVisible();
+  await page
+    .getByRole("link", { name: "Network Monitor", exact: true })
+    .click();
+  await expect(page.getByText(/Replay paused\. Start runs/)).toBeVisible();
   for (let i = 0; i < 3; i++)
     await page.waitForResponse(
       (response) =>
